@@ -21,7 +21,7 @@
   "data": {
     "dataset": "TIG Aluminium 5083 HDR camera dataset",
     "binary_target": "int(label6 > 0)",
-    "split_config": "../ijepa-vit-h14/config.json",
+    "split_config": "data.json",
     "roles": {
       "fitting": {
         "recordings": 12,
@@ -47,8 +47,10 @@
     },
     "assessment_previously_inspected": true
   },
-  "implementation": "../../tig_benchmark/",
+  "implementation": "code/",
   "configuration": "config.json",
   "results": "results.json",
-  "weights": "weights/manifest.json"
+  "weights": "weights/manifest.json",
+  "entrypoint": "tig_benchmark",
+  "runtime_model": "mobilenetv5"
 }

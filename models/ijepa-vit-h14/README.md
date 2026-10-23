@@ -4,6 +4,8 @@
 
 Completed and selected final model. This model was adapted with the I-JEPA objective before its linear classifier was fitted. [model.json](model.json) gives the common package metadata; [config.json](config.json) retains the exact adaptation and readout recipe.
 
+This folder is independently runnable. Its implementation, tests, configuration, data identities and checkpoint downloader are all contained here.
+
 ## Architecture
 
 **Stage 1 — JEPA adaptation**
@@ -51,7 +53,7 @@ Group by image parent-folder name after removing terminal `-partN`; all segments
 
 JEPA uses the pinned upstream random resized 224px crop, scale 0.3–1.0, and its native four-target mask collator. Context scale is 0.85–1.0; target scale 0.15–0.20, aspect ratio 0.75–1.5. The native retry fallback is preserved. Downstream images use whole-image, centered black letterboxing at 224px, bilinear resize and ImageNet normalization. Mean pooling excludes padding-intersecting patches.
 
-Local metadata records `path, group, frame, label6, target, crc, original_bytes`. Image reads verify containment, byte size and CRC32. `config.json` holds the exact split fingerprints and recipe; frame-level metadata and images remain local. Historical `train`/`test` directory names do not assign current roles—the explicit recording split does.
+Local metadata records `path, group, frame, label6, target, crc, original_bytes`. Image reads verify containment, byte size and CRC32. `data.json` holds the exact split fingerprints; `config.json` holds the recipe; frame-level metadata and images remain local. Historical `train`/`test` directory names do not assign current roles—the explicit recording split does.
 
 ## Training and selection
 
@@ -83,61 +85,37 @@ These counts establish where the errors concentrate. The visual or annotation ca
 
 ## Usage
 
-Install compatible PyTorch/torchvision wheels for your CPU/CUDA platform, then the remaining requirements. The original GPU run used Python 3.12.3, torch 2.14.1+cu130, torchvision 0.29.1, NumPy 2.5.4 and Pillow 12.3.0. Arithmetic was float32 with highest-precision matmul and TF32 convolutions. Full H/14 training requires substantial GPU memory and roughly 30 GB or more of asset/checkpoint space; no cloud compute or downloads start automatically.
-
-Obtain [the official pretrained checkpoint](https://dl.fbaipublicfiles.com/ijepa/IN1K-vit.h.14-300e.pth.tar) separately. Its SHA-256 is `0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22`.
-
-Run every command from the repository root.
+Run from this model directory:
 
 ```bash
-python -m pip install -r requirements-ijepa.txt
-python -m pytest -q tests/ijepa
-
-# Local canonical CSV, or the retained original registration JSON.
-# Exact frame membership, annotations and split fingerprints are required.
-python -m ijepa prepare \
-  --metadata /absolute/path/registration.json \
-  --data-root /absolute/path/dataset-root \
-  --base-checkpoint /absolute/path/IN1K-vit.h.14-300e.pth.tar \
-  --output runs/prepared
-
-python -m ijepa train \
-  --config runs/prepared/config.local.json \
-  --output runs/ijepa-vit-h14 --device cuda
-
-python -m ijepa evaluate --run runs/ijepa-vit-h14 --device cuda
-python -m ijepa predict --run runs/ijepa-vit-h14 --image /absolute/path/weld.png --device cpu
+python -m pip install -r requirements.txt
+python run.py fetch-weights
+python run.py verify-weights
+python run.py test
+python run.py --help
 ```
 
-Preparation accepts the retained original registration or an equivalent canonical annotation CSV. It can derive recording groups/targets and calculate missing image checksums; it cannot infer defect labels. Keep the canonical relative frame paths under the supplied data root. The published split fingerprints identify the exact role membership without distributing its frame table.
+For the retained completed model:
 
-Training selects an encoder and classifier using validation, then seals their hashes and data identities before assessment. A run contains `encoder.pt`, `classifier.pt`, `selection.json`, `seal.json`, training histories and local evaluation outputs. Use fresh output directories. Training resume and silent assessment overwrite are intentionally unsupported. Large weights, image data, frame predictions and feature caches are excluded from Git. Retained original weights can also be loaded with `WeldClassifier.from_files(..., expected=...)` using the hashes in `results.json`. See the local [weights inventory](weights/manifest.json).
+```bash
+python run.py predict-local --image /absolute/path/weld.png --device cpu
+```
+
+To reproduce fitting using the exact recorded data roles, obtain the original official full pretraining checkpoint separately and run:
+
+```bash
+python run.py prepare --metadata /absolute/path/registration.json \
+  --data-root /absolute/path/dataset-root \
+  --base-checkpoint /absolute/path/IN1K-vit.h.14-300e.pth.tar --output runs/prepared
+python run.py train --config runs/prepared/config.local.json --output runs/training --device cuda
+python run.py evaluate --run runs/training --device cuda
+```
+
 
 ## Weights
 
-The selected encoder and its matching classifier are saved locally under [weights/](weights/). [weights/manifest.json](weights/manifest.json) records relative filenames, sizes, SHA-256 checksums and unavailable artifact roles. Released original pretraining weights are retained here as well. Checkpoint bytes remain outside Git.
-
-Load the retained completed model from the repository root:
-
-```python
-import json
-from pathlib import Path
-from ijepa.classifier import WeldClassifier
-from ijepa.evaluate import predict_image
-
-folder = Path("models/ijepa-vit-h14")
-result = json.loads((folder / "results.json").read_text())
-model = WeldClassifier.from_files(
-    folder / "weights/encoder.pt", folder / "weights/classifier.pt",
-    device="cpu", encoder_role="encoder",
-    expected={
-        "encoder": result["weights"]["selected_encoder_sha256"],
-        "classifier": result["weights"]["classifier_sha256"],
-    },
-)
-print(predict_image(model, "/absolute/path/weld.png", "cpu"))
-```
+Actual checkpoints are available through [weights/README.md](weights/README.md), with direct download links. `python run.py fetch-weights` reconstructs the exact files under this model’s `weights/` directory and checks their SHA-256 hashes. [weights/manifest.json](weights/manifest.json) identifies every part and final file. Both I-JEPA folders use the same `encoder.pt` + `classifier.pt` inference layout. The small classifiers are also stored directly in Git; large encoders are release assets. MobileNetV5/DINOv3 currently contain pretrained encoders only.
 
 ## Implementation and licenses
 
-The shared [I-JEPA package](../../ijepa/) implements both I-JEPA entries. [Model and pipeline tests](../../tests/ijepa/) live outside the model folders. The package includes the pinned Meta transformer, sampler and transforms; see [attribution and license terms](../../ijepa/NOTICE.md). These structural changes do not retrain the model or change its recorded metrics.
+Implementation lives in [code/](code/) and tests in [tests/](tests/). This model imports no code from another model folder. Read [licenses/](licenses/) for applicable source and checkpoint terms. Numerical training settings, learned tensor values and recorded metrics are preserved; the original encoder export only changes its checkpoint container.

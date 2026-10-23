@@ -1,0 +1,60 @@
+{
+  "format": "ijepa-vit-h14-split-fingerprints-v1",
+  "group_rule": "Remove terminal -partN from the image parent folder",
+  "roles": {
+    "fitting": {
+      "group_sha256": [
+        "0e0d7ec2968081c30d9165922c01e518708dccecd08382826ca055d2216bd4e7",
+        "389f8013b919a11fbf0ccb5ec1058cf4dce4c0eed6b3ecc02fd5b32dc5becbad",
+        "3e059ba52ebf445fc600f6729d1b5f9c55c430bf5c6df7d7d2a91b14f74320d4",
+        "40edc1cea21237a36111d845f1e03b1eeaea3d33e46ab095f6c026b8ca8f32f0",
+        "4a1175fb401768e838103cfa2ae1cb2becb5201bdcf5c94a7a9c316644a42f46",
+        "5240fcf944cf7f359c6e1364cec84f4e91f6eb46a6460a4e822f23ef77c8a3b4",
+        "78cf16f6671b10abece52b75028da884a2afef968bfc4b0c91ff3849aaa0b94e",
+        "84d0819a512060f536b5cb7d752d09e1183af0349b50a6de9ea538848161a296",
+        "9d4e6455335866a851f34343ab88b9dfebdd360382552b0289d32c328a9c2f23",
+        "cd8bfac219bc1ca4a1395162703425896e9f8fbce142fc74098bda74e07436a7",
+        "d94ffb8d314447946477f8bf37590b82d440e244cebe00ad83cfea16703f14f4",
+        "ed2180973f7efbd3564c77114107d4a6445a75c41a921fbe2d75c47d7becc4a7"
+      ],
+      "recordings": 12,
+      "frames": 10338,
+      "good_frames": 3915,
+      "defect_frames": 6423,
+      "normalized_rows_sha256": "9a4599b891d5cb4d0c79ec8c223523a5678a1e478c1b7591dc5ee7cca8144e91"
+    },
+    "selection": {
+      "group_sha256": [
+        "44a46f8287afccc4b580705dc6962dc58a0e80590929df4c244bebeb21523203",
+        "6dd0b8e9a05cf847b40fb4e8ff74929f71e0b2b87ed73728e707e367a7e5d441",
+        "7afd4cef014f880da24b0372815e56a4debad0949d3ea862b4f3aa471cca8392",
+        "7ffddfa86f3baf7cc6e6b0e2d741e46a218e1ae46d187fbfe81ba67e57748c2a",
+        "b1b35c9a4151c42b9d3e321fa330a69d5cb20075626452ff50a895176daf12e3",
+        "cba84694d32dfea4ade9be840df098bd9ac93af49289c5ee49308abe2cc9737b"
+      ],
+      "recordings": 6,
+      "frames": 6454,
+      "good_frames": 1341,
+      "defect_frames": 5113,
+      "normalized_rows_sha256": "0b4ca0af988acff774c5dacae817ab102f09c7b0e9255cd373f36ac8d40ed75e"
+    },
+    "assessment": {
+      "group_sha256": [
+        "165322a3f981f20b7fd302e19e0fe03fe1133f5e86d3348b0efd0c8b5f662c79",
+        "2a9ac0a93ffc5fbf0affaf8ac8bc888b7e855d780cc65dbe5f657e66248449f4",
+        "440a8b468179e513c21d11d1a9debe75cd5042916f91bc39776de9986e83857f",
+        "49d1d9c6b3ab97b7a8bc552111fa10830d47e027c0d64fbbb8952e5b7e74d8a7",
+        "a3329c9406638c53a174563390da32848a8473d9f2d2edc3542ce19472a89e9f",
+        "d06949e38ef9bbf03c699f3bb2832bda087ab97a09118ef8e3f19dfeff245fe0",
+        "d3c1b3bf476c3b30f85d0fd4a227b6ea6b9f16261f9db00c105d2b5d6a4127c4",
+        "d3ff722320c1df09c5bbfaf4806d664e6d48ac2442f4f3972e85d338128d6590",
+        "efe3f4463f7c612f3bfe1dde1c7d4dfb4a16d6374eeb080e321e4a2eb1831c49"
+      ],
+      "recordings": 9,
+      "frames": 6763,
+      "good_frames": 2627,
+      "defect_frames": 4136,
+      "normalized_rows_sha256": "1fdce6903cd9d9c44ca2d5d90ebf461410fe679605076a825e81dc0fd7893e60"
+    }
+  }
+}

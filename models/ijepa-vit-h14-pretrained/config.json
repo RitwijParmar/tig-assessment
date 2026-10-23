@@ -1,20 +1,12 @@
 {
-  "format": "ijepa-vit-h14-pretrained-recorded-recipe-v1",
-  "status": "completed recorded baseline; documentation only",
+  "format": "ijepa-vit-h14-native-v1",
+  "seed": 43,
   "source_commit": "52c1ae95d05f743e000e8f10a1f3a79b10cff048",
-  "shared_implementation": "../../ijepa/",
-  "shared_config": "../ijepa-vit-h14/config.json",
-  "encoder": {
-    "architecture": "ViT-H/14",
-    "blocks": 32,
-    "width": 1280,
-    "patch_size": 14,
-    "image_size": 224,
-    "source_role": "target_encoder",
-    "base_checkpoint_sha256": "0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22",
-    "weld_adaptation": false,
-    "trainable_during_classifier_fitting": false
-  },
+  "base_checkpoint_path": "/absolute/path/IN1K-vit.h.14-300e.pth.tar",
+  "base_checkpoint_sha256": "0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22",
+  "data_root": "/absolute/path/dataset-root",
+  "image_size": 224,
+  "patch_size": 14,
   "preprocessing": {
     "image_size": 224,
     "geometry": "letterbox",
@@ -35,23 +27,50 @@
       0
     ]
   },
-  "pooling": "mean of patch tokens wholly inside the image content, excluding padding-intersecting patches",
-  "classifier": {
-    "epochs": 100,
-    "patience": 15,
-    "batch_size": 256,
-    "lr": 0.001,
-    "weight_decay": 0.01,
-    "seed": 43,
-    "threshold": 0.5,
-    "readouts": [
-      "mean"
+  "masks": {
+    "num_targets": 4,
+    "target_scale": [
+      0.15,
+      0.2
     ],
-    "selection": "highest recording-weighted validation BA at0.5; earliest epoch",
-    "normalization": "fitting-only per-feature mean and population standard deviation",
-    "loss": "fitting-only recording and binary-class balanced BCE on detached EMA features",
-    "device": "CUDA for recorded run; float32, zero initialized linear head"
+    "target_aspect_ratio": [
+      0.75,
+      1.5
+    ],
+    "context_scale": [
+      0.85,
+      1.0
+    ],
+    "min_context_tokens": 32,
+    "area_basis": "valid_content"
   },
+  "training": {
+    "epochs": 0,
+    "batch_size": 16,
+    "gradient_accumulation": 2,
+    "encoder_lr": 3e-05,
+    "predictor_lr": 0.0001,
+    "weight_decay": 0.04,
+    "gradient_clip": 1.0,
+    "warmup_epochs": 1,
+    "ema_start": 0.996,
+    "ema_end": 1.0
+  },
+  "runtime": {
+    "workers": 4,
+    "precision": "float32",
+    "attention_backend": "manual"
+  },
+  "selection": {
+    "metric": "recording-balanced downstream validation BA",
+    "threshold": 0.5,
+    "latent_loss_selects": false
+  },
+  "arm": "pretrained_original",
+  "ssl_transform": "official_random_resized_crop_0.3_1.0",
+  "ssl_mask_backend": "native",
+  "manifest_path": "/absolute/path/manifest.local.json",
+  "manifest_sha256": "SET_BY_PREPARE",
   "data_split": {
     "format": "ijepa-vit-h14-split-fingerprints-v1",
     "group_rule": "Remove terminal -partN from the image parent folder",
@@ -112,6 +131,22 @@
       }
     }
   },
-  "selected_classifier_epoch": 14,
-  "threshold": 0.5
+  "classifier": {
+    "epochs": 100,
+    "patience": 15,
+    "batch_size": 256,
+    "lr": 0.001,
+    "weight_decay": 0.01,
+    "seed": 43,
+    "threshold": 0.5,
+    "readouts": [
+      "mean"
+    ],
+    "selection": "highest recording-weighted validation BA at0.5; earliest epoch",
+    "normalization": "fitting-only per-feature mean and population standard deviation",
+    "loss": "fitting-only recording and binary-class balanced BCE on detached EMA features",
+    "device": "CUDA for recorded run; float32, zero initialized linear head"
+  },
+  "weld_adaptation": false,
+  "selected_classifier_epoch": 14
 }

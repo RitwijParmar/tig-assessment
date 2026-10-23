@@ -1,42 +1,75 @@
 {
   "format": "tig-model-weights-v1",
   "model_id": "ijepa-vit-h14",
-  "files_distributed_on_github": false,
+  "files_distributed_on_github": true,
   "artifacts": {
     "pretrained_encoder": {
-      "path": "pretrained_encoder.pth.tar",
-      "sha256": "0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22",
-      "bytes": 10358004345,
-      "status": "saved_locally",
-      "description": "official original I-JEPA checkpoint; retained with completed baseline and adapted weights"
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "optional_upstream_source",
+      "description": "Full original pretraining source; not required for inference with encoder.pt.",
+      "parts": [],
+      "required": false,
+      "source_url": "https://dl.fbaipublicfiles.com/ijepa/IN1K-vit.h.14-300e.pth.tar",
+      "source_sha256": "0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22"
     },
     "selected_encoder": {
       "path": "encoder.pt",
       "sha256": "9f9c3dfe31e49c1a7333ac85e436d6a7b9f7a12c3a4b142ee12b662a7cde5b17",
       "bytes": 2523197455,
-      "status": "saved_locally",
-      "description": "selected final weld-adapted I-JEPA target encoder"
+      "status": "public_release",
+      "description": "selected final weld-adapted I-JEPA target encoder",
+      "parts": [
+        {
+          "asset": "ijepa-vit-h14--encoder.pt.part01",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14--encoder.pt.part01",
+          "bytes": 1610612736,
+          "sha256": "6acd4a3dfeba801298ac0701f2357931b89f07fc97227fbc73eccb32782868c8"
+        },
+        {
+          "asset": "ijepa-vit-h14--encoder.pt.part02",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14--encoder.pt.part02",
+          "bytes": 912584719,
+          "sha256": "5da5bf632584700b0496e994885c83316440c36fa143285795f6a94f01424c58"
+        }
+      ],
+      "required": true
     },
     "classifier": {
       "path": "classifier.pt",
       "sha256": "990833bb02a531cb2350b65cb4141630b721d79eed62b9b5cc11b245f93619bb",
       "bytes": 18633,
-      "status": "saved_locally",
-      "description": "selected final weld classifier and fitting normalization"
+      "status": "public_release",
+      "description": "selected final weld classifier and fitting normalization",
+      "parts": [
+        {
+          "asset": "ijepa-vit-h14--classifier.pt",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14--classifier.pt",
+          "bytes": 18633,
+          "sha256": "990833bb02a531cb2350b65cb4141630b721d79eed62b9b5cc11b245f93619bb"
+        }
+      ],
+      "required": true
     },
     "final_epoch_encoder": {
       "path": null,
       "sha256": null,
       "bytes": null,
       "status": "not_available",
-      "description": "not part of the retained selected model; future supervised runs keep this separately"
+      "description": "not part of the retained selected model; future supervised runs keep this separately",
+      "parts": [],
+      "required": false
     },
     "final_epoch_classifier": {
       "path": null,
       "sha256": null,
       "bytes": null,
       "status": "not_available",
-      "description": "not part of the retained selected model; future supervised runs keep this separately"
+      "description": "not part of the retained selected model; future supervised runs keep this separately",
+      "parts": [],
+      "required": false
     }
-  }
+  },
+  "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/model-weights-20261023"
 }

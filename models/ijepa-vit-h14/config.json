@@ -146,5 +146,6 @@
     "normalization": "fitting-only per-feature mean and population standard deviation",
     "loss": "fitting-only recording and binary-class balanced BCE on detached EMA features",
     "device": "CUDA for recorded run; float32, zero initialized linear head"
-  }
+  },
+  "weld_adaptation": true
 }

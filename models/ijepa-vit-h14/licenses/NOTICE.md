@@ -1,0 +1,1 @@
+I-JEPA source and weights: Meta, CC BY-NC 4.0. Adapted weights are derivatives of the official pretrained target encoder. Source remains pinned at 52c1ae95d05f743e000e8f10a1f3a79b10cff048. Original source notices are retained under code/ijepa/vendor/.

@@ -1,15 +1,24 @@
-# MobileNetV5-300M + linear classifier: weights
+# Downloadable weights
 
-[manifest.json](manifest.json) records relative filenames, byte sizes, SHA-256 checksums and availability. Available checkpoint files are retained in this local folder. The public repository contains the inventory; checkpoint bytes are excluded from Git.
+Actual checkpoint downloads are published in the [model-weight release](https://github.com/RitwijParmar/tig-assessment/releases/tag/model-weights-20261023). The downloader saves and verifies them in this folder.
 
-| Role | Relative file | Availability |
-| --- | --- | --- |
-| pretrained_encoder | `pretrained_encoder.safetensors` | saved_locally |
-| selected_encoder | — | not_available |
-| classifier | — | not_available |
-| final_epoch_encoder | — | not_available |
-| final_epoch_classifier | — | not_available |
+```bash
+python weights/download.py
+python weights/download.py --verify-only
+```
 
-The released pretrained encoder is retained. Matched weld training has not run, so a weld classifier and selected weld model are unavailable. Do not substitute a classifier from another model or an older split.
+## pretrained_encoder
 
-Future runs retain selected and final-epoch artifacts separately under their run directory. Local retention uses hard links where supported to avoid duplicate disk allocation. This is not an independent disk backup. Upstream weight licenses continue to apply.
+`pretrained_encoder.safetensors` — 1176564736 bytes; SHA-256 `affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321`.
+
+- [Download mobilenetv5-300m--pretrained_encoder.safetensors](https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/mobilenetv5-300m--pretrained_encoder.safetensors)
+
+## selected_encoder
+
+`pretrained_encoder.safetensors` — 1176564736 bytes; SHA-256 `affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321`.
+
+- [Download mobilenetv5-300m--pretrained_encoder.safetensors](https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/mobilenetv5-300m--pretrained_encoder.safetensors)
+
+Numbered parts are byte slices of the exact checkpoint, reconstructed automatically and verified individually and as a complete file. Each part stays below GitHub’s release-file limit.
+
+I-JEPA encoders must be paired with the classifier in the same model folder. MobileNetV5/DINOv3 have released pretrained encoders only; matched weld classifiers have not been trained. Original full I-JEPA pretraining checkpoints are optional assets and are not required for inference with the encoder exports. See [model licenses](../licenses/).

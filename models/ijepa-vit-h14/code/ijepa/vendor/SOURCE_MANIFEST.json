@@ -1,0 +1,67 @@
+{
+  "repository": "https://github.com/facebookresearch/ijepa",
+  "source_commit": "52c1ae95d05f743e000e8f10a1f3a79b10cff048",
+  "license": "CC BY-NC 4.0",
+  "files": [
+    {
+      "file": "ijepa/vision_transformer.py",
+      "upstream_path": "src/models/vision_transformer.py",
+      "upstream_url": "https://raw.githubusercontent.com/facebookresearch/ijepa/52c1ae95d05f743e000e8f10a1f3a79b10cff048/src/models/vision_transformer.py",
+      "upstream_sha256": "69be453a6367460fd0c94588af6531c022a2469ff72e0a793c16fd110dd498c0",
+      "local_sha256": "ee7d3d1d87d64ff3676f2ce2a8bdd6abf49a227a4cf4ca41373acc9d1bf5ab8e",
+      "modifications": [
+        {
+          "old": "from src.utils.tensors import (",
+          "new": "from .tensors import ("
+        },
+        {
+          "old": "from src.masks.utils import apply_masks",
+          "new": "from .masks import apply_masks"
+        },
+        {
+          "old": "torch.linspace(0, drop_path_rate, depth)",
+          "new": "torch.linspace(0, drop_path_rate, depth, device=\"cpu\")"
+        }
+      ]
+    },
+    {
+      "file": "ijepa/tensors.py",
+      "upstream_path": "src/utils/tensors.py",
+      "upstream_url": "https://raw.githubusercontent.com/facebookresearch/ijepa/52c1ae95d05f743e000e8f10a1f3a79b10cff048/src/utils/tensors.py",
+      "upstream_sha256": "66cac858005d01e93ad6f481f384a9d75cb1fb8ad2bff0fd7e9a127f384429c0",
+      "local_sha256": "66cac858005d01e93ad6f481f384a9d75cb1fb8ad2bff0fd7e9a127f384429c0",
+      "modifications": []
+    },
+    {
+      "file": "ijepa/masks.py",
+      "upstream_path": "src/masks/utils.py",
+      "upstream_url": "https://raw.githubusercontent.com/facebookresearch/ijepa/52c1ae95d05f743e000e8f10a1f3a79b10cff048/src/masks/utils.py",
+      "upstream_sha256": "124da04a7513329a14793389d89a98db87498caf7623a10bc772b097c74d97ec",
+      "local_sha256": "124da04a7513329a14793389d89a98db87498caf7623a10bc772b097c74d97ec",
+      "modifications": []
+    },
+    {
+      "file": "LICENSE",
+      "upstream_path": "LICENSE",
+      "upstream_url": "https://raw.githubusercontent.com/facebookresearch/ijepa/52c1ae95d05f743e000e8f10a1f3a79b10cff048/LICENSE",
+      "upstream_sha256": "336255dc30193e8e15d689d9481bb05673d89055718f3a96923a7ffb99adbbaf",
+      "local_sha256": "336255dc30193e8e15d689d9481bb05673d89055718f3a96923a7ffb99adbbaf",
+      "modifications": []
+    },
+    {
+      "file": "ijepa/transforms.py",
+      "upstream_url": "https://raw.githubusercontent.com/facebookresearch/ijepa/52c1ae95d05f743e000e8f10a1f3a79b10cff048/src/transforms.py",
+      "upstream_sha256": "441acaef22ca3bd121f98f95bfcad2b271ecacef0ab4ba72d4f3dc28c57fd44c",
+      "local_sha256": "441acaef22ca3bd121f98f95bfcad2b271ecacef0ab4ba72d4f3dc28c57fd44c",
+      "modifications": []
+    },
+    {
+      "file": "ijepa/multiblock.py",
+      "upstream_url": "https://raw.githubusercontent.com/facebookresearch/ijepa/52c1ae95d05f743e000e8f10a1f3a79b10cff048/src/masks/multiblock.py",
+      "upstream_sha256": "a06c593636f81e760bd26b615b2a7a976790dcc027d4b9244f3e8e7a2e5a8804",
+      "local_sha256": "a06c593636f81e760bd26b615b2a7a976790dcc027d4b9244f3e8e7a2e5a8804",
+      "modifications": []
+    }
+  ],
+  "notes": "Official native-image encoder/predictor source. Relative imports and concrete CPU depth schedule enable standalone meta-device construction without changing numerical forward behavior."
+}

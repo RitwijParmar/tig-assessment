@@ -2,7 +2,9 @@
 
 ## Status
 
-Completed original-pretrained baseline. The encoder keeps its released pretrained weights and only the linear classifier trains. [model.json](model.json) gives the common package metadata; [config.json](config.json) records this completed control's exact recipe. It is a recorded-recipe file, not a new baseline-only training CLI configuration.
+Completed original-pretrained baseline. The encoder keeps its released pretrained weights and only the linear classifier trains. [model.json](model.json) gives the common package metadata; [config.json](config.json) records this completed control's exact recipe. The local runtime configuration sets `weld_adaptation=false`; its training command fits only the original frozen-encoder readout.
+
+This folder is independently runnable. Its implementation, tests, configuration, data identities and checkpoint downloader are all contained here.
 
 ## Architecture
 
@@ -34,7 +36,7 @@ The downstream image/readout recipe matches the adapted model: whole-image cente
 
 Train a zero-initialized `Linear(1280,1)` using fitting-only recording/class-balanced BCE, AdamW LR 0.001, weight decay 0.01, batch 256, gradient clipping 1.0 and seed 43. The maximum is 100 epochs with validation patience 15; highest validation recording-balanced accuracy at threshold 0.5 selects the checkpoint, with earliest exact ties retained. The recorded classifier was selected at **epoch 14**. The original pretrained encoder remains fixed throughout.
 
-[config.json](config.json) records the recipe and exact split fingerprints. [results.json](results.json) records the selected checkpoint identity and exact metrics. Weights, frame-level annotations and predictions remain local.
+[config.json](config.json) records the recipe; [data.json](data.json) records exact split fingerprints. [results.json](results.json) records the selected checkpoint identity and exact metrics. Weights are downloadable from this folder’s release links; frame-level annotations and predictions remain local.
 
 ## Results
 
@@ -50,45 +52,39 @@ The adapted final model reaches **92.75%** assessment balanced accuracy, **96.51
 
 ## Usage
 
-Run commands from the repository root. Install [requirements-ijepa.txt](../../requirements-ijepa.txt) and run `python -m pytest -q tests/ijepa`. Shared commands are listed by `python -m ijepa --help`.
+Run from this model directory:
 
-For the retained completed baseline, load its own files with the shared classifier loader:
-
-```python
-import json
-from pathlib import Path
-from ijepa.classifier import WeldClassifier
-from ijepa.evaluate import predict_image
-
-folder = Path("models/ijepa-vit-h14-pretrained")
-result = json.loads((folder / "results.json").read_text())
-model = WeldClassifier.from_files(
-    folder / "weights/pretrained_encoder.pth.tar",
-    folder / "weights/classifier.pt",
-    device="cpu", encoder_role="target_encoder",
-    expected={
-        "encoder": result["weights"]["base_sha256"],
-        "classifier": result["weights"]["classifier_sha256"],
-    },
-)
-print(predict_image(model, "/absolute/path/weld.png", "cpu"))
+```bash
+python -m pip install -r requirements.txt
+python run.py fetch-weights
+python run.py verify-weights
+python run.py test
+python run.py --help
 ```
 
-The shared `train` command fits the original epoch-0 classifier before adaptation, then runs the declared adaptation experiment. It does not expose a separate baseline-only fitting command. This folder's existing results do not require rerunning that experiment.
+For the retained completed model:
+
+```bash
+python run.py predict-local --image /absolute/path/weld.png --device cpu
+```
+
+To reproduce fitting using the exact recorded data roles, obtain the original official full pretraining checkpoint separately and run:
+
+```bash
+python run.py prepare --metadata /absolute/path/registration.json \
+  --data-root /absolute/path/dataset-root \
+  --base-checkpoint /absolute/path/IN1K-vit.h.14-300e.pth.tar --output runs/prepared
+python run.py train --config runs/prepared/config.local.json --output runs/training --device cuda
+python run.py evaluate --run runs/training --device cuda
+```
+
+This model’s configuration sets `weld_adaptation=false`: training fits the readout on the original frozen target encoder and performs zero JEPA updates.
+
 
 ## Weights
 
-The original checkpoint and this baseline's trained classifier are saved locally under [weights/](weights/). [weights/manifest.json](weights/manifest.json) records relative filenames, sizes and SHA-256 checksums. Use the checkpoint's original `target_encoder` role with this baseline's classifier. Checkpoint bytes remain outside Git.
+Actual checkpoints are available through [weights/README.md](weights/README.md), with direct download links. `python run.py fetch-weights` reconstructs the exact files under this model’s `weights/` directory and checks their SHA-256 hashes. [weights/manifest.json](weights/manifest.json) identifies every part and final file. Both I-JEPA folders use the same `encoder.pt` + `classifier.pt` inference layout. The small classifiers are also stored directly in Git; large encoders are release assets. MobileNetV5/DINOv3 currently contain pretrained encoders only.
 
 ## Implementation and licenses
 
-The baseline and adapted model share the encoder implementation, preprocessing, readout fitting and metrics. Source lives in [the I-JEPA package](../../ijepa/) rather than being duplicated here:
-
-- [model.py](../../ijepa/model.py): pretrained roles, encoder construction and strict loading.
-- [classifier.py](../../ijepa/classifier.py): frozen feature extraction, linear-probe fitting and inference.
-- [data.py](../../ijepa/data.py): exact role checks, image integrity and preprocessing.
-- [train.py](../../ijepa/train.py): readout fitting at pretrained epoch 0 and subsequent adaptation checkpoints.
-- [metrics.py](../../ijepa/metrics.py): recording-weighted evaluation.
-- [Tests](../../tests/ijepa/) and [attribution/license terms](../../ijepa/NOTICE.md).
-
-
+Implementation lives in [code/](code/) and tests in [tests/](tests/). This model imports no code from another model folder. Read [licenses/](licenses/) for applicable source and checkpoint terms. Numerical training settings, learned tensor values and recorded metrics are preserved; the original encoder export only changes its checkpoint container.

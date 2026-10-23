@@ -17,7 +17,19 @@ MODEL_IDS = (
     "mobilenetv5-300m",
     "dinov3-vit-l16",
 )
-ENTRIES = {"README.md", "model.json", "config.json", "results.json", "weights"}
+ENTRIES = {
+    "README.md",
+    "model.json",
+    "config.json",
+    "data.json",
+    "results.json",
+    "requirements.txt",
+    "run.py",
+    "code",
+    "tests",
+    "weights",
+    "licenses",
+}
 SECTIONS = [
     "Status",
     "Architecture",
@@ -38,7 +50,11 @@ def audit(require_weights=False):
     summary, identities, hashed = {}, [], {}
     for model_id in MODEL_IDS:
         folder = ROOT / "models" / model_id
-        assert {p.name for p in folder.iterdir()} == ENTRIES, model_id
+        assert {
+            p.name
+            for p in folder.iterdir()
+            if p.name not in ("__pycache__", ".pytest_cache")
+        } == ENTRIES, model_id
         package = read(folder / "model.json")
         config = read(folder / package["configuration"])
         result = read(folder / package["results"])
@@ -46,7 +62,7 @@ def audit(require_weights=False):
         assert package["model_id"] == inventory["model_id"] == model_id
         assert package["format"] == "tig-model-package-v1"
         assert inventory["format"] == "tig-model-weights-v1"
-        assert inventory["files_distributed_on_github"] is False
+        assert inventory["files_distributed_on_github"] is True
         assert (
             re.findall(r"^## (.+)$", (folder / "README.md").read_text(), re.M)
             == SECTIONS
@@ -58,7 +74,7 @@ def audit(require_weights=False):
             == config["classifier"]["threshold"]
             == 0.5
         )
-        split = read(folder / package["data"]["split_config"])["data_split"]
+        split = read(folder / package["data"]["split_config"])
         for role, values in package["data"]["roles"].items():
             assert values == {k: split["roles"][role][k] for k in values}, model_id
         identities.append(
@@ -94,9 +110,12 @@ def audit(require_weights=False):
                     hashed[inode] = checksum.hexdigest()
                 assert hashed[inode] == weight["sha256"], path
                 checked.append(role)
-        assert {p.name for p in (folder / "weights").iterdir()} <= available_names | {
+        assert {
+            p.name for p in (folder / "weights").iterdir() if p.name != "__pycache__"
+        } <= available_names | {
             "README.md",
             "manifest.json",
+            "download.py",
         }
         if package["status"] == "completed":
             assert result["validation"] is not None and result["assessment"] is not None

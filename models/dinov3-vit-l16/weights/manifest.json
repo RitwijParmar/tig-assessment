@@ -1,42 +1,60 @@
 {
   "format": "tig-model-weights-v1",
   "model_id": "dinov3-vit-l16",
-  "files_distributed_on_github": false,
+  "files_distributed_on_github": true,
   "artifacts": {
     "pretrained_encoder": {
       "path": "pretrained_encoder.safetensors",
       "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
       "bytes": 1212559808,
-      "status": "saved_locally",
-      "description": "official released pretrained encoder; not a weld-trained checkpoint"
+      "status": "public_release",
+      "description": "official released pretrained encoder; not a weld-trained checkpoint",
+      "parts": [
+        {
+          "asset": "dinov3-vit-l16--pretrained_encoder.safetensors",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--pretrained_encoder.safetensors",
+          "bytes": 1212559808,
+          "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
+        }
+      ],
+      "required": true
     },
     "selected_encoder": {
       "path": null,
       "sha256": null,
       "bytes": null,
       "status": "not_available",
-      "description": "not produced by a matched training run"
+      "description": "No matched weld training/validation selection has run. Use the released pretrained_encoder for future readout fitting.",
+      "parts": [],
+      "required": false
     },
     "classifier": {
       "path": null,
       "sha256": null,
       "bytes": null,
       "status": "not_available",
-      "description": "not produced by a matched training run"
+      "description": "not produced by a matched training run",
+      "parts": [],
+      "required": false
     },
     "final_epoch_encoder": {
       "path": null,
       "sha256": null,
       "bytes": null,
       "status": "not_available",
-      "description": "not part of the retained selected model; future supervised runs keep this separately"
+      "description": "not part of the retained selected model; future supervised runs keep this separately",
+      "parts": [],
+      "required": false
     },
     "final_epoch_classifier": {
       "path": null,
       "sha256": null,
       "bytes": null,
       "status": "not_available",
-      "description": "not part of the retained selected model; future supervised runs keep this separately"
+      "description": "not part of the retained selected model; future supervised runs keep this separately",
+      "parts": [],
+      "required": false
     }
-  }
+  },
+  "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/model-weights-20261023"
 }
