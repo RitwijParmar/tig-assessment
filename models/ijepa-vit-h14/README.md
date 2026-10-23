@@ -2,9 +2,7 @@
 
 ## Status
 
-Completed and selected final model. This model was adapted with the I-JEPA objective before its linear classifier was fitted. [model.json](model.json) gives the common package metadata; [config.json](config.json) retains the exact adaptation and readout recipe.
-
-This folder is independently runnable. Its implementation, tests, configuration, data identities and checkpoint downloader are all contained here.
+Completed. The evaluated checkpoint is in `weights/best/`. [model.json](model.json), [config.json](config.json), [data.json](data.json) and [results.json](results.json) record the architecture, recipe, shared split and measured results.
 
 ## Architecture
 
@@ -114,7 +112,15 @@ python run.py evaluate --run runs/training --device cuda
 
 ## Weights
 
-Actual checkpoints are available through [weights/README.md](weights/README.md), with direct download links. `python run.py fetch-weights` reconstructs the exact files under this model’s `weights/` directory and checks their SHA-256 hashes. [weights/manifest.json](weights/manifest.json) identifies every part and final file. Both I-JEPA folders use the same `encoder.pt` + `classifier.pt` inference layout. The small classifiers are also stored directly in Git; large encoders are release assets. MobileNetV5/DINOv3 currently contain pretrained encoders only.
+`weights/best/` contains the evaluated encoder, classifier and checkpoint descriptor. The historical last-epoch checkpoint was not retained; no substitute final checkpoint is created. Actual files and their SHA-256 hashes are listed once in [weights/manifest.json](weights/manifest.json); [weights/README.md](weights/README.md) has the download links. Large encoder bytes are release assets; small classifiers and descriptors are committed here.
+
+```bash
+python run.py fetch-weights
+python run.py verify-weights
+python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
+```
+
+ inference layout. The small classifiers are also stored directly in Git; large encoders are release assets. MobileNetV5/DINOv3 currently contain pretrained encoders only.
 
 ## Implementation and licenses
 

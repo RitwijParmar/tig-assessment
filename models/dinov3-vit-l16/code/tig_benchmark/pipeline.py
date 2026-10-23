@@ -91,8 +91,8 @@ def fit(
     data, roles = load_data(data_path)
     lock = load_assets(name, asset_path)
     spec = model_config(name)
-    if finetune and name != "mobilenetv5":
-        raise ValueError("The declared supervised arm is MobileNet only")
+    if finetune:
+        raise ValueError("DINOv3 uses its declared frozen-encoder classifier recipe")
     cfg = {
         **data,
         "model": name,
@@ -169,23 +169,6 @@ def fit(
     del encoder, features
     if device.type == "cuda":
         torch.cuda.empty_cache()
-    if finetune:
-        from .finetune import run_candidate
-
-        for rate in spec["supervised"]["encoder_lr_candidates"]:
-            candidate = run_candidate(
-                lock,
-                roles,
-                cfg,
-                probe,
-                rate,
-                output / "supervised" / f"lr{rate:g}",
-                device,
-                spec["supervised"],
-            )
-            if candidate["score"]["selection_BA"] > chosen["score"]["selection_BA"]:
-                chosen = {k: v for k, v in candidate.items() if k != "probe"}
-                chosen["mode"] = "supervised"
     from .checkpoints import export_selected
 
     chosen = export_selected(output, chosen, lock, cfg)

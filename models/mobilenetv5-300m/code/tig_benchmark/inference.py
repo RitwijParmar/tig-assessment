@@ -10,33 +10,43 @@ from .pipeline import head_logits
 from .shared import configure_precision, sha256
 
 
+def checkpoint_file(root, item):
+    relative = Path(item["path"])
+    path = root / relative
+    if relative.is_absolute() or ".." in relative.parts or not path.resolve().is_relative_to(root.resolve()):
+        raise ValueError("Checkpoint path must stay inside this model's weights folder")
+    if sha256(path) != item["sha256"]:
+        raise ValueError("Portable checkpoint checksum mismatch")
+    return path
+
+
 def predict_local(folder, image, device="cpu", checkpoint="best", assets=None):
     folder = Path(folder)
     if checkpoint not in ("best", "final"):
         raise ValueError("Choose best or final")
-    weights = folder / "weights" / checkpoint
-    descriptor = json.loads((weights / "model.json").read_text())
+    weights = folder / "weights"
+    descriptor = json.loads((weights / checkpoint / "model.json").read_text())
+    if descriptor["format"] != "tig-checkpoint-v1" or descriptor["kind"] != checkpoint:
+        raise ValueError("Invalid checkpoint descriptor")
+    if descriptor["source_model_config_sha256"] != sha256(folder / "config.json"):
+        raise ValueError("Checkpoint recipe changed")
     name = next(iter(MODEL_DIRS))
     lock = load_assets(name, assets or folder / "assets/pretrained/assets.local.json")
     configure_precision()
-    base = weights / descriptor["pretrained_encoder"]["path"]
-    if sha256(base) != descriptor["pretrained_encoder"]["sha256"]:
-        raise ValueError("Portable base encoder checksum mismatch")
+    base_spec = descriptor.get("pretrained_encoder", descriptor["encoder"])
+    base = checkpoint_file(weights, base_spec)
+    if base_spec["sha256"] != lock["checkpoint_sha256"]:
+        raise ValueError("Portable base is not the declared released encoder")
     lock = {**lock, "checkpoint": str(base.resolve())}
     encoder, transform = build(lock, device, descriptor["geometry"])
-    if descriptor["supervised_encoder"]:
-        spec = descriptor["supervised_encoder"]
-        path = weights / spec["path"]
-        if sha256(path) != spec["sha256"]:
-            raise ValueError("Portable tuned encoder changed")
+    if descriptor["encoder_format"] == "supervised_torch":
+        path = checkpoint_file(weights, descriptor["encoder"])
         encoder.load_state_dict(
             torch.load(path, map_location="cpu", weights_only=True)["encoder"],
             strict=True,
         )
     spec = descriptor["classifier"]
-    path = weights / spec["path"]
-    if sha256(path) != spec["sha256"]:
-        raise ValueError("Portable classifier changed")
+    path = checkpoint_file(weights, spec)
     probe = torch.load(path, map_location="cpu", weights_only=True)
     with Image.open(image) as im:
         x = transform(im.convert("RGB"))[None].to(device)

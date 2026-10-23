@@ -2,9 +2,7 @@
 
 ## Status
 
-Completed original-pretrained baseline. The encoder keeps its released pretrained weights and only the linear classifier trains. [model.json](model.json) gives the common package metadata; [config.json](config.json) records this completed control's exact recipe. The local runtime configuration sets `weld_adaptation=false`; its training command fits only the original frozen-encoder readout.
-
-This folder is independently runnable. Its implementation, tests, configuration, data identities and checkpoint downloader are all contained here.
+Completed. The evaluated checkpoint is in `weights/best/`. [model.json](model.json), [config.json](config.json), [data.json](data.json) and [results.json](results.json) record the architecture, recipe, shared split and measured results.
 
 ## Architecture
 
@@ -48,8 +46,6 @@ Train a zero-initialized `Linear(1280,1)` using fitting-only recording/class-bal
 
 Validation contains 229 missed defect frames and 3 false alarms. Assessment contains 747 missed defect frames and 729 false alarms. Each frame's metric weight is `1 / all_frames_in_its_recording`; class recalls are calculated with these weights, then averaged for balanced accuracy. Raw frame counts and recording-weighted percentages therefore have different denominators.
 
-The adapted final model reaches **92.75%** assessment balanced accuracy, **96.51%** defect recall and **11.00%** false-alarm rate on these same nine recordings. These paired observations describe the completed run; they do not establish universal or statistically proven superiority.
-
 ## Usage
 
 Run from this model directory:
@@ -83,7 +79,15 @@ This model’s configuration sets `weld_adaptation=false`: training fits the rea
 
 ## Weights
 
-Actual checkpoints are available through [weights/README.md](weights/README.md), with direct download links. `python run.py fetch-weights` reconstructs the exact files under this model’s `weights/` directory and checks their SHA-256 hashes. [weights/manifest.json](weights/manifest.json) identifies every part and final file. Both I-JEPA folders use the same `encoder.pt` + `classifier.pt` inference layout. The small classifiers are also stored directly in Git; large encoders are release assets. MobileNetV5/DINOv3 currently contain pretrained encoders only.
+`weights/best/` contains the evaluated encoder, classifier and checkpoint descriptor. The historical last-epoch checkpoint was not retained; no substitute final checkpoint is created. Actual files and their SHA-256 hashes are listed once in [weights/manifest.json](weights/manifest.json); [weights/README.md](weights/README.md) has the download links. Large encoder bytes are release assets; small classifiers and descriptors are committed here.
+
+```bash
+python run.py fetch-weights
+python run.py verify-weights
+python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
+```
+
+.json](weights/manifest.json) identifies every part and final file. Both I-JEPA folders use the same `encoder.pt` + `classifier.pt` inference layout. The small classifiers are also stored directly in Git; large encoders are release assets. MobileNetV5/DINOv3 currently contain pretrained encoders only.
 
 ## Implementation and licenses
 

@@ -1,8 +1,5 @@
 {
   "model": "Original pretrained I-JEPA ViT-H/14 with a linear classifier",
-  "role": "completed pretrained baseline",
-  "selected_final_model": false,
-  "candidate": "pretrained_epoch0/mean",
   "adaptation_epoch": 0,
   "adaptation_updates": 0,
   "classifier_epoch": 14,
@@ -28,8 +25,10 @@
   "weights": {
     "base_sha256": "0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22",
     "encoder_source": "target_encoder from the official base checkpoint, with no weld adaptation",
-    "classifier_sha256": "c1b949da5b97acea322495d3aeda835c4c34b8a859812e4eb4bc625f513f3d40"
+    "classifier_sha256": "c1b949da5b97acea322495d3aeda835c4c34b8a859812e4eb4bc625f513f3d40",
+    "selected_encoder_sha256": "2fd11db9cf9ade5f7d707faedb78f3bde64feea79c5d18e5f498f86620bdb671",
+    "best_directory": "weights/best"
   },
-  "matched_adapted_model": "../ijepa-vit-h14/results.json",
-  "scope": "Existing completed pretrained control from the same recorded run and identical fitting, validation and assessment rows, preprocessing, linear-probe recipe and threshold as the adapted model. Assessment recordings were inspected in earlier research. No new training or evaluation."
+  "scope": "Existing completed pretrained control from the same recorded run and identical fitting, validation and assessment rows, preprocessing, linear-probe recipe and threshold as the adapted model. Assessment recordings were inspected in earlier research. No new training or evaluation.",
+  "status": "completed"
 }

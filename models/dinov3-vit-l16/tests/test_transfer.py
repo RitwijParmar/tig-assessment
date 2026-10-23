@@ -9,7 +9,7 @@ from PIL import Image
 import pytest
 import torch
 from torch import nn
-from tig_benchmark import assets, data, models, pipeline, finetune
+from tig_benchmark import assets, data, models, pipeline
 from tig_benchmark.shared import digest
 
 
@@ -217,50 +217,6 @@ def test_dino_readout_excludes_registers_and_keeps_patch_mean(tmp_path):
     features = enc(torch.zeros(2, 3, 224, 224))
     assert features.shape == (2, 2048)
     assert (features[:, :1024] == 7).all() and (features[:, 1024:] == 3).all()
-
-
-def test_finetune_includes_epoch_zero_and_respects_warmup(stub, monkeypatch):
-    root, roles = stub
-    cfg = {
-        "seed": 43,
-        "batch_size": 2,
-        "workers": 0,
-        "data_root": str(root),
-        "geometry": "native",
-    }
-    monkeypatch.setattr(finetune, "build", tiny_build)
-    enc, transform = tiny_build({}, "cpu")
-    features = pipeline.extract(enc, transform, roles["fitting"], cfg, "cpu")
-    probe = {
-        "identity": "fixture",
-        "mean": features.mean(0),
-        "std": features.std(0, unbiased=False).clamp_min(1e-6),
-        "head": nn.Linear(2048, 1).state_dict(),
-        "epoch": 0,
-        "score": {"selection_BA": 1.0},
-        "fitting_rows_sha256": digest(roles["fitting"]),
-        "selection_rows_sha256": digest(roles["selection"]),
-    }
-    recipe = {
-        "effective_batch": 4,
-        "epochs": 3,
-        "warmup_epochs": 2,
-        "head_lr": 0.001,
-        "weight_decay": 0.01,
-        "gradient_clip": 1.0,
-        "patience": 2,
-    }
-    result = finetune.run_candidate(
-        {"model": "mobilenetv5"}, roles, cfg, probe, 1e-4, root / "ft", "cpu", recipe
-    )
-    assert result["epoch"] == 0 and result["encoder_path"] is None
-    audit = json.loads((root / "ft/weight_audit.json").read_text())
-    assert audit["parameters_with_gradients"] and audit["warmup_updates"] == 2
-    assert (root / "ft/final_encoder.pt").exists() and not (
-        root / "ft/best_encoder.pt"
-    ).exists()
-    assert finetune.schedule(0, 10, 3) == pytest.approx(1 / 3)
-    assert finetune.schedule(3, 10, 3) == pytest.approx(1.0)
 
 
 def test_existing_common_classifier_recipe_is_exact():

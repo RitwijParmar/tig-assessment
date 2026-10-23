@@ -63,6 +63,8 @@ def audit(require_weights=False):
         assert package["format"] == "tig-model-package-v1"
         assert inventory["format"] == "tig-model-weights-v1"
         assert inventory["files_distributed_on_github"] is True
+        assert package["status"] == result["status"] == "completed"
+        assert "selected_final_model" not in package and "selected_final_model" not in result
         assert (
             re.findall(r"^## (.+)$", (folder / "README.md").read_text(), re.M)
             == SECTIONS
@@ -83,15 +85,15 @@ def audit(require_weights=False):
                 set(package["architecture"]),
                 set(package["training"]),
                 package["data"],
-                set(inventory["artifacts"]),
             )
         )
         checked = []
         available_names = set()
+        paths = set()
         for role, weight in inventory["artifacts"].items():
-            if weight["path"] is None:
-                assert weight["sha256"] is weight["bytes"] is None
-                continue
+            assert weight["path"] and weight["required"] is True
+            assert weight["path"] not in paths, "One file must not have duplicate inventory entries"
+            paths.add(weight["path"])
             path = folder / "weights" / weight["path"]
             assert path.resolve().is_relative_to((folder / "weights").resolve())
             assert ".." not in Path(weight["path"]).parts
@@ -126,27 +128,35 @@ def audit(require_weights=False):
             if "__pycache__" in weight_file.parts or not weight_file.is_file():
                 continue
             assert weight_file.relative_to(folder / "weights").as_posix() in allowed_weight_paths, weight_file
-        for kind in ("best", "final"):
+        assert "best" in inventory["checkpoints"]
+        assert all(inventory["artifacts"][inventory["checkpoints"]["best"][key]]["path"].startswith("best/") for key in ("encoder", "classifier"))
+        for kind, pair in inventory["checkpoints"].items():
+            assert kind in ("best", "final")
             descriptor_path = folder / "weights" / kind / "model.json"
-            if package["status"] == "completed" and package["entrypoint"] == "tig_benchmark":
-                assert descriptor_path.is_file(), descriptor_path
+            assert descriptor_path.is_file(), descriptor_path
             if descriptor_path.exists():
                 descriptor = read(descriptor_path)
+                assert descriptor["format"] == "tig-checkpoint-v1"
+                assert descriptor["model_id"] == model_id and descriptor["kind"] == kind
                 assert descriptor["threshold"] == 0.5
                 assert descriptor["assessment_used_to_select"] is False
                 assert descriptor["source_model_config_sha256"] == hashlib.sha256(
                     (folder / "config.json").read_bytes()
                 ).hexdigest()
-                for role in ("pretrained_encoder", "classifier", "supervised_encoder"):
-                    item = descriptor[role]
-                    if item is None:
+                for role in ("encoder", "classifier", "pretrained_encoder"):
+                    item = descriptor.get(role)
+                    if not item:
                         continue
-                    assert Path(item["path"]).name == item["path"]
-                    relative = kind + "/" + item["path"]
+                    relative = item["path"]
+                    assert ".." not in Path(relative).parts and not Path(relative).is_absolute()
                     assert any(
                         weight["path"] == relative and weight["sha256"] == item["sha256"]
                         for weight in inventory["artifacts"].values()
                     ), (model_id, relative)
+                for role in ("encoder", "classifier"):
+                    assert descriptor[role]["path"] == inventory["artifacts"][pair[role]]["path"]
+        if "final" not in inventory["checkpoints"]:
+            assert not (folder / "weights/final").exists()
         if package["status"] == "completed":
             assert result["validation"] is not None and result["assessment"] is not None
             assert (
@@ -163,6 +173,7 @@ def audit(require_weights=False):
     assert all(
         x == identities[0] for x in identities
     ), "Model package schemas/data differ"
+    assert len(re.findall(r"\| Completed \|", (ROOT / "README.md").read_text())) == len(MODEL_IDS)
     for path in ROOT.rglob("*.md"):
         if "__pycache__" in path.parts or ".pytest_cache" in path.parts:
             continue

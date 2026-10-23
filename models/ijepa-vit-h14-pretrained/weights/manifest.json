@@ -3,22 +3,10 @@
   "model_id": "ijepa-vit-h14-pretrained",
   "files_distributed_on_github": true,
   "artifacts": {
-    "pretrained_encoder": {
-      "path": null,
-      "sha256": null,
-      "bytes": null,
-      "status": "optional_upstream_source",
-      "description": "Full original pretraining source; not required for inference with encoder.pt.",
-      "parts": [],
-      "required": false,
-      "source_url": "https://dl.fbaipublicfiles.com/ijepa/IN1K-vit.h.14-300e.pth.tar",
-      "source_sha256": "0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22"
-    },
     "selected_encoder": {
-      "path": "encoder.pt",
+      "path": "best/encoder.pt",
       "sha256": "2fd11db9cf9ade5f7d707faedb78f3bde64feea79c5d18e5f498f86620bdb671",
       "bytes": 2523165301,
-      "status": "public_release",
       "description": "unchanged official target_encoder, exported into the common encoder.pt format",
       "parts": [
         {
@@ -37,10 +25,9 @@
       "required": true
     },
     "classifier": {
-      "path": "classifier.pt",
+      "path": "best/classifier.pt",
       "sha256": "c1b949da5b97acea322495d3aeda835c4c34b8a859812e4eb4bc625f513f3d40",
       "bytes": 18633,
-      "status": "public_release",
       "description": "completed pretrained I-JEPA baseline classifier",
       "parts": [
         {
@@ -51,43 +38,18 @@
         }
       ],
       "required": true
-    },
-    "final_epoch_encoder": {
-      "path": null,
-      "sha256": null,
-      "bytes": null,
-      "status": "not_available",
-      "description": "not part of the retained selected model; future supervised runs keep this separately",
-      "parts": [],
-      "required": false
-    },
-    "final_epoch_classifier": {
-      "path": null,
-      "sha256": null,
-      "bytes": null,
-      "status": "not_available",
-      "description": "not part of the retained selected model; future supervised runs keep this separately",
-      "parts": [],
-      "required": false
-    },
-    "best_pretrained_encoder": {
-      "path": null,
-      "sha256": null,
-      "bytes": null,
-      "status": "not_applicable",
-      "description": "Separate upstream base is only needed by the native transfer packages.",
-      "parts": [],
-      "required": false
-    },
-    "final_pretrained_encoder": {
-      "path": null,
-      "sha256": null,
-      "bytes": null,
-      "status": "not_applicable",
-      "description": "Separate upstream base is only needed by the native transfer packages.",
-      "parts": [],
-      "required": false
     }
   },
-  "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/model-weights-20261023"
+  "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/model-weights-20261023",
+  "checkpoints": {
+    "best": {
+      "encoder": "selected_encoder",
+      "classifier": "classifier",
+      "descriptor": "best/model.json"
+    }
+  },
+  "checkpoint_definition": {
+    "best": "Validation-selected checkpoint used for the reported assessment.",
+    "final": "Last completed epoch of the selected training configuration, when retained."
+  }
 }

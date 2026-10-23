@@ -1,5 +1,6 @@
 """Explicit asset download; uses HF's existing login, never accepts a CLI token."""
 
+import json
 from pathlib import Path
 import tarfile
 import urllib.request
@@ -33,7 +34,10 @@ def fetch(name, output):
     source = output / prefix
     archive.unlink()
     weights_folder = Path(__file__).resolve().parents[2] / "weights"
-    checkpoint = weights_folder / "pretrained_encoder.safetensors"
+    inventory = json.loads((weights_folder / "manifest.json").read_text())
+    role = "pretrained_encoder" if "pretrained_encoder" in inventory["artifacts"] else "selected_encoder"
+    relative = inventory["artifacts"][role]["path"]
+    checkpoint = weights_folder / relative
     import importlib.util
 
     spec = importlib.util.spec_from_file_location(
@@ -41,5 +45,5 @@ def fetch(name, output):
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    module.download(weights_folder / "manifest.json", only=checkpoint.name)
+    module.download(weights_folder / "manifest.json", only=relative)
     return register(name, source, checkpoint, output / "assets.local.json")

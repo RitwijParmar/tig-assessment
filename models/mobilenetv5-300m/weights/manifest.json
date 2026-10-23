@@ -4,11 +4,10 @@
   "files_distributed_on_github": true,
   "artifacts": {
     "pretrained_encoder": {
-      "path": "pretrained_encoder.safetensors",
+      "path": "pretrained/encoder.safetensors",
       "sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321",
       "bytes": 1176564736,
-      "status": "public_release",
-      "description": "official released pretrained encoder; not a weld-trained checkpoint",
+      "description": "Single released base encoder used to construct the native architecture.",
       "parts": [
         {
           "asset": "mobilenetv5-300m--pretrained_encoder.safetensors",
@@ -23,7 +22,6 @@
       "path": "best/encoder.pt",
       "bytes": 1176686195,
       "sha256": "e2ca8dcb3c29d68f683112c85e3b9221d35174aae02683551945b74f0caf22a0",
-      "status": "public_release",
       "description": "best trained supervised encoder",
       "parts": [
         {
@@ -39,7 +37,6 @@
       "path": "best/classifier.pt",
       "bytes": 28027,
       "sha256": "ab23162e817bec262fbc2376a8dbb4356959181e6e5d7513d85b666055507437",
-      "status": "public_release",
       "description": "best trained classifier",
       "parts": [
         {
@@ -55,7 +52,6 @@
       "path": "final/encoder.pt",
       "bytes": 1176686749,
       "sha256": "8c5878d324d30cec64e08cbb57e1e2c85739c9533b470c1f0cf1af8339f56fb8",
-      "status": "public_release",
       "description": "final trained supervised encoder",
       "parts": [
         {
@@ -71,7 +67,6 @@
       "path": "final/classifier.pt",
       "bytes": 28037,
       "sha256": "d3ed8ef887994d0cbf57183020670a600248427f2b2044f7b240f1a9239ff877",
-      "status": "public_release",
       "description": "final trained classifier",
       "parts": [
         {
@@ -82,44 +77,23 @@
         }
       ],
       "required": true
-    },
-    "best_pretrained_encoder": {
-      "path": "best/pretrained_encoder.safetensors",
-      "sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321",
-      "bytes": 1176564736,
-      "status": "public_release",
-      "description": "Released encoder base retained with the best checkpoint.",
-      "parts": [
-        {
-          "asset": "mobilenetv5-300m--pretrained_encoder.safetensors",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/mobilenetv5-300m--pretrained_encoder.safetensors",
-          "bytes": 1176564736,
-          "sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321"
-        }
-      ],
-      "required": true
-    },
-    "final_pretrained_encoder": {
-      "path": "final/pretrained_encoder.safetensors",
-      "sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321",
-      "bytes": 1176564736,
-      "status": "public_release",
-      "description": "Released encoder base retained with the final checkpoint.",
-      "parts": [
-        {
-          "asset": "mobilenetv5-300m--pretrained_encoder.safetensors",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/mobilenetv5-300m--pretrained_encoder.safetensors",
-          "bytes": 1176564736,
-          "sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321"
-        }
-      ],
-      "required": true
     }
   },
   "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/matched-training-20261023",
   "checkpoint_definition": {
-    "best": "highest validation recording-weighted balanced accuracy at threshold0.5; earliest exact tie",
-    "final": "last completed epoch of the validation-selected configuration",
-    "reported_assessment": "best only; final was not used for assessment selection"
+    "best": "Validation-selected checkpoint used for the reported assessment.",
+    "final": "Last completed epoch of the selected training configuration, when retained."
+  },
+  "checkpoints": {
+    "best": {
+      "encoder": "selected_encoder",
+      "classifier": "classifier",
+      "descriptor": "best/model.json"
+    },
+    "final": {
+      "encoder": "final_epoch_encoder",
+      "classifier": "final_epoch_classifier",
+      "descriptor": "final/model.json"
+    }
   }
 }

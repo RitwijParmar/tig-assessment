@@ -9,7 +9,6 @@ models/*/assets/
 data/
 .DS_Store
 *.pt
-!models/*/weights/classifier.pt
 !models/*/weights/best/classifier.pt
 !models/*/weights/final/classifier.pt
 *.pth

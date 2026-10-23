@@ -31,7 +31,6 @@ def main():
     p.add_argument("--batch-size", type=int)
     p.add_argument("--workers", type=int, default=0)
     p.add_argument("--geometry", choices=("native", "letterbox224"), default="native")
-    p.add_argument("--finetune", action="store_true")
     for name in ("verify", "evaluate", "predict"):
         p = subs.add_parser(name)
         p.add_argument("--run", required=True)
@@ -57,7 +56,7 @@ def main():
             a.batch_size,
             a.workers,
             a.geometry,
-            a.finetune,
+            False,
         )
     elif a.command == "verify":
         result = pipeline.verify(a.run, a.device)

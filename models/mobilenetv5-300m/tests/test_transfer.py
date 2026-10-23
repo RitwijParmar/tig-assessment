@@ -199,26 +199,6 @@ def test_grayscale_conversion_precedes_native_transform():
     assert models.RGBTransform(lambda value: value.mode)(im) == "RGB"
 
 
-def test_dino_readout_excludes_registers_and_keeps_patch_mean(tmp_path):
-    p = tmp_path / "dinov3/eval"
-    p.mkdir(parents=True)
-    # Fixture represents the released helper API; actual source parity is checked
-    # separately on the pinned released model, not asserted by this fixture.
-    (p / "linear.py").write_text(
-        "def create_linear_input(x_tokens_list, use_n_blocks, use_avgpool):\n    patch, cls = x_tokens_list[-1]\n    return torch.cat((cls, patch.mean(1)), dim=1)\n"
-    )
-
-    class Tokens(nn.Module):
-        def get_intermediate_layers(self, x, **kw):
-            assert kw == {"n": 1, "return_class_token": True, "norm": True}
-            return [(torch.ones(len(x), 196, 1024) * 3, torch.ones(len(x), 1024) * 7)]
-
-    enc = models.Encoder(Tokens(), "dinov3", models.official_linear_input(tmp_path))
-    features = enc(torch.zeros(2, 3, 224, 224))
-    assert features.shape == (2, 2048)
-    assert (features[:, :1024] == 7).all() and (features[:, 1024:] == 3).all()
-
-
 def test_finetune_includes_epoch_zero_and_respects_warmup(stub, monkeypatch):
     root, roles = stub
     cfg = {
@@ -358,7 +338,6 @@ def test_resume_exactly_reproduces_uninterrupted_epoch_weights(stub, monkeypatch
     ahead=torch.load(path,weights_only=True);ahead['epoch']+=1;torch.save(ahead,path)
     with pytest.raises(ValueError,match='commit boundary'):
         finetune.run_candidate({'model':'mobilenetv5'},roles,cfg,probe,1e-4,root/'interrupted','cpu',recipe,resume=True)
-
 
 
 def test_full_pipeline_resumes_only_unsealed_run_without_assessment(stub,monkeypatch):

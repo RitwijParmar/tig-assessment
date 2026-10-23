@@ -3,7 +3,6 @@
   "model_id": "ijepa-vit-h14",
   "name": "Weld-adapted I-JEPA ViT-H/14 + linear classifier",
   "status": "completed",
-  "selected_final_model": true,
   "architecture": {
     "backbone": "ViT-H/14",
     "feature_dim": 1280,

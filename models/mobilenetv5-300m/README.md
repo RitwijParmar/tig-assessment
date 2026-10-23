@@ -2,7 +2,7 @@
 
 ## Status
 
-Completed GPU training and retrospective held-out assessment on exactly the final adapted I-JEPA split. Selected mode: **supervised**. Best classifier epoch **16**; final classifier epoch **20**. [model.json](model.json), [config.json](config.json), [data.json](data.json) and [results.json](results.json) record the package, recipe, split and measured results. This folder contains its own implementation and tests.
+Completed. The evaluated checkpoint is in `weights/best/`. [model.json](model.json), [config.json](config.json), [data.json](data.json) and [results.json](results.json) record the architecture, recipe, shared split and measured results.
 
 ## Architecture
 
@@ -27,7 +27,7 @@ Use the shared data preparation, classifier recipe and evaluation commands. Raw 
 
 The same existing classifier-fitting function, fitting-only normalization, balanced BCE, optimizer, patience, selection metric and threshold are shared with I-JEPA. Model-native preprocessing and its full-frame geometry control are declared separately. Assessment is excluded from fitting, normalization and checkpoint choice, and requires a sealed verified run. Previously inspected recordings provide retrospective assessment rather than a new blind test.
 
-The completed supervised configuration used encoder learning rate `1e-5`, head learning rate `1e-3`, effective batch 32 (physical batch8), 20 epochs and one warmup epoch. Before assessment, the user stopped the additional search: `3e-5` ended after five committed epochs and was excluded from final selection; `1e-4` was not started. This does not establish that either higher rate would perform worse. The frozen baseline and completed `1e-5` run were eligible for the final choice. The original three-rate recipe remains in config.json, and results.json records the amendment.
+The completed supervised configuration used encoder learning rate `1e-5`, head learning rate `1e-3`, effective batch 32 (physical batch 8), 20 epochs and one warmup epoch. Before assessment, the user stopped the additional search: `3e-5` ended after five committed epochs and was excluded from final selection; `1e-4` was not started. This does not establish that either higher rate would perform worse. The frozen baseline and completed `1e-5` run were eligible for the final choice. The original three-rate recipe remains in config.json, and results.json records the amendment.
 
 A fitting-only diagnostic found near-overflow stem gradients. Backward loss scaling by `2**-64` and float64 norm accumulation implement the same norm-1 global clipping without overflowing; assessment had not been opened.
 
@@ -42,7 +42,7 @@ A fitting-only diagnostic found near-overflow stem gradients. Backward loss scal
 | False-positive frames | 33 | 524 |
 | False-negative frames | 390 | 594 |
 
-Each frame has weight `1 / frames_in_its_recording`; class recalls are calculated with those weights and averaged for balanced accuracy. Raw frame counts have a different denominator. Full aggregate metrics and training/validation histories are in [results.json](results.json). Assessment was opened only after both new models were selected and reloaded successfully. No threshold tuning, fitting-plus-validation refit or assessment-driven retraining was performed.
+Each frame has weight `1 / frames_in_its_recording`; class recalls are calculated with those weights and averaged for balanced accuracy. Raw frame counts have a different denominator. Full aggregate metrics and selected checkpoint details are in [results.json](results.json). Assessment was opened only after both new models were selected and reloaded successfully. No threshold tuning, fitting-plus-validation refit or assessment-driven retraining was performed.
 
 ## Usage
 
@@ -71,13 +71,17 @@ The model identifier is supplied automatically by this folder’s runner. Asset 
 
 ## Weights
 
-`weights/best/` contains the validation-selected encoder and trained classifier. `weights/final/` contains the last completed epoch of that same selected configuration. Both include fitting-only normalization in the classifier checkpoint. The reported assessment uses **best**. A frozen encoder can have identical bytes in both folders. Best and final can also coincide when the last epoch is validation-best; both folders retain their defined checkpoints.
-
-Use `python run.py fetch-weights` and `python run.py verify-weights`. [weights/README.md](weights/README.md) gives download links, and [weights/manifest.json](weights/manifest.json) records every file, size and SHA-256. Large encoder files are release downloads; the small best/final classifiers and portable descriptors are also committed in these folders. Both checkpoints reload on CPU and GPU and agree on the checked fitting-image decisions. CPU logits differ substantially, so the reported GPU metrics have not been established as CPU metrics.
+`weights/best/` contains the evaluated encoder, classifier and checkpoint descriptor. `weights/final/` retains the last completed epoch of the selected configuration. The assessment uses **best**. The released base encoder is stored once under `pretrained/` and shared by best/final loading. Actual files and their SHA-256 hashes are listed once in [weights/manifest.json](weights/manifest.json); [weights/README.md](weights/README.md) has the download links. Large encoder bytes are release assets; small classifiers and descriptors are committed here.
 
 ```bash
-python run.py fetch-assets --output assets/pretrained
+python run.py fetch-weights
+python run.py verify-weights
 python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
+```
+
+Use `--checkpoint final` to load the retained final checkpoint. GPU scores are reported; CPU/GPU metric equivalence has not been established.
+
+un.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
 python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint final
 ```
 

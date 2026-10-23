@@ -3,7 +3,6 @@
   "model_id": "ijepa-vit-h14-pretrained",
   "name": "Original pretrained I-JEPA ViT-H/14 + linear classifier",
   "status": "completed",
-  "selected_final_model": false,
   "architecture": {
     "backbone": "ViT-H/14",
     "feature_dim": 1280,

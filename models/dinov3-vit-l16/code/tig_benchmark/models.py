@@ -110,15 +110,10 @@ class Encoder(nn.Module):
         self.requires_grad_(False).eval()
 
     def forward(self, images):
-        if self.name == "mobilenetv5":
-            value = self.model.forward_head(
-                self.model.forward_features(images), pre_logits=True
-            )
-        else:
-            tokens = self.model.get_intermediate_layers(
-                images, n=1, return_class_token=True, norm=True
-            )
-            value = self.readout(tokens, use_n_blocks=1, use_avgpool=True)
+        tokens = self.model.get_intermediate_layers(
+            images, n=1, return_class_token=True, norm=True
+        )
+        value = self.readout(tokens, use_n_blocks=1, use_avgpool=True)
         if value.ndim != 2 or value.shape[1] != 2048 or not torch.isfinite(value).all():
             raise ValueError("Expected finite 2048-dimensional released features")
         return value.float()
@@ -126,40 +121,21 @@ class Encoder(nn.Module):
 
 def build(lock, device="cpu", geometry="native"):
     name, source = lock["model"], lock["source"]
-    if name == "mobilenetv5":
-        timm = source_import("timm", source)
-        model = timm.create_model("mobilenetv5_300m.gemma3n", pretrained=False)
-        from timm.models.mobilenetv5 import checkpoint_filter_fn
+    if name != 'dinov3':
+        raise ValueError("This package only builds its declared encoder")
+    source_import("dinov3", source)
+    from dinov3.hub.backbones import dinov3_vitl16
 
-        model.load_state_dict(
-            checkpoint_filter_fn(load_file(lock["checkpoint"]), model), strict=True
-        )
-        cfg = timm.data.resolve_model_data_config(model)
-        if (
-            cfg["input_size"] != (3, 768, 768)
-            or tuple(cfg["mean"]) != (0.0, 0.0, 0.0)
-            or tuple(cfg["std"]) != (1.0, 1.0, 1.0)
-        ):
-            raise ValueError("Released MobileNetV5 preprocessing changed")
-        transform = timm.data.create_transform(**cfg, is_training=False)
-        encoder = Encoder(model, name)
-        common = TransformSpec(
-            image_size=224, mean=(0.0, 0.0, 0.0), std=(1.0, 1.0, 1.0)
-        )
-    else:
-        source_import("dinov3", source)
-        from dinov3.hub.backbones import dinov3_vitl16
-
-        model = dinov3_vitl16(pretrained=False)
-        model.load_state_dict(
-            convert_dino_hf(load_file(lock["checkpoint"]), model.state_dict()),
-            strict=True,
-        )
-        transform = native_transforms(source).make_classification_eval_transform(
-            resize_size=256, crop_size=224
-        )
-        encoder = Encoder(model, name, official_linear_input(source))
-        common = TransformSpec()
+    model = dinov3_vitl16(pretrained=False)
+    model.load_state_dict(
+        convert_dino_hf(load_file(lock["checkpoint"]), model.state_dict()),
+        strict=True,
+    )
+    transform = native_transforms(source).make_classification_eval_transform(
+        resize_size=256, crop_size=224
+    )
+    encoder = Encoder(model, name, official_linear_input(source))
+    common = TransformSpec()
     if geometry not in ("native", "letterbox224"):
         raise ValueError("Declare native or letterbox224 geometry")
     return encoder.to(device).eval(), (

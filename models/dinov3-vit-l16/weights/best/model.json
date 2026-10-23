@@ -1,22 +1,22 @@
 {
-  "classifier": {
-    "path": "classifier.pt",
-    "sha256": "b24a1ce82e1850d9d47c98fc98d79fc532d73faa98747d7cf9e9295d28f3c8b4"
-  },
-  "geometry": "native",
+  "format": "tig-checkpoint-v1",
+  "model_id": "dinov3-vit-l16",
+  "kind": "best",
+  "classifier_epoch": 77,
   "mode": "frozen",
-  "model": "dinov3",
-  "note": "Selected final model; supervised final-epoch checkpoints are retained separately.",
-  "pretrained_encoder": {
-    "path": "pretrained_encoder.safetensors",
+  "geometry": "native",
+  "threshold": 0.5,
+  "encoder": {
+    "path": "best/encoder.safetensors",
+    "bytes": 1212559808,
     "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
   },
-  "selected_epoch": 77,
-  "source_revision": "6876159a11b4df116f30f667f8c9888617df0751",
-  "supervised_encoder": null,
-  "threshold": 0.5,
-  "checkpoint_kind": "best",
+  "classifier": {
+    "path": "best/classifier.pt",
+    "bytes": 27785,
+    "sha256": "b24a1ce82e1850d9d47c98fc98d79fc532d73faa98747d7cf9e9295d28f3c8b4"
+  },
+  "encoder_format": "native_safetensors",
   "source_model_config_sha256": "bb762779344d1569334146e86ad44936634060d779a1ee512e2a91be26162790",
-  "assessment_used_to_select": false,
-  "full_run": "runs/full"
+  "assessment_used_to_select": false
 }

@@ -1,0 +1,22 @@
+{
+  "format": "tig-checkpoint-v1",
+  "model_id": "ijepa-vit-h14",
+  "kind": "best",
+  "classifier_epoch": 3,
+  "mode": "frozen",
+  "geometry": "letterbox224",
+  "threshold": 0.5,
+  "encoder": {
+    "path": "best/encoder.pt",
+    "bytes": 2523197455,
+    "sha256": "9f9c3dfe31e49c1a7333ac85e436d6a7b9f7a12c3a4b142ee12b662a7cde5b17"
+  },
+  "classifier": {
+    "path": "best/classifier.pt",
+    "bytes": 18633,
+    "sha256": "990833bb02a531cb2350b65cb4141630b721d79eed62b9b5cc11b245f93619bb"
+  },
+  "encoder_format": "ijepa_torch",
+  "source_model_config_sha256": "d2c8539b61119cbd2f2cdd13d9c3980fc901ce8c8db604d9ed5f7bd6cc6760f5",
+  "assessment_used_to_select": false
+}

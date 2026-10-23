@@ -3,7 +3,6 @@
   "model_id": "dinov3-vit-l16",
   "name": "DINOv3 ViT-L/16 + linear classifier",
   "status": "completed",
-  "selected_final_model": false,
   "architecture": {
     "backbone": "ViT-L/16",
     "feature_dim": 2048,
