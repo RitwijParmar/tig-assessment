@@ -1,0 +1,42 @@
+{
+  "format": "tig-model-weights-v1",
+  "model_id": "mobilenetv5-300m",
+  "files_distributed_on_github": false,
+  "artifacts": {
+    "pretrained_encoder": {
+      "path": "pretrained_encoder.safetensors",
+      "sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321",
+      "bytes": 1176564736,
+      "status": "saved_locally",
+      "description": "official released pretrained encoder; not a weld-trained checkpoint"
+    },
+    "selected_encoder": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not produced by a matched training run"
+    },
+    "classifier": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not produced by a matched training run"
+    },
+    "final_epoch_encoder": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not part of the retained selected model; future supervised runs keep this separately"
+    },
+    "final_epoch_classifier": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not part of the retained selected model; future supervised runs keep this separately"
+    }
+  }
+}

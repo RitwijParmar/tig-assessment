@@ -1,0 +1,42 @@
+{
+  "format": "tig-model-weights-v1",
+  "model_id": "ijepa-vit-h14-pretrained",
+  "files_distributed_on_github": false,
+  "artifacts": {
+    "pretrained_encoder": {
+      "path": "pretrained_encoder.pth.tar",
+      "sha256": "0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22",
+      "bytes": 10358004345,
+      "status": "saved_locally",
+      "description": "official original I-JEPA checkpoint; retained with completed baseline and adapted weights"
+    },
+    "selected_encoder": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "use target_encoder in pretrained_encoder; no adapted encoder for this baseline"
+    },
+    "classifier": {
+      "path": "classifier.pt",
+      "sha256": "c1b949da5b97acea322495d3aeda835c4c34b8a859812e4eb4bc625f513f3d40",
+      "bytes": 18633,
+      "status": "saved_locally",
+      "description": "completed pretrained I-JEPA baseline classifier"
+    },
+    "final_epoch_encoder": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not part of the retained selected model; future supervised runs keep this separately"
+    },
+    "final_epoch_classifier": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not part of the retained selected model; future supervised runs keep this separately"
+    }
+  }
+}

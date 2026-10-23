@@ -1,0 +1,12 @@
+{
+  "model": "DINOv3 ViT-L/16 + linear classifier",
+  "status": "implemented_not_matched_trained",
+  "selected_final_model": false,
+  "candidate": null,
+  "classifier_epoch": null,
+  "threshold": 0.5,
+  "validation": null,
+  "assessment": null,
+  "weights": "weights/manifest.json",
+  "scope": "No matched weld training or assessment has run. Historical results from different splits are not substituted."
+}

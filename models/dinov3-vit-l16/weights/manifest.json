@@ -1,0 +1,42 @@
+{
+  "format": "tig-model-weights-v1",
+  "model_id": "dinov3-vit-l16",
+  "files_distributed_on_github": false,
+  "artifacts": {
+    "pretrained_encoder": {
+      "path": "pretrained_encoder.safetensors",
+      "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
+      "bytes": 1212559808,
+      "status": "saved_locally",
+      "description": "official released pretrained encoder; not a weld-trained checkpoint"
+    },
+    "selected_encoder": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not produced by a matched training run"
+    },
+    "classifier": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not produced by a matched training run"
+    },
+    "final_epoch_encoder": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not part of the retained selected model; future supervised runs keep this separately"
+    },
+    "final_epoch_classifier": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not part of the retained selected model; future supervised runs keep this separately"
+    }
+  }
+}

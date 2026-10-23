@@ -12,7 +12,9 @@ from .data import evaluation_loader, content_mask
 from .metrics import class_weights, quality_metrics, selection_score
 
 DEFAULT_RECIPE = json.loads(
-    (Path(__file__).resolve().parents[1] / "config.json").read_text()
+    (
+        Path(__file__).resolve().parents[1] / "models/ijepa-vit-h14/config.json"
+    ).read_text()
 )["classifier"]
 
 
@@ -163,7 +165,16 @@ class WeldClassifier(nn.Module):
         return self.head((pooled - self.mean) / self.std).squeeze(-1)
 
     @classmethod
-    def from_files(cls, encoder_path, head_path, device="cpu", expected=None):
+    def from_files(
+        cls,
+        encoder_path,
+        head_path,
+        device="cpu",
+        expected=None,
+        encoder_role="encoder",
+    ):
+        if encoder_role not in {"encoder", "target_encoder"}:
+            raise ValueError("Use an exported encoder or the original target_encoder")
         if expected:
             for key, path in (("encoder", encoder_path), ("classifier", head_path)):
                 if sha256(path) != expected[key]:
@@ -174,7 +185,7 @@ class WeldClassifier(nn.Module):
         probe = torch.load(head_path, map_location="cpu", weights_only=True)
         with torch.device("meta"):
             encoder = vit_huge(img_size=[224], patch_size=14)
-        _strict_load(encoder, exported["encoder"], "selected EMA encoder")
+        _strict_load(encoder, exported[encoder_role], encoder_role)
         return cls(encoder, probe["mean"], probe["std"], probe["head"]).to(device)
 
     @classmethod

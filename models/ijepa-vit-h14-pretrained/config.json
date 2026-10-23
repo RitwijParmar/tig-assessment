@@ -2,7 +2,7 @@
   "format": "ijepa-vit-h14-pretrained-recorded-recipe-v1",
   "status": "completed recorded baseline; documentation only",
   "source_commit": "52c1ae95d05f743e000e8f10a1f3a79b10cff048",
-  "shared_implementation": "../ijepa-vit-h14/ijepa/",
+  "shared_implementation": "../../ijepa/",
   "shared_config": "../ijepa-vit-h14/config.json",
   "encoder": {
     "architecture": "ViT-H/14",

@@ -1,8 +1,8 @@
-# I-JEPA ViT-H/14
+# Weld-adapted I-JEPA ViT-H/14 + linear classifier
 
-Weld-image classification using a **JEPA-adapted I-JEPA ViT-H/14 encoder**, followed by a trained linear classifier. This directory contains the recorded model, its training and evaluation source, data recipe and summary results.
+## Status
 
-**Selected final model.** The [completed original pretrained baseline](../ijepa-vit-h14-pretrained/) used the same data roles and downstream recipe and reached **84.89%** assessment balanced accuracy. This adapted model reached **92.75%**. Both are existing recorded results.
+Completed and selected final model. This model was adapted with the I-JEPA objective before its linear classifier was fitted. [model.json](model.json) gives the common package metadata; [config.json](config.json) retains the exact adaptation and readout recipe.
 
 ## Architecture
 
@@ -53,7 +53,15 @@ JEPA uses the pinned upstream random resized 224px crop, scale 0.3–1.0, and it
 
 Local metadata records `path, group, frame, label6, target, crc, original_bytes`. Image reads verify containment, byte size and CRC32. `config.json` holds the exact split fingerprints and recipe; frame-level metadata and images remain local. Historical `train`/`test` directory names do not assign current roles—the explicit recording split does.
 
-## Recorded result
+## Training and selection
+
+JEPA: seed 43, five-epoch schedule, batch 16 × accumulation 2, AdamW, context LR 3e-5, predictor LR 1e-4, weight decay 0.04, one warmup epoch then cosine decay, gradient clipping 1.0. EMA momentum rises from 0.996 to 1.0. Biases and one-dimensional parameters have no weight decay.
+
+Classifier: fitting-only feature mean/population standard deviation, zero-initialized linear head, recording/class-balanced BCE, AdamW LR 0.001, weight decay 0.01, batch 256, at most 100 epochs, validation patience 15. Highest validation balanced accuracy selects the checkpoint; earliest exact ties win.
+
+The recorded winner is **adaptation epoch 1, after 324 updates**, with classifier epoch 3. It belongs to a five-epoch cosine/EMA schedule: shortening the schedule to one epoch does not reproduce that checkpoint.
+
+## Results
 
 | Recording-weighted metric | Validation | Assessment |
 | --- | ---: | ---: |
@@ -63,7 +71,7 @@ Local metadata records `path, group, frame, label6, target, crc, original_bytes`
 
 The threshold is **0.5**. Each frame's metric weight is `1 / all_frames_in_its_recording`; balanced accuracy averages weighted good and defect recall. Assessment has 165 missed defect frames and 521 false-alarm frames. Raw frame counts and recording-weighted percentages use different denominators. The selected checkpoint, hashes and metrics are in [results.json](results.json).
 
-## Known limitation: concentrated false alarms
+### Known limitation: concentrated false alarms
 
 The adapted I-JEPA ViT-H/14 model fails on many good frames from assessment recording **`170906-141809`** (group `170906-141809-Al 2mm`):
 
@@ -73,25 +81,17 @@ The adapted I-JEPA ViT-H/14 model fails on many good frames from assessment reco
 
 These counts establish where the errors concentrate. The visual or annotation cause has not been established. The aggregate 11.00% recording-weighted assessment false-alarm rate is therefore not evidence of uniformly low false alarms across recordings.
 
-## Recipe
-
-JEPA: seed 43, five-epoch schedule, batch 16 × accumulation 2, AdamW, context LR 3e-5, predictor LR 1e-4, weight decay 0.04, one warmup epoch then cosine decay, gradient clipping 1.0. EMA momentum rises from 0.996 to 1.0. Biases and one-dimensional parameters have no weight decay.
-
-Classifier: fitting-only feature mean/population standard deviation, zero-initialized linear head, recording/class-balanced BCE, AdamW LR 0.001, weight decay 0.01, batch 256, at most 100 epochs, validation patience 15. Highest validation balanced accuracy selects the checkpoint; earliest exact ties win.
-
-The recorded winner is **adaptation epoch 1, after 324 updates**, with classifier epoch 3. It belongs to a five-epoch cosine/EMA schedule: shortening the schedule to one epoch does not reproduce that checkpoint.
-
-## Run
+## Usage
 
 Install compatible PyTorch/torchvision wheels for your CPU/CUDA platform, then the remaining requirements. The original GPU run used Python 3.12.3, torch 2.14.1+cu130, torchvision 0.29.1, NumPy 2.5.4 and Pillow 12.3.0. Arithmetic was float32 with highest-precision matmul and TF32 convolutions. Full H/14 training requires substantial GPU memory and roughly 30 GB or more of asset/checkpoint space; no cloud compute or downloads start automatically.
 
 Obtain [the official pretrained checkpoint](https://dl.fbaipublicfiles.com/ijepa/IN1K-vit.h.14-300e.pth.tar) separately. Its SHA-256 is `0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22`.
 
-Run from this model directory (`models/ijepa-vit-h14/`).
+Run every command from the repository root.
 
 ```bash
-python -m pip install -r requirements.txt
-python -m pytest -q tests
+python -m pip install -r requirements-ijepa.txt
+python -m pytest -q tests/ijepa
 
 # Local canonical CSV, or the retained original registration JSON.
 # Exact frame membership, annotations and split fingerprints are required.
@@ -111,20 +111,33 @@ python -m ijepa predict --run runs/ijepa-vit-h14 --image /absolute/path/weld.png
 
 Preparation accepts the retained original registration or an equivalent canonical annotation CSV. It can derive recording groups/targets and calculate missing image checksums; it cannot infer defect labels. Keep the canonical relative frame paths under the supplied data root. The published split fingerprints identify the exact role membership without distributing its frame table.
 
-Training selects an encoder and classifier using validation, then seals their hashes and data identities before assessment. A run contains `encoder.pt`, `classifier.pt`, `selection.json`, `seal.json`, training histories and local evaluation outputs. Use fresh output directories. Training resume and silent assessment overwrite are intentionally unsupported. Large weights, image data, frame predictions and feature caches are excluded from Git. Retained original weights can also be loaded with `WeldClassifier.from_files(..., expected=...)` using the hashes in `results.json`.
+Training selects an encoder and classifier using validation, then seals their hashes and data identities before assessment. A run contains `encoder.pt`, `classifier.pt`, `selection.json`, `seal.json`, training histories and local evaluation outputs. Use fresh output directories. Training resume and silent assessment overwrite are intentionally unsupported. Large weights, image data, frame predictions and feature caches are excluded from Git. Retained original weights can also be loaded with `WeldClassifier.from_files(..., expected=...)` using the hashes in `results.json`. See the local [weights inventory](weights/manifest.json).
 
-## Code
+## Weights
 
-```text
-ijepa/model.py       Two encoders, predictor, loss, EMA, strict checkpoint loading
-ijepa/train.py       Native crop/mask adaptation and selected readout training
-ijepa/classifier.py  Linear classifier and frozen-encoder inference model
-ijepa/data.py        Image checks, preparation, split validation and preprocessing
-ijepa/evaluate.py    Sealed assessment and image prediction
-ijepa/metrics.py     Recording-weighted metrics
-ijepa/utils.py       Atomic checkpoints, identities and reproducibility
-ijepa/vendor/        Required pinned Meta implementation and license
-tests/            Model, data and end-to-end pipeline checks
+The selected encoder and its matching classifier are saved locally under [weights/](weights/). [weights/manifest.json](weights/manifest.json) records relative filenames, sizes, SHA-256 checksums and unavailable artifact roles. Released original pretraining weights are retained here as well. Checkpoint bytes remain outside Git.
+
+Load the retained completed model from the repository root:
+
+```python
+import json
+from pathlib import Path
+from ijepa.classifier import WeldClassifier
+from ijepa.evaluate import predict_image
+
+folder = Path("models/ijepa-vit-h14")
+result = json.loads((folder / "results.json").read_text())
+model = WeldClassifier.from_files(
+    folder / "weights/encoder.pt", folder / "weights/classifier.pt",
+    device="cpu", encoder_role="encoder",
+    expected={
+        "encoder": result["weights"]["selected_encoder_sha256"],
+        "classifier": result["weights"]["classifier_sha256"],
+    },
+)
+print(predict_image(model, "/absolute/path/weld.png", "cpu"))
 ```
 
-This package contains the recorded final pipeline; publishing it does not retrain or replace the recorded result. Meta source remains pinned at `52c1ae95d05f743e000e8f10a1f3a79b10cff048`; see [NOTICE.md](NOTICE.md) for attribution and license terms.
+## Implementation and licenses
+
+The shared [I-JEPA package](../../ijepa/) implements both I-JEPA entries. [Model and pipeline tests](../../tests/ijepa/) live outside the model folders. The package includes the pinned Meta transformer, sampler and transforms; see [attribution and license terms](../../ijepa/NOTICE.md). These structural changes do not retrain the model or change its recorded metrics.

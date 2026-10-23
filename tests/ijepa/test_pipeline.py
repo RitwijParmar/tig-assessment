@@ -201,7 +201,9 @@ def test_readout_fits_detached_features_and_uses_fitting_only_normalization(tmp_
 def test_native_adaptation_epoch_completes_with_real_images_and_weight_audit(tmp_path):
     from functools import partial
 
-    config = json.loads((Path(__file__).parents[1] / "config.json").read_text())
+    config = json.loads(
+        (Path(__file__).parents[2] / "models/ijepa-vit-h14/config.json").read_text()
+    )
     config["data_root"] = str(tmp_path)
     config["runtime"]["workers"] = 0
     config["training"].update(epochs=1, batch_size=4, gradient_accumulation=2)
@@ -284,7 +286,9 @@ def test_standalone_pipeline_seals_before_assessment_and_replays_selected_model(
     from functools import partial
     from ijepa import classifier as inference, train as pipeline, evaluate as assessment
 
-    config = json.loads((Path(__file__).parents[1] / "config.json").read_text())
+    config = json.loads(
+        (Path(__file__).parents[2] / "models/ijepa-vit-h14/config.json").read_text()
+    )
     config["data_root"] = str(tmp_path)
     config["runtime"]["workers"] = 0
     config["training"].update(epochs=1, batch_size=4, gradient_accumulation=2)

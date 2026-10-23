@@ -26,7 +26,7 @@ from .shared import (
 
 def implementation_identity():
     files = list((ROOT / "tig_benchmark").glob("*.py")) + list(
-        (IJEPA_ROOT / "ijepa").rglob("*.py")
+        (ROOT / "ijepa").rglob("*.py")
     )
     files += [ROOT / "tig_benchmark/upstream_sources.json", IJEPA_ROOT / "config.json"]
     return digest({str(p.relative_to(ROOT)): sha256(p) for p in sorted(files)})

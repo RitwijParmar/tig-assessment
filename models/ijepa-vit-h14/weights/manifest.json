@@ -1,0 +1,42 @@
+{
+  "format": "tig-model-weights-v1",
+  "model_id": "ijepa-vit-h14",
+  "files_distributed_on_github": false,
+  "artifacts": {
+    "pretrained_encoder": {
+      "path": "pretrained_encoder.pth.tar",
+      "sha256": "0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22",
+      "bytes": 10358004345,
+      "status": "saved_locally",
+      "description": "official original I-JEPA checkpoint; retained with completed baseline and adapted weights"
+    },
+    "selected_encoder": {
+      "path": "encoder.pt",
+      "sha256": "9f9c3dfe31e49c1a7333ac85e436d6a7b9f7a12c3a4b142ee12b662a7cde5b17",
+      "bytes": 2523197455,
+      "status": "saved_locally",
+      "description": "selected final weld-adapted I-JEPA target encoder"
+    },
+    "classifier": {
+      "path": "classifier.pt",
+      "sha256": "990833bb02a531cb2350b65cb4141630b721d79eed62b9b5cc11b245f93619bb",
+      "bytes": 18633,
+      "status": "saved_locally",
+      "description": "selected final weld classifier and fitting normalization"
+    },
+    "final_epoch_encoder": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not part of the retained selected model; future supervised runs keep this separately"
+    },
+    "final_epoch_classifier": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_available",
+      "description": "not part of the retained selected model; future supervised runs keep this separately"
+    }
+  }
+}

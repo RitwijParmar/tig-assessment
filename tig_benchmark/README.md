@@ -2,7 +2,7 @@
 
 Executable implementations using the **exact final adapted I-JEPA split**: 12 fitting recordings / 10,338 frames; 6 validation recordings / 6,454 frames; 9 assessment recordings / 6,763 frames. Every frame identity, annotation, checksum and recording role is checked against [the retained split fingerprints](../models/ijepa-vit-h14/config.json). Neither the dataset's folder names nor a newly generated random split assigns roles.
 
-The encoders are released upstream implementations with verified pretrained weights. The binary readout uses the existing I-JEPA [`fit_probe`](../models/ijepa-vit-h14/ijepa/classifier.py), [`class_weights` and metrics](../models/ijepa-vit-h14/ijepa/metrics.py) directly. The same fitting-only mean/population standard deviation, zero-initialized linear head, balanced BCE, AdamW LR 0.001, weight decay 0.01, batch 256, maximum 100 epochs, patience 15, seed 43 and earliest-tie validation selection apply. The threshold stays 0.5. Validation never joins the fitting set.
+The encoders are released upstream implementations with verified pretrained weights. The binary readout uses the existing I-JEPA [`fit_probe`](../ijepa/classifier.py), [`class_weights` and metrics](../ijepa/metrics.py) directly. The same fitting-only mean/population standard deviation, zero-initialized linear head, balanced BCE, AdamW LR 0.001, weight decay 0.01, batch 256, maximum 100 epochs, patience 15, seed 43 and earliest-tie validation selection apply. The threshold stays 0.5. Validation never joins the fitting set.
 
 ## Setup and exact data preparation
 
@@ -80,6 +80,6 @@ DINOv3 remains frozen in the declared implementation. Additional folds/seeds are
 
 ## Verification and result status
 
-Run `python -m pytest -q tests models/ijepa-vit-h14/tests` from the repository root. All 47 tests passed on 2026-10-23. Tests exercise real image loading with small fixture encoders, role isolation, fitting-only statistics, sealing, tamper rejection, warmup, epoch-0 selection and durable selected-weight exports. Real released-model forward parity was also verified separately on CPU; DINO checkpoint conversion was independently checked against the official Hugging Face model, with maximum feature error 2.5034e-6 (tolerance 1e-4).
+Run `python -m pytest -q tests` from the repository root. The implementation and model-folder consistency checks are covered by the repository test suite. Tests exercise real image loading with small fixture encoders, role isolation, fitting-only statistics, sealing, tamper rejection, warmup, epoch-0 selection and durable selected-weight exports. Real released-model forward parity was also verified separately on CPU; DINO checkpoint conversion was independently checked against the official Hugging Face model, with maximum feature error 2.5034e-6 (tolerance 1e-4).
 
 The implementation is ready for matched training. **No completed MobileNetV5 or DINOv3 quality result is claimed here.** The existing I-JEPA results remain unchanged. Assessment recordings were historically inspected; future scores on this split remain retrospective held-out results.

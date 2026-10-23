@@ -3,13 +3,17 @@ __pycache__/
 *.pyc
 .venv/
 *.local.json
-runs/
-weights/
-data/
-*.pt
-.DS_Store
-assets/
-*.safetensors
-*.pth
-*.bin
 *.local.pt
+runs/
+assets/
+data/
+.DS_Store
+# Keep each model's weight inventory public, checkpoint bytes local.
+models/*/weights/*
+!models/*/weights/README.md
+!models/*/weights/manifest.json
+*.pt
+*.pth
+*.pth.tar
+*.safetensors
+*.bin

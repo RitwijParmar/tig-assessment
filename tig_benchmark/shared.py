@@ -7,10 +7,10 @@ ROOT = Path(__file__).resolve().parents[1]
 IJEPA_ROOT = ROOT / "models/ijepa-vit-h14"
 if (
     "ijepa" in sys.modules
-    and Path(sys.modules["ijepa"].__file__).resolve().parent != IJEPA_ROOT / "ijepa"
+    and Path(sys.modules["ijepa"].__file__).resolve().parent != ROOT / "ijepa"
 ):
     raise RuntimeError("An unrelated ijepa package is already imported")
-sys.path.insert(0, str(IJEPA_ROOT))
+sys.path.insert(0, str(ROOT))
 from ijepa.data import normalize_rows, validate_roles, ResearchImages, TransformSpec
 from ijepa.classifier import fit_probe
 from ijepa.metrics import quality_metrics, selection_score, class_weights

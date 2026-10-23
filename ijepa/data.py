@@ -9,7 +9,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from .utils import atomic_json, digest, sha256
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[1] / "models/ijepa-vit-h14"
 FIELDS = ("path", "group", "frame", "label6", "target", "crc", "original_bytes")
 
 

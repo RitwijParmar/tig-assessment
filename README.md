@@ -13,7 +13,23 @@ Models and recording-grouped assessments for weld-image classification on the [T
 
 The two I-JEPA models were already completed using identical fitting, validation and assessment frame memberships, downstream preprocessing, classifier recipes and threshold 0.5. Training uses **12 recordings / 10,338 frames**, validation **6 / 6,454**, and assessment **9 / 6,763**. BA means recording-weighted balanced accuracy. These entries document completed results; no new experiment is required to obtain them.
 
-Each model has a directory under `models/` with its architecture, data recipe and summary metrics. Related models link to shared source and tests. Additional approaches can be added as separate model directories.
+Every model directory has the same structure and model-card sections:
+
+```text
+models/<model-id>/
+  README.md           Status, architecture, data, training, results, usage, weights, licenses
+  model.json          Common model metadata and artifact references
+  config.json         Model-specific exact configuration or recorded recipe
+  results.json        Completed metrics, or explicit nulls when training has not run
+  weights/
+    README.md         Weight roles and loading notes
+    manifest.json     Relative filenames, SHA-256, sizes and availability
+    <checkpoint>      Local only; excluded from Git
+```
+
+Shared implementation lives in `ijepa/` and `tig_benchmark/`; tests live in `tests/`. Both I-JEPA entries use the same shared package. Run commands from the repository root. Each model's `model.json` identifies its implementation and configuration; configuration contents differ where the model's training differs.
+
+Check all model folders with `python tools/verify_model_packages.py`. Add `--require-weights` to verify every retained local checkpoint's bytes against its SHA-256 inventory. Public clones contain the inventories; local packages also contain the available checkpoint files.
 
 The new MobileNetV5/DINOv3 pipelines use the same exact split and shared readout recipe. See [setup, verification and execution commands](tig_benchmark/README.md). Their quality metrics will be added only after matched runs complete.
 
@@ -23,4 +39,4 @@ All pipelines use separate fitting, validation and assessment recording groups. 
 
 The selected adapted model's false alarms concentrate in recording `170906-141809`: **514 of the 521 assessment false alarms**, among **1,037 good frames** in that recording. See the [model's known limitation](models/ijepa-vit-h14/README.md#known-limitation-concentrated-false-alarms) for details and metric definitions.
 
-This repository publishes source, documentation and summary results. Obtain the dataset and pretrained weights separately; local predictions, checkpoints and frame-level metadata are excluded. Source and pretrained-weight license conditions are documented in the model's [NOTICE](models/ijepa-vit-h14/NOTICE.md).
+This repository publishes source, documentation and summary results. Obtain the dataset and pretrained weights separately; local predictions, checkpoints and frame-level metadata are excluded. Source and pretrained-weight license conditions are documented in the shared [NOTICE](ijepa/NOTICE.md).

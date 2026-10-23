@@ -1,0 +1,54 @@
+{
+  "format": "tig-model-package-v1",
+  "model_id": "dinov3-vit-l16",
+  "name": "DINOv3 ViT-L/16 + linear classifier",
+  "status": "implemented_not_matched_trained",
+  "selected_final_model": false,
+  "architecture": {
+    "backbone": "ViT-L/16",
+    "feature_dim": 2048,
+    "classifier": "Linear(feature_dim, 1)",
+    "threshold": 0.5,
+    "preprocessing": "256px short-side resize, 224px bicubic center crop, RGB/ImageNet normalization",
+    "readout": "official last-block CLS + patch-token mean"
+  },
+  "training": {
+    "weld_jepa_adaptation": false,
+    "encoder_frozen_during_linear_readout": true,
+    "optional_supervised_arm": false,
+    "classifier_recipe": "config.json#/classifier"
+  },
+  "data": {
+    "dataset": "TIG Aluminium 5083 HDR camera dataset",
+    "binary_target": "int(label6 > 0)",
+    "split_config": "../ijepa-vit-h14/config.json",
+    "roles": {
+      "fitting": {
+        "recordings": 12,
+        "frames": 10338,
+        "good_frames": 3915,
+        "defect_frames": 6423,
+        "normalized_rows_sha256": "9a4599b891d5cb4d0c79ec8c223523a5678a1e478c1b7591dc5ee7cca8144e91"
+      },
+      "selection": {
+        "recordings": 6,
+        "frames": 6454,
+        "good_frames": 1341,
+        "defect_frames": 5113,
+        "normalized_rows_sha256": "0b4ca0af988acff774c5dacae817ab102f09c7b0e9255cd373f36ac8d40ed75e"
+      },
+      "assessment": {
+        "recordings": 9,
+        "frames": 6763,
+        "good_frames": 2627,
+        "defect_frames": 4136,
+        "normalized_rows_sha256": "1fdce6903cd9d9c44ca2d5d90ebf461410fe679605076a825e81dc0fd7893e60"
+      }
+    },
+    "assessment_previously_inspected": true
+  },
+  "implementation": "../../tig_benchmark/",
+  "configuration": "config.json",
+  "results": "results.json",
+  "weights": "weights/manifest.json"
+}
