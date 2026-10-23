@@ -2,7 +2,6 @@
   "model": "DINOv3 ViT-L/16",
   "status": "completed",
   "classifier_epoch": 77,
-  "selected_encoder_lr": null,
   "threshold": 0.5,
   "validation": {
     "recordings": 6,
@@ -52,49 +51,11 @@
       "pr_auc": 0.9654505549715068
     }
   },
-  "selected_encoder_training": "frozen released encoder",
   "weights": {
     "base_sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
     "selected_encoder_sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
     "classifier_sha256": "b24a1ce82e1850d9d47c98fc98d79fc532d73faa98747d7cf9e9295d28f3c8b4",
     "best_directory": "weights/best"
   },
-  "training": {
-    "seed": 43,
-    "device": "NVIDIA RTX PRO 6000 Blackwell",
-    "dtype": "float32",
-    "extraction_batch_size": 16,
-    "workers": 4,
-    "geometry": "native",
-    "runtime": {
-      "convolution_precision": "tf32 on CUDA, matching recorded I-JEPA",
-      "float_dtype": "float32",
-      "matmul_precision": "highest",
-      "python": "3.12.3",
-      "torch": "2.14.1+cu130"
-    },
-    "exact_runtime": {
-      "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
-      "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
-      "packages": {
-        "torch": "2.14.1+cu130",
-        "torchvision": "0.29.1",
-        "numpy": "2.5.4",
-        "Pillow": "12.3.0",
-        "safetensors": "0.6.2",
-        "huggingface-hub": "0.36.2",
-        "PyYAML": "6.0.3",
-        "packaging": "26.3"
-      },
-      "cuda": "13.0",
-      "cudnn": 92400,
-      "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
-      "gpu_memory_bytes": 101973819392,
-      "driver": "580.178.04"
-    },
-    "sealed_run_config_sha256": "2ddfcf1a3793d27b108618f865b635ed7b06a4b5fbab55bdaf0ea12ab3139903"
-  },
-  "selection_used_assessment": false,
-  "assessment_previously_inspected": true,
   "scope": "Same canonical recording/frame roles as final adapted I-JEPA. Assessment excluded from training, normalization and checkpoint selection. These previously inspected recordings provide retrospective held-out evidence. Reported metrics use the validation-selected best checkpoint."
 }

@@ -40,14 +40,17 @@
       "required": true
     }
   },
-  "checkpoints": {
-    "best": {
-      "encoder": "best_encoder",
-      "classifier": "best_classifier",
-      "descriptor": "best/model.json"
-    }
-  },
   "checkpoint_definition": {
     "best": "Validation-selected checkpoint used for reported results."
+  },
+  "inference": {
+    "classifier_epoch": 3,
+    "mode": "frozen",
+    "geometry": "letterbox224",
+    "threshold": 0.5,
+    "encoder_format": "ijepa_torch",
+    "source_model_config_sha256": "d2c8539b61119cbd2f2cdd13d9c3980fc901ce8c8db604d9ed5f7bd6cc6760f5",
+    "assessment_used_to_select": false,
+    "family": "ijepa"
   }
 }

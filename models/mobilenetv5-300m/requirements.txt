@@ -1,4 +1,3 @@
-# Python 3.12+. Install matching CPU/CUDA wheels for these tested torch versions.
 torch==2.14.1
 torchvision==0.29.1
 numpy>=1.26
@@ -7,6 +6,3 @@ safetensors==0.6.2
 huggingface-hub>=0.34,<3
 pyyaml>=6
 packaging>=24
-pytest>=8
-# Encoder source comes from pinned upstream archives, checked by register-assets.
-# No unpinned timm/transformers encoder is substituted at runtime.

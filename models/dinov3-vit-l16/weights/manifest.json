@@ -34,14 +34,17 @@
       "required": true
     }
   },
-  "checkpoints": {
-    "best": {
-      "encoder": "best_encoder",
-      "classifier": "best_classifier",
-      "descriptor": "best/model.json"
-    }
-  },
   "checkpoint_definition": {
     "best": "Validation-selected checkpoint used for reported results."
+  },
+  "inference": {
+    "classifier_epoch": 77,
+    "mode": "frozen",
+    "geometry": "native",
+    "threshold": 0.5,
+    "encoder_format": "native_safetensors",
+    "source_model_config_sha256": "bb762779344d1569334146e86ad44936634060d779a1ee512e2a91be26162790",
+    "assessment_used_to_select": false,
+    "family": "dinov3"
   }
 }

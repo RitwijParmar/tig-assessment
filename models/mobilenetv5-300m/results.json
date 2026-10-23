@@ -2,7 +2,6 @@
   "model": "MobileNetV5-300M",
   "status": "completed",
   "classifier_epoch": 16,
-  "selected_encoder_lr": 1e-05,
   "threshold": 0.5,
   "validation": {
     "recordings": 6,
@@ -52,96 +51,11 @@
       "pr_auc": 0.9502367922807902
     }
   },
-  "selected_encoder_training": "full supervised encoder and classifier fine-tuning",
   "weights": {
     "base_sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321",
     "selected_encoder_sha256": "e2ca8dcb3c29d68f683112c85e3b9221d35174aae02683551945b74f0caf22a0",
     "classifier_sha256": "ab23162e817bec262fbc2376a8dbb4356959181e6e5d7513d85b666055507437",
     "best_directory": "weights/best"
   },
-  "training": {
-    "seed": 43,
-    "device": "NVIDIA RTX PRO 6000 Blackwell",
-    "dtype": "float32",
-    "extraction_batch_size": 8,
-    "workers": 4,
-    "geometry": "native",
-    "runtime": {
-      "convolution_precision": "tf32 on CUDA, matching recorded I-JEPA",
-      "float_dtype": "float32",
-      "matmul_precision": "highest",
-      "python": "3.12.3",
-      "torch": "2.14.1+cu130"
-    },
-    "exact_runtime": {
-      "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
-      "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
-      "packages": {
-        "torch": "2.14.1+cu130",
-        "torchvision": "0.29.1",
-        "numpy": "2.5.4",
-        "Pillow": "12.3.0",
-        "safetensors": "0.6.2",
-        "huggingface-hub": "0.36.2",
-        "PyYAML": "6.0.3",
-        "packaging": "26.3"
-      },
-      "cuda": "13.0",
-      "cudnn": 92400,
-      "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
-      "gpu_memory_bytes": 101973819392,
-      "driver": "580.178.04"
-    },
-    "sealed_run_config_sha256": "3d93672177cd94e56994e5c1bfd340c3f00d1e711ba6036073be509d9889196a",
-    "stability": {
-      "backward_loss_scale": 5.421010862427522e-20,
-      "gradient_norm_dtype": "float64",
-      "purpose": "Avoid overflow before applying the declared global norm-1 clipping; verified on fitting data before assessment."
-    },
-    "selection_amendment": {
-      "assessment_opened": false,
-      "completed_candidates": [
-        {
-          "best_epoch": 16,
-          "best_validation_BA": 0.9255012768636232,
-          "completed_epoch": 20,
-          "rate": 1e-05
-        }
-      ],
-      "completed_rates_used_for_selection": [
-        1e-05
-      ],
-      "originally_declared_rates": [
-        1e-05,
-        3e-05,
-        0.0001
-      ],
-      "reason": "User stopped the additional learning-rate search before assessment; retain the completed 1e-5 configuration and frozen baseline.",
-      "selection_rule": "Compare the frozen baseline and completed configurations only, using validation; earliest ties retained.",
-      "skipped_rates": [
-        3e-05,
-        0.0001
-      ],
-      "utc": "2026-10-23T14:01:16.960345+00:00"
-    },
-    "stopped_extra_search": {
-      "stopped_rate": 3e-05,
-      "completed_epochs": 5,
-      "best_validation_BA": 0.8731920472508223,
-      "used_for_final_selection": false,
-      "unstarted_rates": [
-        0.0001
-      ],
-      "reason": "User stopped additional search before assessment. The unfinished/unstarted rates were not established as worse."
-    },
-    "checkpoint_portability": {
-      "best_reloaded_on_cpu_and_gpu": true,
-      "checked_fitting_decisions_agree": true,
-      "cpu_gpu_dataset_metric_equivalence_established": false,
-      "scope": "CPU logits differ substantially on the fitting-only fixture; reported scores are the saved GPU evaluation. Finite reloads and matching checked decisions do not establish hardware-equivalent metrics."
-    }
-  },
-  "selection_used_assessment": false,
-  "assessment_previously_inspected": true,
   "scope": "Same canonical recording/frame roles as final adapted I-JEPA. Assessment excluded from training, normalization and checkpoint selection. These previously inspected recordings provide retrospective held-out evidence. Reported metrics use the validation-selected best checkpoint."
 }

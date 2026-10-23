@@ -2,7 +2,7 @@
 
 ## Status
 
-Completed. The evaluated checkpoint is in `weights/best/`. [model.json](model.json), [config.json](config.json), [data.json](data.json) and [results.json](results.json) record the architecture, recipe, shared split and measured results.
+Completed. The evaluated checkpoint is in `weights/best/`. [config.json](config.json), [data.json](data.json) and [results.json](results.json) record the architecture, recipe, shared split and measured results.
 
 ## Architecture
 
@@ -48,27 +48,20 @@ Run from this model directory:
 python -m pip install -r requirements.txt
 python run.py fetch-weights
 python run.py verify-weights
-python run.py test
-python run.py --help
+python run.py fetch-source
+python run.py predict --image /absolute/path/weld.png --device cpu
 ```
-
-```bash
-python run.py prepare --metadata /absolute/path/registration.json \
-  --data-root /absolute/path/dataset-root --output runs/prepared
-python run.py fetch-assets --output assets/pretrained
-python run.py train --data runs/prepared/data.local.json --assets assets/pretrained/assets.local.json \
-  --output runs/training --device cuda --batch-size 16 --workers 4
-python run.py verify --run runs/training --device cuda
-python run.py evaluate --run runs/training --device cuda
-```
-
-The model identifier is supplied automatically by this folder’s runner. Asset setup verifies pinned upstream source and checkpoint bytes. The released encoder is available through the public weight downloader; the asset command additionally sets up pinned upstream source. Both selected checkpoints were sealed and replayed before either assessment was opened.
-
 
 ## Weights
 
-`weights/best/` contains the validation-selected encoder, matching classifier and checkpoint descriptor used for the reported results. See [downloads and hashes](weights/README.md).
+`weights/best/` contains the encoder and matching classifier used for the reported results. [manifest.json](weights/manifest.json) records downloads, hashes and inference settings.
+
+| File | Download |
+| --- | --- |
+| `best/encoder.safetensors` | [download](https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--best--encoder.safetensors) |
+| `best/classifier.pt` | [download](https://github.com/RitwijParmar/tig-assessment/releases/download/matched-training-20261023/dinov3-vit-l16--best--classifier.pt) |
+
 
 ## Implementation and licenses
 
-Implementation lives in [code/](code/) and tests in [tests/](tests/). This model imports no code from another model folder. Read [licenses/](licenses/) for applicable source and checkpoint terms. Pinned upstream source is checked before loading. Checkpoints retain the exact saved training bytes; package/export code does not retrain or alter tensors. No classifier loss or EMA update is added to the released encoder during frozen-feature training.
+Inference and preprocessing are in [code/](code/). Read [licenses/](licenses/) for source and checkpoint terms.

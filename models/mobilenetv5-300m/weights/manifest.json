@@ -34,14 +34,17 @@
       "required": true
     }
   },
-  "checkpoints": {
-    "best": {
-      "encoder": "best_encoder",
-      "classifier": "best_classifier",
-      "descriptor": "best/model.json"
-    }
-  },
   "checkpoint_definition": {
     "best": "Validation-selected checkpoint used for reported results."
+  },
+  "inference": {
+    "classifier_epoch": 16,
+    "mode": "supervised",
+    "geometry": "native",
+    "threshold": 0.5,
+    "encoder_format": "supervised_torch",
+    "source_model_config_sha256": "12c8f9ce01ce3cf99f1402742b0b3f50c64264f8cf2ee9f5c8fa02a86ef6791b",
+    "assessment_used_to_select": false,
+    "family": "mobilenetv5"
   }
 }

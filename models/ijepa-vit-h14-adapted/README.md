@@ -2,7 +2,7 @@
 
 ## Status
 
-Completed. The evaluated checkpoint is in `weights/best/`. [model.json](model.json), [config.json](config.json), [data.json](data.json) and [results.json](results.json) record the architecture, recipe, shared split and measured results.
+Completed. The evaluated checkpoint is in `weights/best/`. [config.json](config.json), [data.json](data.json) and [results.json](results.json) record the architecture, recipe, shared split and measured results.
 
 ## Architecture
 
@@ -51,7 +51,7 @@ Group by image parent-folder name after removing terminal `-partN`; all segments
 
 JEPA uses the pinned upstream random resized 224px crop, scale 0.3–1.0, and its native four-target mask collator. Context scale is 0.85–1.0; target scale 0.15–0.20, aspect ratio 0.75–1.5. The native retry fallback is preserved. Downstream images use whole-image, centered black letterboxing at 224px, bilinear resize and ImageNet normalization. Mean pooling excludes padding-intersecting patches.
 
-Local metadata records `path, group, frame, label6, target, crc, original_bytes`. Image reads verify containment, byte size and CRC32. `data.json` holds the exact split fingerprints; `config.json` holds the recipe; frame-level metadata and images remain local. Historical `train`/`test` directory names do not assign current roles—the explicit recording split does.
+The recorded run used `path, group, frame, label6, target, crc, original_bytes` metadata and verified image containment, byte size and CRC32. `data.json` holds the exact split fingerprints; `config.json` holds the recipe; frame-level metadata and images remain local. Historical `train`/`test` directory names do not assign current roles—the explicit recording split does.
 
 ## Training and selection
 
@@ -89,31 +89,24 @@ Run from this model directory:
 python -m pip install -r requirements.txt
 python run.py fetch-weights
 python run.py verify-weights
-python run.py test
-python run.py --help
+python run.py fetch-source
+python run.py predict --image /absolute/path/weld.png --device cpu
 ```
-
-For the retained completed model:
-
-```bash
-python run.py predict-local --image /absolute/path/weld.png --device cpu
-```
-
-To reproduce fitting using the exact recorded data roles, obtain the original official full pretraining checkpoint separately and run:
-
-```bash
-python run.py prepare --metadata /absolute/path/registration.json \
-  --data-root /absolute/path/dataset-root \
-  --base-checkpoint /absolute/path/IN1K-vit.h.14-300e.pth.tar --output runs/prepared
-python run.py train --config runs/prepared/config.local.json --output runs/training --device cuda
-python run.py evaluate --run runs/training --device cuda
-```
-
 
 ## Weights
 
-`weights/best/` contains the validation-selected encoder, matching classifier and checkpoint descriptor used for the reported results. See [downloads and hashes](weights/README.md).
+`weights/best/` contains the encoder and matching classifier used for the reported results. [manifest.json](weights/manifest.json) records downloads, hashes and inference settings.
+
+| File | Download |
+| --- | --- |
+| `best/encoder.pt` | [part 1](https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14-adapted--best--encoder.pt.part01), [part 2](https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14-adapted--best--encoder.pt.part02) |
+| `best/classifier.pt` | [download](https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14-adapted--best--classifier.pt) |
+
+**Note:** Part 1 and part 2 are pieces of one encoder file. The encoder is about 2.52 GB, so it was split to fit GitHub’s release-file limit. `python run.py fetch-weights` automatically joins and verifies them. [GitHub limits](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases#storage-and-bandwidth-quotas).
+
+In the previous layout, the `final/encoder.pt` row linked to `best` because both used identical frozen encoder weights; their classifier weights differed. Only the best checkpoint is distributed here.
+
 
 ## Implementation and licenses
 
-Implementation lives in [code/](code/) and tests in [tests/](tests/). This model imports no code from another model folder. Read [licenses/](licenses/) for applicable source and checkpoint terms. Numerical training settings, learned tensor values and recorded metrics are preserved; the original encoder export only changes its checkpoint container.
+Inference and preprocessing are in [code/](code/). Read [licenses/](licenses/) for source and checkpoint terms.
