@@ -9,6 +9,8 @@ Four weld-classification models using the same recording split and a binary line
 | MobileNetV5-300M | Completed | 92.55% | 79.57% | [Model](models/mobilenetv5-300m/) |
 | DINOv3 ViT-L/16 | Completed | 89.70% | 88.00% | [Model](models/dinov3-vit-l16/) |
 
+**Adapted I-JEPA false-alarm finding:** The increase from **0.77% on validation to 11.00% on assessment** is concentrated in recording **`170906-141809`**, which accounts for **514 of 521 assessment false alarms (98.66%)**. The other eight assessment recordings contribute just **seven**. This recording is absent from validation, so its failure was not reflected in the validation rate. See the [recording-level breakdown](models/ijepa-vit-h14-adapted/README.md#known-limitation-concentrated-false-alarms). The reported assessment results include all nine recordings.
+
 | Split | Recordings | Frames |
 | --- | ---: | ---: |
 | Training | 12 | 10,338 |

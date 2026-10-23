@@ -73,13 +73,16 @@ The threshold is **0.5**. Each frame's metric weight is `1 / all_frames_in_its_r
 
 ### Known limitation: concentrated false alarms
 
-The adapted I-JEPA ViT-H/14 model fails on many good frames from assessment recording **`170906-141809`** (group `170906-141809-Al 2mm`):
+The increase from **0.77% validation false-alarm rate to 11.00% assessment false-alarm rate** is concentrated in one assessment recording: **`170906-141809`** (group `170906-141809-Al 2mm`). It contributes **514 of the 521 assessment false alarms (98.66%)**.
 
-- **1,037 good frames**, of which **514** are incorrectly classified as defective (**49.57%**).
-- This one recording contributes **514 of the 521 total assessment false alarms**; the other assessment recordings contribute seven.
-- This recording is absent from validation, so validation's **0.77% recording-weighted false-alarm rate did not reveal this failure**.
+| Assessment recordings | Good frames | False-alarm frames | Raw good-frame false-alarm rate |
+| --- | ---: | ---: | ---: |
+| `170906-141809` | 1,037 | 514 | 49.57% |
+| Other eight recordings combined | 1,590 | 7 | 0.44% |
 
-These counts establish where the errors concentrate. The visual or annotation cause has not been established. The aggregate 11.00% recording-weighted assessment false-alarm rate is therefore not evidence of uniformly low false alarms across recordings.
+False alarms are therefore rare across the remaining eight recordings, while this single-recording failure largely explains the aggregate increase. The recording is absent from validation, so validation's **0.77% recording-weighted false-alarm rate did not reveal it**.
+
+The table uses raw frame counts; the reported **11.00%** uses recording weights. All nine recordings remain included in the reported assessment results. These counts locate the failure; its underlying visual or annotation cause has not been established.
 
 ## Usage
 
