@@ -31,20 +31,16 @@ def predict_local(folder, image, device="cpu", checkpoint="best", assets=None):
     if descriptor["source_model_config_sha256"] != sha256(folder / "config.json"):
         raise ValueError("Checkpoint recipe changed")
     name = next(iter(MODEL_DIRS))
-    lock = load_assets(name, assets or folder / "assets/pretrained/assets.local.json")
+    lock = load_assets(name, assets or folder / "assets/pretrained/assets.local.json", require_checkpoint=False)
     configure_precision()
-    base_spec = descriptor.get("pretrained_encoder", descriptor["encoder"])
-    base = checkpoint_file(weights, base_spec)
-    if base_spec["sha256"] != lock["checkpoint_sha256"]:
-        raise ValueError("Portable base is not the declared released encoder")
-    lock = {**lock, "checkpoint": str(base.resolve())}
-    encoder, transform = build(lock, device, descriptor["geometry"])
-    if descriptor["encoder_format"] == "supervised_torch":
-        path = checkpoint_file(weights, descriptor["encoder"])
-        encoder.load_state_dict(
-            torch.load(path, map_location="cpu", weights_only=True)["encoder"],
-            strict=True,
-        )
+    if descriptor["encoder_format"] != "supervised_torch":
+        raise ValueError("Expected a complete trained MobileNetV5 encoder")
+    path = checkpoint_file(weights, descriptor["encoder"])
+    encoder, transform = build(lock, device, descriptor["geometry"], load_pretrained=False)
+    encoder.load_state_dict(
+        torch.load(path, map_location="cpu", weights_only=True)["encoder"],
+        strict=True,
+    )
     spec = descriptor["classifier"]
     path = checkpoint_file(weights, spec)
     probe = torch.load(path, map_location="cpu", weights_only=True)

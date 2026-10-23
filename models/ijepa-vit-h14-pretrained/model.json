@@ -1,7 +1,7 @@
 {
   "format": "tig-model-package-v1",
   "model_id": "ijepa-vit-h14-pretrained",
-  "name": "Original pretrained I-JEPA ViT-H/14 + linear classifier",
+  "name": "I-JEPA ViT-H/14 (Pretrained)",
   "status": "completed",
   "architecture": {
     "backbone": "ViT-H/14",

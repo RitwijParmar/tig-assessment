@@ -3,26 +3,26 @@
   "model_id": "dinov3-vit-l16",
   "files_distributed_on_github": true,
   "artifacts": {
-    "selected_encoder": {
+    "best_encoder": {
       "path": "best/encoder.safetensors",
       "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
       "bytes": 1212559808,
-      "description": "Released frozen encoder shared by best and final classifier checkpoints.",
+      "description": "Best encoder",
       "parts": [
         {
-          "asset": "dinov3-vit-l16--pretrained_encoder.safetensors",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--pretrained_encoder.safetensors",
+          "asset": "dinov3-vit-l16--best--encoder.safetensors",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--best--encoder.safetensors",
           "bytes": 1212559808,
           "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
         }
       ],
       "required": true
     },
-    "classifier": {
+    "best_classifier": {
       "path": "best/classifier.pt",
       "bytes": 27785,
       "sha256": "b24a1ce82e1850d9d47c98fc98d79fc532d73faa98747d7cf9e9295d28f3c8b4",
-      "description": "best trained classifier",
+      "description": "Best classifier",
       "parts": [
         {
           "asset": "dinov3-vit-l16--best--classifier.pt",
@@ -33,11 +33,26 @@
       ],
       "required": true
     },
-    "final_epoch_classifier": {
+    "final_encoder": {
+      "path": "final/encoder.safetensors",
+      "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
+      "bytes": 1212559808,
+      "description": "Final encoder",
+      "parts": [
+        {
+          "asset": "dinov3-vit-l16--best--encoder.safetensors",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--best--encoder.safetensors",
+          "bytes": 1212559808,
+          "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
+        }
+      ],
+      "required": true
+    },
+    "final_classifier": {
       "path": "final/classifier.pt",
       "bytes": 27795,
       "sha256": "1d32999b903d3ff235d2b76ff487583c81718cd64131651f69300ab61b7f06f7",
-      "description": "final trained classifier",
+      "description": "Final classifier",
       "parts": [
         {
           "asset": "dinov3-vit-l16--final--classifier.pt",
@@ -47,38 +62,22 @@
         }
       ],
       "required": true
-    },
-    "final_epoch_encoder": {
-      "path": "final/encoder.safetensors",
-      "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
-      "bytes": 1212559808,
-      "description": "Unchanged frozen DINOv3 encoder; downloader reuses verified best bytes via hardlink.",
-      "parts": [
-        {
-          "asset": "dinov3-vit-l16--pretrained_encoder.safetensors",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--pretrained_encoder.safetensors",
-          "bytes": 1212559808,
-          "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
-        }
-      ],
-      "required": true
     }
-  },
-  "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/matched-training-20261023",
-  "checkpoint_definition": {
-    "best": "Validation-selected encoder/classifier pair used for the reported assessment.",
-    "final": "Last completed downstream training epoch of the selected configuration; frozen encoders are unchanged. This is distinct from the final JEPA adaptation epoch."
   },
   "checkpoints": {
     "best": {
-      "encoder": "selected_encoder",
-      "classifier": "classifier",
+      "encoder": "best_encoder",
+      "classifier": "best_classifier",
       "descriptor": "best/model.json"
     },
     "final": {
-      "encoder": "final_epoch_encoder",
-      "classifier": "final_epoch_classifier",
+      "encoder": "final_encoder",
+      "classifier": "final_classifier",
       "descriptor": "final/model.json"
     }
+  },
+  "checkpoint_definition": {
+    "best": "Validation-selected checkpoint used for reported results.",
+    "final": "Last completed downstream training epoch."
   }
 }

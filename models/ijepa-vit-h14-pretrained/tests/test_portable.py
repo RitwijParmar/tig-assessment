@@ -13,7 +13,7 @@ def test_final_pair_has_explicit_reconstruction_and_distinct_last_head():
     inventory = json.loads((weights / 'manifest.json').read_text())
     final = inventory['checkpoints']['final']
     desc = json.loads((weights / final['descriptor']).read_text())
-    best_head = torch.load(weights / inventory['artifacts']['classifier']['path'], map_location='cpu', weights_only=True)
+    best_head = torch.load(weights / inventory['artifacts']['best_classifier']['path'], map_location='cpu', weights_only=True)
     final_head = torch.load(weights / inventory['artifacts'][final['classifier']]['path'], map_location='cpu', weights_only=True)
     assert final_head['epoch'] == desc['classifier_epoch'] > best_head['epoch']
     assert not torch.equal(final_head['head']['weight'], best_head['head']['weight'])

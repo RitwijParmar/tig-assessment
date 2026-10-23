@@ -35,7 +35,7 @@ def fetch(name, output):
     archive.unlink()
     weights_folder = Path(__file__).resolve().parents[2] / "weights"
     inventory = json.loads((weights_folder / "manifest.json").read_text())
-    role = "pretrained_encoder" if "pretrained_encoder" in inventory["artifacts"] else "selected_encoder"
+    role = "best_encoder"
     relative = inventory["artifacts"][role]["path"]
     checkpoint = weights_folder / relative
     import importlib.util

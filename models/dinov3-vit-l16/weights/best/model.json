@@ -18,5 +18,8 @@
   },
   "encoder_format": "native_safetensors",
   "source_model_config_sha256": "bb762779344d1569334146e86ad44936634060d779a1ee512e2a91be26162790",
-  "assessment_used_to_select": false
+  "assessment_used_to_select": false,
+  "provenance": {
+    "status": "original_saved"
+  }
 }

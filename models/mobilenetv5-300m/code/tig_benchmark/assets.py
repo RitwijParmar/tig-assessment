@@ -58,7 +58,7 @@ def register(name, source, checkpoint, output):
     return lock
 
 
-def load_assets(name, path):
+def load_assets(name, path, *, require_checkpoint=True):
     lock = json.loads(Path(path).read_text())
     config = model_config(name)
     if (
@@ -69,6 +69,11 @@ def load_assets(name, path):
         raise ValueError("Assets/config identity mismatch")
     if verify_source(name, lock["source"]) != lock["source_revision"]:
         raise ValueError("Source revision changed")
-    if sha256(lock["checkpoint"]) != config["checkpoint_sha256"]:
-        raise ValueError("Pretrained checkpoint changed")
+    if lock["checkpoint_sha256"] != config["checkpoint_sha256"]:
+        raise ValueError("Pretrained checkpoint identity changed")
+    if require_checkpoint:
+        if not lock.get("checkpoint"):
+            raise ValueError("Training requires a pretrained checkpoint")
+        if sha256(lock["checkpoint"]) != config["checkpoint_sha256"]:
+            raise ValueError("Pretrained checkpoint changed")
     return lock

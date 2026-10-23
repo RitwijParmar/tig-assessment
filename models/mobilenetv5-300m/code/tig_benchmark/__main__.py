@@ -22,6 +22,7 @@ def main():
     p = subs.add_parser("fetch-assets")
     p.add_argument("--model", choices=assets.MODEL_DIRS, required=True)
     p.add_argument("--output", required=True)
+    p.add_argument("--source-only", action="store_true", help="Set up architecture source for best/final inference")
     p = subs.add_parser("train")
     p.add_argument("--model", choices=assets.MODEL_DIRS, required=True)
     p.add_argument("--data", required=True)
@@ -47,7 +48,7 @@ def main():
     elif a.command == "fetch-assets":
         from .download import fetch
 
-        result = fetch(a.model, a.output)
+        result = fetch(a.model, a.output, source_only=a.source_only)
     elif a.command == "train":
         result = pipeline.fit(
             a.model,

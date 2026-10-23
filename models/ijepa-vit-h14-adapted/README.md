@@ -1,4 +1,4 @@
-# Weld-adapted I-JEPA ViT-H/14 + linear classifier
+# I-JEPA ViT-H/14 (Adapted)
 
 ## Status
 
@@ -112,16 +112,7 @@ python run.py evaluate --run runs/training --device cuda
 
 ## Weights
 
-`weights/best/` and `weights/final/` each contain their encoder, classifier and checkpoint descriptor. Reported results use **best**. Final means the last completed downstream training epoch of the selected configuration. The historical last classifier head was not saved, so its final head is a labelled CPU reconstruction from verified historical fitting/validation features. The encoder remains the selected frozen encoder. Exact hashes, provenance and downloads are in [weights/manifest.json](weights/manifest.json), [weights/final/model.json](weights/final/model.json) and [weights/README.md](weights/README.md).
-
-```bash
-python run.py fetch-weights
-python run.py verify-weights
-python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
-python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint final
-```
-
-The separately recovered epoch-5 adaptation encoder is an end-of-JEPA-stage artifact, not the epoch-1 encoder behind the reported 92.75% assessment result. See the [recovery release](https://github.com/RitwijParmar/tig-assessment/releases/tag/ijepa-final-recovery-20261023) for its original checksum and matching historical readout.
+`best/` and `final/` each contain the encoder, classifier and checkpoint descriptor. Reported results use **best**. Final classifier: reconstructed CPU replay. See [downloads and hashes](weights/README.md).
 
 ## Implementation and licenses
 

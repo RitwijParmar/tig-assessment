@@ -1,4 +1,4 @@
-# MobileNetV5-300M + linear classifier
+# MobileNetV5-300M
 
 ## Status
 
@@ -27,9 +27,7 @@ Use the shared data preparation, classifier recipe and evaluation commands. Raw 
 
 The same existing classifier-fitting function, fitting-only normalization, balanced BCE, optimizer, patience, selection metric and threshold are shared with I-JEPA. Model-native preprocessing and its full-frame geometry control are declared separately. Assessment is excluded from fitting, normalization and checkpoint choice, and requires a sealed verified run. Previously inspected recordings provide retrospective assessment rather than a new blind test.
 
-The completed supervised configuration used encoder learning rate `1e-5`, head learning rate `1e-3`, effective batch 32 (physical batch 8), 20 epochs and one warmup epoch. Before assessment, the user stopped the additional search: `3e-5` ended after five committed epochs and was excluded from final selection; `1e-4` was not started. This does not establish that either higher rate would perform worse. The frozen baseline and completed `1e-5` run were eligible for the final choice. The original three-rate recipe remains in config.json, and results.json records the amendment.
-
-A fitting-only diagnostic found near-overflow stem gradients. Backward loss scaling by `2**-64` and float64 norm accumulation implement the same norm-1 global clipping without overflowing; assessment had not been opened.
+The selected supervised configuration uses encoder LR `1e-5`, head LR `1e-3`, effective batch 32 (physical batch 8), 20 epochs and one warmup epoch. See [config.json](config.json) for the recipe.
 
 ## Results
 
@@ -53,32 +51,23 @@ python -m pip install -r requirements.txt
 python run.py fetch-weights
 python run.py verify-weights
 python run.py test
-python run.py --help
+python run.py fetch-assets --output assets/pretrained --source-only
 ```
 
 ```bash
 python run.py prepare --metadata /absolute/path/registration.json \
   --data-root /absolute/path/dataset-root --output runs/prepared
-python run.py fetch-assets --output assets/pretrained
-python run.py train --data runs/prepared/data.local.json --assets assets/pretrained/assets.local.json \
+python run.py fetch-assets --output assets/training
+python run.py train --data runs/prepared/data.local.json --assets assets/training/assets.local.json \
   --output runs/training --device cuda --batch-size 8 --workers 4 --finetune
 python run.py verify --run runs/training --device cuda
 python run.py evaluate --run runs/training --device cuda
 ```
 
-The model identifier is supplied automatically by this folder’s runner. Asset setup verifies pinned upstream source and checkpoint bytes. The released encoder is available through the public weight downloader; the asset command additionally sets up pinned upstream source. Both selected checkpoints were sealed and replayed before either assessment was opened.
-
 
 ## Weights
 
-`weights/best/` and `weights/final/` each contain their encoder, classifier and checkpoint descriptor. Reported results use **best**. Final means the last completed downstream training epoch of the selected configuration. Exact hashes, provenance and downloads are in [weights/manifest.json](weights/manifest.json), [weights/final/model.json](weights/final/model.json) and [weights/README.md](weights/README.md).
-
-```bash
-python run.py fetch-weights
-python run.py verify-weights
-python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
-python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint final
-```
+`best/` and `final/` each contain the encoder, classifier and checkpoint descriptor. Reported results use **best**. See [downloads and hashes](weights/README.md).
 
 ## Implementation and licenses
 

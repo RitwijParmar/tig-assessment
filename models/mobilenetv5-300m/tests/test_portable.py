@@ -19,15 +19,21 @@ def package(tmp_path, monkeypatch):
     mobile = model == 'mobilenetv5'
     weights = tmp_path/'weights'; (weights/'best').mkdir(parents=True); (weights/'final').mkdir()
     (tmp_path/'config.json').write_text('{}')
-    base = weights/('pretrained/encoder.safetensors' if mobile else 'best/encoder.safetensors')
-    base.parent.mkdir(exist_ok=True);base.write_bytes(b'released encoder fixture')
+    base = weights/'best/encoder.safetensors'
+    if not mobile:base.write_bytes(b'released encoder fixture')
     class Tiny(nn.Module):
         def __init__(self):
             super().__init__();self.value=nn.Parameter(torch.tensor(3.))
         def forward(self, image):
             return self.value.expand(len(image),2048)
-    monkeypatch.setattr(inference,'load_assets',lambda *args:{'model':model,'checkpoint_sha256':spec(base,weights)['sha256']})
-    monkeypatch.setattr(inference,'build',lambda *args:(Tiny(),lambda image:torch.zeros(3,2,2)))
+    def load(*args, **kwargs):
+        assert kwargs == {'require_checkpoint':False}
+        return {'model':model,'checkpoint':None}
+    def build(*args, **kwargs):
+        assert kwargs == {'load_pretrained':False}
+        return Tiny(),lambda image:torch.zeros(3,2,2)
+    monkeypatch.setattr(inference,'load_assets',load)
+    monkeypatch.setattr(inference,'build',build)
     for kind,value in [('best',7.),('final',9.)]:
         classifier=weights/kind/'classifier.pt';w=torch.zeros(1,2048);w[0,0]=1.
         torch.save({'head':{'weight':w,'bias':torch.tensor([float(kind=='final')])},'mean':torch.zeros(2048),'std':torch.ones(2048)},classifier)
@@ -38,7 +44,6 @@ def package(tmp_path, monkeypatch):
               'geometry':'native','encoder_format':'supervised_torch' if mobile else 'native_safetensors',
               'source_model_config_sha256':hashlib.sha256(b'{}').hexdigest(),
               'encoder':spec(encoder,weights),'classifier':spec(classifier,weights)}
-        if mobile:desc['pretrained_encoder']=spec(base,weights)
         (weights/kind/'model.json').write_text(json.dumps(desc))
     image=tmp_path/'fixture.png';Image.new('RGB',(2,2)).save(image)
     return tmp_path,image,mobile
@@ -62,3 +67,18 @@ def test_modified_classifier_is_rejected(package):
 def test_descriptor_cannot_escape_the_weights_directory(tmp_path):
     with pytest.raises(ValueError,match='inside'):
         inference.checkpoint_file(tmp_path,{'path':'../elsewhere','sha256':'unused'})
+
+
+def test_source_only_assets_cannot_initialize_training(tmp_path, monkeypatch):
+    from tig_benchmark import assets
+    from tig_benchmark.shared import digest
+    config = assets.model_config('mobilenetv5')
+    monkeypatch.setattr(assets,'verify_source',lambda *args:'pinned-source')
+    lock={'format':'tig-model-assets-v1','model':'mobilenetv5','source':'verified',
+          'source_revision':'pinned-source','checkpoint':None,
+          'checkpoint_sha256':config['checkpoint_sha256'],
+          'model_config_sha256':digest(config)}
+    path=tmp_path/'assets.local.json';path.write_text(json.dumps(lock))
+    assert assets.load_assets('mobilenetv5',path,require_checkpoint=False)==lock
+    with pytest.raises(ValueError,match='Training requires'):
+        assets.load_assets('mobilenetv5',path)

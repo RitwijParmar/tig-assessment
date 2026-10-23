@@ -19,9 +19,7 @@
   "encoder_format": "supervised_torch",
   "source_model_config_sha256": "12c8f9ce01ce3cf99f1402742b0b3f50c64264f8cf2ee9f5c8fa02a86ef6791b",
   "assessment_used_to_select": false,
-  "pretrained_encoder": {
-    "path": "pretrained/encoder.safetensors",
-    "bytes": 1176564736,
-    "sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321"
+  "provenance": {
+    "status": "original_saved"
   }
 }

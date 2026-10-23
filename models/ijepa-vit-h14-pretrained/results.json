@@ -1,5 +1,5 @@
 {
-  "model": "Original pretrained I-JEPA ViT-H/14 with a linear classifier",
+  "model": "I-JEPA ViT-H/14 (Pretrained)",
   "adaptation_epoch": 0,
   "adaptation_updates": 0,
   "classifier_epoch": 14,

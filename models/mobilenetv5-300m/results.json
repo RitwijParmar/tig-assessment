@@ -1,5 +1,5 @@
 {
-  "model": "MobileNetV5-300M + linear classifier",
+  "model": "MobileNetV5-300M",
   "status": "completed",
   "classifier_epoch": 16,
   "final_classifier_epoch": 20,

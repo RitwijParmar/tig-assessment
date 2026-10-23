@@ -1,4 +1,4 @@
-# DINOv3 ViT-L/16 + linear classifier
+# DINOv3 ViT-L/16
 
 ## Status
 
@@ -67,14 +67,7 @@ The model identifier is supplied automatically by this folder’s runner. Asset 
 
 ## Weights
 
-`weights/best/` and `weights/final/` each contain their encoder, classifier and checkpoint descriptor. Reported results use **best**. Final means the last completed downstream training epoch of the selected configuration. Its frozen encoder is identical in both folders and is reused by hardlink. Exact hashes, provenance and downloads are in [weights/manifest.json](weights/manifest.json), [weights/final/model.json](weights/final/model.json) and [weights/README.md](weights/README.md).
-
-```bash
-python run.py fetch-weights
-python run.py verify-weights
-python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
-python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint final
-```
+`best/` and `final/` each contain the encoder, classifier and checkpoint descriptor. Reported results use **best**. See [downloads and hashes](weights/README.md).
 
 ## Implementation and licenses
 

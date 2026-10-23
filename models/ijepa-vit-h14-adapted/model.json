@@ -1,7 +1,7 @@
 {
   "format": "tig-model-package-v1",
-  "model_id": "ijepa-vit-h14",
-  "name": "Weld-adapted I-JEPA ViT-H/14 + linear classifier",
+  "model_id": "ijepa-vit-h14-adapted",
+  "name": "I-JEPA ViT-H/14 (Adapted)",
   "status": "completed",
   "architecture": {
     "backbone": "ViT-H/14",

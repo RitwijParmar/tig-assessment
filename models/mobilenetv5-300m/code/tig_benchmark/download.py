@@ -4,10 +4,11 @@ import json
 from pathlib import Path
 import tarfile
 import urllib.request
-from .assets import model_config, register
+from .assets import model_config, register, verify_source
+from .shared import atomic_json, digest
 
 
-def fetch(name, output):
+def fetch(name, output, source_only=False):
 
     output = Path(output).resolve()
     if output.exists():
@@ -33,17 +34,19 @@ def fetch(name, output):
         tar.extractall(output, filter="data")
     source = output / prefix
     archive.unlink()
-    weights_folder = Path(__file__).resolve().parents[2] / "weights"
-    inventory = json.loads((weights_folder / "manifest.json").read_text())
-    role = "pretrained_encoder" if "pretrained_encoder" in inventory["artifacts"] else "selected_encoder"
-    relative = inventory["artifacts"][role]["path"]
-    checkpoint = weights_folder / relative
-    import importlib.util
-
-    spec = importlib.util.spec_from_file_location(
-        "model_release_weights", weights_folder / "download.py"
+    if source_only:
+        lock = {
+            "format": "tig-model-assets-v1", "model": name,
+            "source": str(source.resolve()),
+            "source_revision": verify_source(name, source),
+            "checkpoint": None, "checkpoint_sha256": cfg["checkpoint_sha256"],
+            "model_config_sha256": digest(cfg),
+        }
+        atomic_json(output / "assets.local.json", lock)
+        return lock
+    from huggingface_hub import hf_hub_download
+    checkpoint = hf_hub_download(
+        repo_id=cfg["checkpoint_repository"], revision=cfg["checkpoint_revision"],
+        filename="model.safetensors", local_dir=output / "training-weights",
     )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    module.download(weights_folder / "manifest.json", only=relative)
     return register(name, source, checkpoint, output / "assets.local.json")

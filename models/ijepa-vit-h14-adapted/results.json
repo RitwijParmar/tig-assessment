@@ -1,5 +1,5 @@
 {
-  "model": "I-JEPA ViT-H/14 with weld adaptation and a linear classifier",
+  "model": "I-JEPA ViT-H/14 (Adapted)",
   "adaptation_epoch": 1,
   "adaptation_updates": 324,
   "adaptation_schedule_epochs": 5,

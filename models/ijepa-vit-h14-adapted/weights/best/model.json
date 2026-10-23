@@ -1,6 +1,6 @@
 {
   "format": "tig-checkpoint-v1",
-  "model_id": "ijepa-vit-h14",
+  "model_id": "ijepa-vit-h14-adapted",
   "kind": "best",
   "classifier_epoch": 3,
   "mode": "frozen",
@@ -18,5 +18,8 @@
   },
   "encoder_format": "ijepa_torch",
   "source_model_config_sha256": "d2c8539b61119cbd2f2cdd13d9c3980fc901ce8c8db604d9ed5f7bd6cc6760f5",
-  "assessment_used_to_select": false
+  "assessment_used_to_select": false,
+  "provenance": {
+    "status": "original_saved"
+  }
 }

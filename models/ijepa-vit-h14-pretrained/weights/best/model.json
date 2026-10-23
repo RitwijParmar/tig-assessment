@@ -18,5 +18,8 @@
   },
   "encoder_format": "ijepa_torch",
   "source_model_config_sha256": "8a0026301f459594a0017889fdfe43271a613735087e4e2a9453bf2726c6b797",
-  "assessment_used_to_select": false
+  "assessment_used_to_select": false,
+  "provenance": {
+    "status": "original_saved"
+  }
 }

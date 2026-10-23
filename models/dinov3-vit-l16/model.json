@@ -1,7 +1,7 @@
 {
   "format": "tig-model-package-v1",
   "model_id": "dinov3-vit-l16",
-  "name": "DINOv3 ViT-L/16 + linear classifier",
+  "name": "DINOv3 ViT-L/16",
   "status": "completed",
   "architecture": {
     "backbone": "ViT-L/16",

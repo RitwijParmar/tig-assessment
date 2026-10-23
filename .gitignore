@@ -16,5 +16,3 @@ data/
 *.safetensors
 *.bin
 *.partial
-
-!models/*/weights/adaptation-final/classifier.pt

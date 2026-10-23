@@ -43,7 +43,7 @@ class Encoder(nn.Module):
         return value.float()
 
 
-def build(lock, device="cpu", geometry="native"):
+def build(lock, device="cpu", geometry="native", *, load_pretrained=True):
     name, source = lock["model"], lock["source"]
     if name != 'mobilenetv5':
         raise ValueError("This package only builds its declared encoder")
@@ -51,9 +51,10 @@ def build(lock, device="cpu", geometry="native"):
     model = timm.create_model("mobilenetv5_300m.gemma3n", pretrained=False)
     from timm.models.mobilenetv5 import checkpoint_filter_fn
 
-    model.load_state_dict(
-        checkpoint_filter_fn(load_file(lock["checkpoint"]), model), strict=True
-    )
+    if load_pretrained:
+        model.load_state_dict(
+            checkpoint_filter_fn(load_file(lock["checkpoint"]), model), strict=True
+        )
     cfg = timm.data.resolve_model_data_config(model)
     if (
         cfg["input_size"] != (3, 768, 768)

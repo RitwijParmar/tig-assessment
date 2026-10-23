@@ -3,26 +3,11 @@
   "model_id": "mobilenetv5-300m",
   "files_distributed_on_github": true,
   "artifacts": {
-    "pretrained_encoder": {
-      "path": "pretrained/encoder.safetensors",
-      "sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321",
-      "bytes": 1176564736,
-      "description": "Single released base encoder used to construct the native architecture.",
-      "parts": [
-        {
-          "asset": "mobilenetv5-300m--pretrained_encoder.safetensors",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/mobilenetv5-300m--pretrained_encoder.safetensors",
-          "bytes": 1176564736,
-          "sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321"
-        }
-      ],
-      "required": true
-    },
-    "selected_encoder": {
+    "best_encoder": {
       "path": "best/encoder.pt",
       "bytes": 1176686195,
       "sha256": "e2ca8dcb3c29d68f683112c85e3b9221d35174aae02683551945b74f0caf22a0",
-      "description": "best trained supervised encoder",
+      "description": "Best encoder",
       "parts": [
         {
           "asset": "mobilenetv5-300m--best--encoder.pt",
@@ -33,11 +18,11 @@
       ],
       "required": true
     },
-    "classifier": {
+    "best_classifier": {
       "path": "best/classifier.pt",
       "bytes": 28027,
       "sha256": "ab23162e817bec262fbc2376a8dbb4356959181e6e5d7513d85b666055507437",
-      "description": "best trained classifier",
+      "description": "Best classifier",
       "parts": [
         {
           "asset": "mobilenetv5-300m--best--classifier.pt",
@@ -48,11 +33,11 @@
       ],
       "required": true
     },
-    "final_epoch_encoder": {
+    "final_encoder": {
       "path": "final/encoder.pt",
       "bytes": 1176686749,
       "sha256": "8c5878d324d30cec64e08cbb57e1e2c85739c9533b470c1f0cf1af8339f56fb8",
-      "description": "final trained supervised encoder",
+      "description": "Final encoder",
       "parts": [
         {
           "asset": "mobilenetv5-300m--final--encoder.pt",
@@ -63,11 +48,11 @@
       ],
       "required": true
     },
-    "final_epoch_classifier": {
+    "final_classifier": {
       "path": "final/classifier.pt",
       "bytes": 28037,
       "sha256": "d3ed8ef887994d0cbf57183020670a600248427f2b2044f7b240f1a9239ff877",
-      "description": "final trained classifier",
+      "description": "Final classifier",
       "parts": [
         {
           "asset": "mobilenetv5-300m--final--classifier.pt",
@@ -79,21 +64,20 @@
       "required": true
     }
   },
-  "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/matched-training-20261023",
-  "checkpoint_definition": {
-    "best": "Validation-selected encoder/classifier pair used for the reported assessment.",
-    "final": "Last completed downstream training epoch of the selected configuration; frozen encoders are unchanged. This is distinct from the final JEPA adaptation epoch."
-  },
   "checkpoints": {
     "best": {
-      "encoder": "selected_encoder",
-      "classifier": "classifier",
+      "encoder": "best_encoder",
+      "classifier": "best_classifier",
       "descriptor": "best/model.json"
     },
     "final": {
-      "encoder": "final_epoch_encoder",
-      "classifier": "final_epoch_classifier",
+      "encoder": "final_encoder",
+      "classifier": "final_classifier",
       "descriptor": "final/model.json"
     }
+  },
+  "checkpoint_definition": {
+    "best": "Validation-selected checkpoint used for reported results.",
+    "final": "Last completed downstream training epoch."
   }
 }

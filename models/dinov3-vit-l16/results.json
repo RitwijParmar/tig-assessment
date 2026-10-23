@@ -1,5 +1,5 @@
 {
-  "model": "DINOv3 ViT-L/16 + linear classifier",
+  "model": "DINOv3 ViT-L/16",
   "status": "completed",
   "classifier_epoch": 77,
   "final_classifier_epoch": 92,

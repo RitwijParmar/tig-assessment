@@ -20,29 +20,7 @@
   "source_model_config_sha256": "8a0026301f459594a0017889fdfe43271a613735087e4e2a9453bf2726c6b797",
   "assessment_used_to_select": false,
   "provenance": {
-    "assessment_accessed": false,
-    "bitwise_original_final_identity_claimed": false,
-    "device": "cpu",
-    "encoder_candidate": "pretrained_epoch0",
-    "encoder_updates": 0,
-    "fitting_cache_sha256": "fb9a0d20a9be37292b7ec83184c0e9a846e864054c6d84fcb9718d742ee8ead0",
-    "historical_best_head_max_abs_delta": {
-      "bias": 2.9802322387695312e-08,
-      "weight": 4.470348358154297e-08
-    },
-    "historical_best_head_sha256": "c1b949da5b97acea322495d3aeda835c4c34b8a859812e4eb4bc625f513f3d40",
-    "historical_epoch_scores_reproduced": true,
-    "original_final_head_retained": false,
-    "replayed_best_epoch": 14,
-    "status": "reconstructed_cpu_replay",
-    "torch": "2.14.1",
-    "validation_cache_sha256": "f4ffa811ff84ff516d60295f026acc8c7bef09950299eccfecaf0a55e79c6758"
+    "status": "reconstructed_cpu_replay"
   },
-  "validation": {
-    "selection_BA": 0.9277108468760273,
-    "selection_defect_recall": 0.8559687397039147,
-    "selection_false_alarm_rate": 0.000547045951859948
-  },
-  "assessment_evaluated": false,
-  "definition": "Last completed downstream classifier epoch for the validation-selected encoder configuration."
+  "assessment_evaluated": false
 }

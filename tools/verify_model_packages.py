@@ -12,7 +12,7 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_IDS = (
-    "ijepa-vit-h14",
+    "ijepa-vit-h14-adapted",
     "ijepa-vit-h14-pretrained",
     "mobilenetv5-300m",
     "dinov3-vit-l16",
@@ -120,7 +120,9 @@ def audit(require_weights=False):
             "manifest.json",
             "download.py",
         }
-        pairs = {**inventory["checkpoints"], **inventory.get("training_stages", {})}
+        pairs = inventory["checkpoints"]
+        assert set(inventory["artifacts"]) == {"best_encoder", "best_classifier", "final_encoder", "final_classifier"}
+        assert available_names == {"best", "final"}
         allowed_weight_paths = {
             weight["path"] for weight in inventory["artifacts"].values()
             if weight["path"] is not None
@@ -132,7 +134,7 @@ def audit(require_weights=False):
         assert set(inventory["checkpoints"]) == {"best", "final"}
         assert all(inventory["artifacts"][inventory["checkpoints"]["best"][key]]["path"].startswith("best/") for key in ("encoder", "classifier"))
         for kind, pair in pairs.items():
-            assert kind in ("best", "final", "adaptation-final")
+            assert kind in ("best", "final")
             assert all(inventory["artifacts"][pair[key]]["path"].startswith(kind+"/") for key in ("encoder", "classifier"))
             descriptor_path = folder / "weights" / kind / "model.json"
             assert descriptor_path.is_file(), descriptor_path
@@ -162,12 +164,12 @@ def audit(require_weights=False):
         if package["status"] == "completed":
             assert result["validation"] is not None and result["assessment"] is not None
             assert (
-                inventory["artifacts"]["classifier"]["sha256"]
+                inventory["artifacts"]["best_classifier"]["sha256"]
                 == result["weights"]["classifier_sha256"]
             )
         else:
             assert result["validation"] is result["assessment"] is None
-            assert inventory["artifacts"]["classifier"]["path"] is None
+            assert inventory["artifacts"]["best_classifier"]["path"] is None
         summary[model_id] = {
             "status": package["status"],
             "local_weight_roles_verified": checked,

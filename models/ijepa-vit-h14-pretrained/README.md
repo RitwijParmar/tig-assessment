@@ -1,4 +1,4 @@
-# Original pretrained I-JEPA ViT-H/14 + linear classifier
+# I-JEPA ViT-H/14 (Pretrained)
 
 ## Status
 
@@ -79,14 +79,7 @@ This model’s configuration sets `weld_adaptation=false`: training fits the rea
 
 ## Weights
 
-`weights/best/` and `weights/final/` each contain their encoder, classifier and checkpoint descriptor. Reported results use **best**. Final means the last completed downstream training epoch of the selected configuration. The historical last classifier head was not saved, so its final head is a labelled CPU reconstruction from verified historical fitting/validation features. The encoder remains the selected frozen encoder. Exact hashes, provenance and downloads are in [weights/manifest.json](weights/manifest.json), [weights/final/model.json](weights/final/model.json) and [weights/README.md](weights/README.md).
-
-```bash
-python run.py fetch-weights
-python run.py verify-weights
-python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
-python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint final
-```
+`best/` and `final/` each contain the encoder, classifier and checkpoint descriptor. Reported results use **best**. Final classifier: reconstructed CPU replay. See [downloads and hashes](weights/README.md).
 
 ## Implementation and licenses
 
