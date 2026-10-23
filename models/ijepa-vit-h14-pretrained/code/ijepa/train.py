@@ -446,6 +446,7 @@ def train(config_path, output, device="cuda"):
                 },
             )
             shutil.copyfile(destination / "mean/best.pt", output / "classifier.pt")
+            shutil.copyfile(destination / "mean/last.pt", output / "classifier_last.pt")
             atomic_json(output / "selection.json", best)
         del features, probe
         gc.collect()
@@ -474,6 +475,7 @@ def train(config_path, output, device="cuda"):
                 "encoder": sha256(output / "encoder.pt"),
                 "classifier": sha256(output / "classifier.pt"),
             },
+            "final_classifier_sha256": sha256(output / "classifier_last.pt"),
             "classifier_recipe": config["classifier"],
             "assessment_pixels_accessed": False,
         }

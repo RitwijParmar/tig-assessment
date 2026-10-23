@@ -79,15 +79,14 @@ This model’s configuration sets `weld_adaptation=false`: training fits the rea
 
 ## Weights
 
-`weights/best/` contains the evaluated encoder, classifier and checkpoint descriptor. The historical last-epoch checkpoint was not retained; no substitute final checkpoint is created. Actual files and their SHA-256 hashes are listed once in [weights/manifest.json](weights/manifest.json); [weights/README.md](weights/README.md) has the download links. Large encoder bytes are release assets; small classifiers and descriptors are committed here.
+`weights/best/` and `weights/final/` each contain their encoder, classifier and checkpoint descriptor. Reported results use **best**. Final means the last completed downstream training epoch of the selected configuration. The historical last classifier head was not saved, so its final head is a labelled CPU reconstruction from verified historical fitting/validation features. The encoder remains the selected frozen encoder. Exact hashes, provenance and downloads are in [weights/manifest.json](weights/manifest.json), [weights/final/model.json](weights/final/model.json) and [weights/README.md](weights/README.md).
 
 ```bash
 python run.py fetch-weights
 python run.py verify-weights
 python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
+python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint final
 ```
-
-.json](weights/manifest.json) identifies every part and final file. Both I-JEPA folders use the same `encoder.pt` + `classifier.pt` inference layout. The small classifiers are also stored directly in Git; large encoders are release assets. MobileNetV5/DINOv3 currently contain pretrained encoders only.
 
 ## Implementation and licenses
 

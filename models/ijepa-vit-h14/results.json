@@ -38,7 +38,8 @@
     "base_sha256": "0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22",
     "selected_encoder_sha256": "9f9c3dfe31e49c1a7333ac85e436d6a7b9f7a12c3a4b142ee12b662a7cde5b17",
     "classifier_sha256": "990833bb02a531cb2350b65cb4141630b721d79eed62b9b5cc11b245f93619bb",
-    "best_directory": "weights/best"
+    "best_directory": "weights/best",
+    "final_directory": "weights/final"
   },
   "scope": "Existing recorded results, not a new training run. Assessment groups were not used for weight updates but were inspected in earlier research.",
   "status": "completed"

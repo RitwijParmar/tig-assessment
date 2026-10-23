@@ -27,7 +27,8 @@
     "encoder_source": "target_encoder from the official base checkpoint, with no weld adaptation",
     "classifier_sha256": "c1b949da5b97acea322495d3aeda835c4c34b8a859812e4eb4bc625f513f3d40",
     "selected_encoder_sha256": "2fd11db9cf9ade5f7d707faedb78f3bde64feea79c5d18e5f498f86620bdb671",
-    "best_directory": "weights/best"
+    "best_directory": "weights/best",
+    "final_directory": "weights/final"
   },
   "scope": "Existing completed pretrained control from the same recorded run and identical fitting, validation and assessment rows, preprocessing, linear-probe recipe and threshold as the adapted model. Assessment recordings were inspected in earlier research. No new training or evaluation.",
   "status": "completed"

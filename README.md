@@ -40,11 +40,20 @@ models/<model>/
     manifest.json
     download.py
     best/          Evaluated encoder, classifier and model.json
-    final/         Last-epoch checkpoint, when retained
+    final/         Last downstream epoch: encoder, classifier and model.json
     pretrained/    Shared released base, only when required
 ```
 
-All models have **best**. MobileNetV5 and DINOv3 also retain **final**. Historical I-JEPA final-epoch weights were not retained; they are not replaced with copies of best. Frozen DINOv3 reuses one encoder for both heads. The manifests contain only actual files, each listed once.
+All four models have **best** and **final**, with complete encoder/classifier pairs and descriptors. Final means the last completed downstream training epoch of the selected configuration. Frozen encoder bytes are reused by hardlink when downloaded.
+
+| Model | Best classifier epoch | Final classifier epoch | Final provenance |
+| --- | ---: | ---: | --- |
+| Original I-JEPA | 14 | 29 | CPU reconstruction from verified historical features |
+| Adapted I-JEPA | 3 | 18 | CPU reconstruction from verified historical features; same selected epoch-1 encoder |
+| MobileNetV5 | 16 | 20 | Original saved GPU checkpoint |
+| DINOv3 | 77 | 92 | Original saved GPU checkpoint |
+
+The old I-JEPA probe saved only its best head. Recovery reproduced every historical validation score and stopping epoch, but the reconstructed final heads are not claimed to be the original unsaved CUDA files. Reported benchmark results and original best weights are unchanged. The real epoch-5 JEPA adaptation encoder was saved in a private snapshot and recovered separately; it is a different stage from the selected encoder's last classifier epoch. [Recovery details](https://github.com/RitwijParmar/tig-assessment/releases/tag/ijepa-final-recovery-20261023).
 
 Run from any model folder:
 

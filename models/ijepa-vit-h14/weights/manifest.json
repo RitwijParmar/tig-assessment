@@ -7,7 +7,7 @@
       "path": "best/encoder.pt",
       "sha256": "9f9c3dfe31e49c1a7333ac85e436d6a7b9f7a12c3a4b142ee12b662a7cde5b17",
       "bytes": 2523197455,
-      "description": "selected final weld-adapted I-JEPA target encoder",
+      "description": "Validation-selected weld-adapted I-JEPA target encoder, adaptation epoch 1.",
       "parts": [
         {
           "asset": "ijepa-vit-h14--encoder.pt.part01",
@@ -28,13 +28,85 @@
       "path": "best/classifier.pt",
       "sha256": "990833bb02a531cb2350b65cb4141630b721d79eed62b9b5cc11b245f93619bb",
       "bytes": 18633,
-      "description": "selected final weld classifier and fitting normalization",
+      "description": "Validation-selected classifier, epoch 3, and fitting-only normalization.",
       "parts": [
         {
           "asset": "ijepa-vit-h14--classifier.pt",
           "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14--classifier.pt",
           "bytes": 18633,
           "sha256": "990833bb02a531cb2350b65cb4141630b721d79eed62b9b5cc11b245f93619bb"
+        }
+      ],
+      "required": true
+    },
+    "final_epoch_encoder": {
+      "path": "final/encoder.pt",
+      "sha256": "9f9c3dfe31e49c1a7333ac85e436d6a7b9f7a12c3a4b142ee12b662a7cde5b17",
+      "bytes": 2523197455,
+      "description": "Same frozen selected encoder as best; paired with reconstructed last-epoch head.",
+      "parts": [
+        {
+          "asset": "ijepa-vit-h14--encoder.pt.part01",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14--encoder.pt.part01",
+          "bytes": 1610612736,
+          "sha256": "6acd4a3dfeba801298ac0701f2357931b89f07fc97227fbc73eccb32782868c8"
+        },
+        {
+          "asset": "ijepa-vit-h14--encoder.pt.part02",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14--encoder.pt.part02",
+          "bytes": 912584719,
+          "sha256": "5da5bf632584700b0496e994885c83316440c36fa143285795f6a94f01424c58"
+        }
+      ],
+      "required": true
+    },
+    "final_epoch_classifier": {
+      "path": "final/classifier.pt",
+      "bytes": 19807,
+      "sha256": "e9cf0aacd2615c2480a57bcb90e8f091bd634c5770ff046345ea2dde86188603",
+      "description": "Reconstructed last completed classifier epoch from verified historical features; CPU replay, not original CUDA checkpoint.",
+      "parts": [
+        {
+          "asset": "ijepa-vit-h14--final--classifier.pt",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/ijepa-final-recovery-20261023/ijepa-vit-h14--final--classifier.pt",
+          "bytes": 19807,
+          "sha256": "e9cf0aacd2615c2480a57bcb90e8f091bd634c5770ff046345ea2dde86188603"
+        }
+      ],
+      "required": true
+    },
+    "adaptation_final_encoder": {
+      "path": "adaptation-final/encoder.pt",
+      "bytes": 2523195875,
+      "sha256": "1622c381ce11d10e8f95479805f6131ddb4390b08e2d7d8ac109b64cd302d831",
+      "description": "Original saved native-mask EMA target encoder at JEPA adaptation epoch 5; recovered unchanged from private snapshot.",
+      "parts": [
+        {
+          "asset": "ijepa-vit-h14--adaptation-final--encoder.pt.part01",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/ijepa-final-recovery-20261023/ijepa-vit-h14--adaptation-final--encoder.pt.part01",
+          "bytes": 1610612736,
+          "sha256": "d05b3fab05c7b18303fe480a8647c407400f090b7c272021d7b44935eae9f342"
+        },
+        {
+          "asset": "ijepa-vit-h14--adaptation-final--encoder.pt.part02",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/ijepa-final-recovery-20261023/ijepa-vit-h14--adaptation-final--encoder.pt.part02",
+          "bytes": 912583139,
+          "sha256": "7dd46da19a066ce1ce2af39c9bde7b871c40e8757d98817f9175327466d5cdca"
+        }
+      ],
+      "required": true
+    },
+    "adaptation_final_classifier": {
+      "path": "adaptation-final/classifier.pt",
+      "bytes": 18633,
+      "sha256": "83d6d9130ec36d5b4978b2b78488ee61a057826574e5e8bd447aac41a30ade63",
+      "description": "Original validation-selected mean readout trained on the epoch-5 adaptation encoder; not the reported winning model.",
+      "parts": [
+        {
+          "asset": "ijepa-vit-h14--adaptation-final--classifier.pt",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/ijepa-final-recovery-20261023/ijepa-vit-h14--adaptation-final--classifier.pt",
+          "bytes": 18633,
+          "sha256": "83d6d9130ec36d5b4978b2b78488ee61a057826574e5e8bd447aac41a30ade63"
         }
       ],
       "required": true
@@ -46,10 +118,23 @@
       "encoder": "selected_encoder",
       "classifier": "classifier",
       "descriptor": "best/model.json"
+    },
+    "final": {
+      "encoder": "final_epoch_encoder",
+      "classifier": "final_epoch_classifier",
+      "descriptor": "final/model.json"
     }
   },
   "checkpoint_definition": {
-    "best": "Validation-selected checkpoint used for the reported assessment.",
-    "final": "Last completed epoch of the selected training configuration, when retained."
+    "best": "Validation-selected encoder/classifier pair used for the reported assessment.",
+    "final": "Last completed downstream training epoch of the selected configuration; frozen encoders are unchanged. This is distinct from the final JEPA adaptation epoch."
+  },
+  "recovery_release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/ijepa-final-recovery-20261023",
+  "training_stages": {
+    "adaptation-final": {
+      "encoder": "adaptation_final_encoder",
+      "classifier": "adaptation_final_classifier",
+      "descriptor": "adaptation-final/model.json"
+    }
   }
 }

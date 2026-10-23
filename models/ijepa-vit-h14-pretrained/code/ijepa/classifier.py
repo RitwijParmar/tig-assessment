@@ -76,26 +76,31 @@ def fit_probe(
             logits = head(val).squeeze(-1)
         score = selection_score(selection, logits)
         history.append({"epoch": epoch, "fitting_loss": total / len(fitting), **score})
+        current = {
+            "identity": digest(
+                {"candidate": candidate, "readout": readout, "recipe": recipe}
+            ),
+            "candidate": candidate,
+            "readout": readout,
+            "recipe": recipe,
+            "head": {
+                k: v.detach().cpu().clone() for k, v in head.state_dict().items()
+            },
+            "mean": mean,
+            "std": std,
+            "epoch": epoch,
+            "fitting_rows_sha256": digest(fitting),
+            "selection_rows_sha256": digest(selection),
+            "score": score,
+        }
+        # Persist the actual last completed epoch, independently of selection.
+        # A crash or early stop must not leave only the validation-best head.
+        atomic_torch(output / "last.pt", current)
         if score["selection_BA"] > best:
             best = score["selection_BA"]
             stale = 0
-            saved = {
-                "identity": digest(
-                    {"candidate": candidate, "readout": readout, "recipe": recipe}
-                ),
-                "candidate": candidate,
-                "readout": readout,
-                "recipe": recipe,
-                "head": {
-                    k: v.detach().cpu().clone() for k, v in head.state_dict().items()
-                },
-                "mean": mean,
-                "std": std,
-                "epoch": epoch,
-                "fitting_rows_sha256": digest(fitting),
-                "selection_rows_sha256": digest(selection),
-                "score": score,
-            }
+            saved = current
+            atomic_torch(output / "best.pt", saved)
         else:
             stale += 1
         if stale >= recipe["patience"]:

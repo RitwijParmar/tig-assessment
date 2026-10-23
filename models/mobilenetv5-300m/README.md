@@ -71,17 +71,12 @@ The model identifier is supplied automatically by this folder’s runner. Asset 
 
 ## Weights
 
-`weights/best/` contains the evaluated encoder, classifier and checkpoint descriptor. `weights/final/` retains the last completed epoch of the selected configuration. The assessment uses **best**. The released base encoder is stored once under `pretrained/` and shared by best/final loading. Actual files and their SHA-256 hashes are listed once in [weights/manifest.json](weights/manifest.json); [weights/README.md](weights/README.md) has the download links. Large encoder bytes are release assets; small classifiers and descriptors are committed here.
+`weights/best/` and `weights/final/` each contain their encoder, classifier and checkpoint descriptor. Reported results use **best**. Final means the last completed downstream training epoch of the selected configuration. Exact hashes, provenance and downloads are in [weights/manifest.json](weights/manifest.json), [weights/final/model.json](weights/final/model.json) and [weights/README.md](weights/README.md).
 
 ```bash
 python run.py fetch-weights
 python run.py verify-weights
 python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
-```
-
-Use `--checkpoint final` to load the retained final checkpoint. GPU scores are reported; CPU/GPU metric equivalence has not been established.
-
-un.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
 python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint final
 ```
 

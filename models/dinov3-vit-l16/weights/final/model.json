@@ -7,7 +7,7 @@
   "geometry": "native",
   "threshold": 0.5,
   "encoder": {
-    "path": "best/encoder.safetensors",
+    "path": "final/encoder.safetensors",
     "bytes": 1212559808,
     "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
   },

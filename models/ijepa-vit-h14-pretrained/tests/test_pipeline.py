@@ -196,6 +196,13 @@ def test_readout_fits_detached_features_and_uses_fitting_only_normalization(tmp_
     torch.testing.assert_close(saved["std"], x.std(0, unbiased=False), rtol=0, atol=0)
     assert saved["score"]["selection_BA"] == 1.0
     assert (tmp_path / "probe/best.pt").is_file()
+    last = torch.load(tmp_path / "probe/last.pt", map_location="cpu", weights_only=True)
+    history = json.loads((tmp_path / "probe/history.json").read_text())
+    assert saved["epoch"] == 1
+    assert last["epoch"] == len(history) > saved["epoch"]
+    assert not torch.equal(last["head"]["weight"], saved["head"]["weight"])
+    torch.testing.assert_close(last["mean"], x.mean(0), rtol=0, atol=0)
+    torch.testing.assert_close(last["std"], x.std(0, unbiased=False), rtol=0, atol=0)
 
 
 def test_native_adaptation_epoch_completes_with_real_images_and_weight_audit(tmp_path):
@@ -364,6 +371,9 @@ def test_standalone_pipeline_seals_before_assessment_and_replays_selected_model(
     assert not any(group.startswith("assessment") for group in accessed)
     seal = json.loads((run / "seal.json").read_text())
     assert seal["assessment_pixels_accessed"] is False
+    assert seal["final_classifier_sha256"] == hashlib.sha256((run / "classifier_last.pt").read_bytes()).hexdigest()
+    selected_final = run / "readouts" / f"epoch{chosen['adaptation_epoch']}" / "mean/last.pt"
+    assert (run / "classifier_last.pt").read_bytes() == selected_final.read_bytes()
     metrics = assessment.evaluate(run, "cpu")
     assert 0 <= metrics["balanced_accuracy"] <= 1
     assert any(group.startswith("assessment") for group in accessed)

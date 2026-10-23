@@ -47,12 +47,27 @@
         }
       ],
       "required": true
+    },
+    "final_epoch_encoder": {
+      "path": "final/encoder.safetensors",
+      "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
+      "bytes": 1212559808,
+      "description": "Unchanged frozen DINOv3 encoder; downloader reuses verified best bytes via hardlink.",
+      "parts": [
+        {
+          "asset": "dinov3-vit-l16--pretrained_encoder.safetensors",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--pretrained_encoder.safetensors",
+          "bytes": 1212559808,
+          "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
+        }
+      ],
+      "required": true
     }
   },
   "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/matched-training-20261023",
   "checkpoint_definition": {
-    "best": "Validation-selected checkpoint used for the reported assessment.",
-    "final": "Last completed epoch of the selected training configuration, when retained."
+    "best": "Validation-selected encoder/classifier pair used for the reported assessment.",
+    "final": "Last completed downstream training epoch of the selected configuration; frozen encoders are unchanged. This is distinct from the final JEPA adaptation epoch."
   },
   "checkpoints": {
     "best": {
@@ -61,7 +76,7 @@
       "descriptor": "best/model.json"
     },
     "final": {
-      "encoder": "selected_encoder",
+      "encoder": "final_epoch_encoder",
       "classifier": "final_epoch_classifier",
       "descriptor": "final/model.json"
     }

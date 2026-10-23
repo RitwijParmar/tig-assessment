@@ -81,8 +81,8 @@
   },
   "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/matched-training-20261023",
   "checkpoint_definition": {
-    "best": "Validation-selected checkpoint used for the reported assessment.",
-    "final": "Last completed epoch of the selected training configuration, when retained."
+    "best": "Validation-selected encoder/classifier pair used for the reported assessment.",
+    "final": "Last completed downstream training epoch of the selected configuration; frozen encoders are unchanged. This is distinct from the final JEPA adaptation epoch."
   },
   "checkpoints": {
     "best": {
