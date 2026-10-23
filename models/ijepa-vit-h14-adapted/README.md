@@ -84,6 +84,8 @@ False alarms are therefore rare across the remaining eight recordings, while thi
 
 The table uses raw frame counts; the reported **11.00%** uses recording weights. All nine recordings remain included in the reported assessment results. These counts locate the failure; its underlying visual or annotation cause has not been established.
 
+**Proposed follow-up:** [SliceFinder](https://arxiv.org/abs/1807.06068) could test whether brightness, glare, contrast or blur are associated with false alarms. [Domino](https://arxiv.org/abs/2203.14960) could find visually similar error groups using image embeddings, labels and predictions. These analyses would help investigate what makes this recording difficult; they have not yet been run.
+
 ## Usage
 
 Run from this model directory:
