@@ -2,6 +2,8 @@
 
 Weld-image classification using a **JEPA-adapted I-JEPA ViT-H/14 encoder**, followed by a trained linear classifier. This directory contains the recorded model, its training and evaluation source, data recipe and summary results.
 
+**Selected final model.** The [completed original pretrained baseline](../ijepa-vit-h14-pretrained/) used the same data roles and downstream recipe and reached **84.89%** assessment balanced accuracy. This adapted model reached **92.75%**. Both are existing recorded results.
+
 ## Architecture
 
 **Stage 1 — JEPA adaptation**
