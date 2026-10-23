@@ -25,7 +25,6 @@
     "device": "CUDA for recorded run; float32, zero initialized linear head"
   },
   "same_split_config": "data.json",
-  "status": "implemented; no completed matched training result yet",
   "data_split": {
     "format": "ijepa-vit-h14-split-fingerprints-v1",
     "group_rule": "Remove terminal -partN from the image parent folder",

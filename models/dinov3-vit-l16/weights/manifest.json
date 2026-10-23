@@ -20,41 +20,106 @@
       "required": true
     },
     "selected_encoder": {
-      "path": null,
-      "sha256": null,
-      "bytes": null,
-      "status": "not_available",
-      "description": "No matched weld training/validation selection has run. Use the released pretrained_encoder for future readout fitting.",
-      "parts": [],
-      "required": false
+      "path": "best/pretrained_encoder.safetensors",
+      "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
+      "bytes": 1212559808,
+      "status": "public_release",
+      "description": "best frozen encoder; byte-identical to the released pretrained encoder.",
+      "parts": [
+        {
+          "asset": "dinov3-vit-l16--pretrained_encoder.safetensors",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--pretrained_encoder.safetensors",
+          "bytes": 1212559808,
+          "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
+        }
+      ],
+      "required": true
     },
     "classifier": {
-      "path": null,
-      "sha256": null,
-      "bytes": null,
-      "status": "not_available",
-      "description": "not produced by a matched training run",
-      "parts": [],
-      "required": false
+      "path": "best/classifier.pt",
+      "bytes": 27785,
+      "sha256": "b24a1ce82e1850d9d47c98fc98d79fc532d73faa98747d7cf9e9295d28f3c8b4",
+      "status": "public_release",
+      "description": "best trained classifier",
+      "parts": [
+        {
+          "asset": "dinov3-vit-l16--best--classifier.pt",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/matched-training-20261023/dinov3-vit-l16--best--classifier.pt",
+          "bytes": 27785,
+          "sha256": "b24a1ce82e1850d9d47c98fc98d79fc532d73faa98747d7cf9e9295d28f3c8b4"
+        }
+      ],
+      "required": true
     },
     "final_epoch_encoder": {
-      "path": null,
-      "sha256": null,
-      "bytes": null,
-      "status": "not_available",
-      "description": "not part of the retained selected model; future supervised runs keep this separately",
-      "parts": [],
-      "required": false
+      "path": "final/pretrained_encoder.safetensors",
+      "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
+      "bytes": 1212559808,
+      "status": "public_release",
+      "description": "final frozen encoder; byte-identical to the released pretrained encoder.",
+      "parts": [
+        {
+          "asset": "dinov3-vit-l16--pretrained_encoder.safetensors",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--pretrained_encoder.safetensors",
+          "bytes": 1212559808,
+          "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
+        }
+      ],
+      "required": true
     },
     "final_epoch_classifier": {
-      "path": null,
-      "sha256": null,
-      "bytes": null,
-      "status": "not_available",
-      "description": "not part of the retained selected model; future supervised runs keep this separately",
-      "parts": [],
+      "path": "final/classifier.pt",
+      "bytes": 27795,
+      "sha256": "1d32999b903d3ff235d2b76ff487583c81718cd64131651f69300ab61b7f06f7",
+      "status": "public_release",
+      "description": "final trained classifier",
+      "parts": [
+        {
+          "asset": "dinov3-vit-l16--final--classifier.pt",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/matched-training-20261023/dinov3-vit-l16--final--classifier.pt",
+          "bytes": 27795,
+          "sha256": "1d32999b903d3ff235d2b76ff487583c81718cd64131651f69300ab61b7f06f7"
+        }
+      ],
+      "required": true
+    },
+    "best_pretrained_encoder": {
+      "path": "best/pretrained_encoder.safetensors",
+      "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
+      "bytes": 1212559808,
+      "status": "public_release",
+      "description": "Released encoder base retained with the best checkpoint.",
+      "parts": [
+        {
+          "asset": "dinov3-vit-l16--pretrained_encoder.safetensors",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--pretrained_encoder.safetensors",
+          "bytes": 1212559808,
+          "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
+        }
+      ],
+      "required": false
+    },
+    "final_pretrained_encoder": {
+      "path": "final/pretrained_encoder.safetensors",
+      "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
+      "bytes": 1212559808,
+      "status": "public_release",
+      "description": "Released encoder base retained with the final checkpoint.",
+      "parts": [
+        {
+          "asset": "dinov3-vit-l16--pretrained_encoder.safetensors",
+          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--pretrained_encoder.safetensors",
+          "bytes": 1212559808,
+          "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
+        }
+      ],
       "required": false
     }
   },
-  "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/model-weights-20261023"
+  "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/matched-training-20261023",
+  "checkpoint_definition": {
+    "best": "highest validation recording-weighted balanced accuracy at threshold0.5; earliest exact tie",
+    "final": "last completed epoch of the validation-selected configuration",
+    "reported_assessment": "best only; final was not used for assessment selection"
+  }
 }

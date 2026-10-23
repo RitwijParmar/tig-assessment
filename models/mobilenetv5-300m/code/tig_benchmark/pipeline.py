@@ -59,6 +59,15 @@ def extract(encoder, transform, rows, config, device):
     for batch in loader:
         values.append(encoder(batch["image"].to(device)).cpu())
         paths.extend(batch["path"])
+        if len(values) % 100 == 0 or len(paths) == len(rows):
+            print(
+                {
+                    "stage": "feature_extraction",
+                    "frames": len(paths),
+                    "total": len(rows),
+                },
+                flush=True,
+            )
     if paths != [r["path"] for r in rows]:
         raise ValueError("Feature frame coverage/order mismatch")
     return torch.cat(values)
@@ -74,10 +83,14 @@ def fit(
     workers=0,
     geometry="native",
     finetune=False,
+    resume=False,
 ):
     output, device = Path(output), torch.device(device)
-    if output.exists():
+    continuing = output.exists()
+    if continuing and not resume:
         raise FileExistsError("Use a fresh run; never overwrite an existing selection")
+    if continuing and any((output / p).exists() for p in ("seal.json", ".assessment.started", "assessment_metrics.json")):
+        raise ValueError("Cannot resume a sealed or assessed run")
     configure_precision()
     data, roles = load_data(data_path)
     lock = load_assets(name, asset_path)
@@ -107,59 +120,99 @@ def fit(
         "matmul_precision": "highest",
         "convolution_precision": "tf32 on CUDA, matching recorded I-JEPA",
     }
-    output.mkdir(parents=True)
-    atomic_json(output / "config.json", cfg)
-    atomic_json(output / "assets.local.json", lock)
-    encoder, transform = models.build(lock, device, geometry)
-    before = tensor_identity(encoder)
-    features = {
-        role: extract(encoder, transform, roles[role], cfg, device)
-        for role in ("fitting", "selection")
-    }
-    if tensor_identity(encoder) != before:
-        raise ValueError(
-            "Frozen encoder weights/buffers changed during feature extraction"
+    if continuing:
+        if json.loads((output / "config.json").read_text()) != cfg:
+            raise ValueError("Resume runtime/data/recipe configuration differs")
+        prior_assets = json.loads((output / "assets.local.json").read_text())
+        if {k: v for k, v in prior_assets.items() if k != "checkpoint"} != {k: v for k, v in lock.items() if k != "checkpoint"}:
+            raise ValueError("Resume source/weight registration differs")
+        if sha256(prior_assets["checkpoint"]) != lock["checkpoint_sha256"]:
+            raise ValueError("Resume retained pretrained encoder differs")
+        # An interruption after export but before seal may leave portable
+        # exports and a retained-base path. Preserve those unsealed exports,
+        # then rebuild them from the committed candidate epoch checkpoints.
+        atomic_json(output / "assets.local.json", lock)
+        for name in ("selected", "final"):
+            path = output / name
+            if path.exists():
+                archive = output / ("unsealed_export_before_resume_" + name)
+                if archive.exists():
+                    raise ValueError("Resolve an earlier incomplete export archive before resuming")
+                path.rename(archive)
+        saved_features = torch.load(output / "features.local.pt", map_location="cpu", weights_only=True)
+        if saved_features["identity"] != digest({"assets": lock, "data": data, "geometry": geometry}):
+            raise ValueError("Resume frozen feature identity differs")
+        probe = torch.load(output / "frozen/best.pt", map_location="cpu", weights_only=True)
+        if probe["fitting_rows_sha256"] != digest(roles["fitting"]) or probe["selection_rows_sha256"] != digest(roles["selection"]):
+            raise ValueError("Resume frozen head frame identities differ")
+        if not torch.equal(probe["mean"], saved_features["fitting"].mean(0)) or not torch.equal(probe["std"], saved_features["fitting"].std(0, unbiased=False).clamp_min(1e-6)):
+            raise ValueError("Resume fitting-only normalization differs")
+        encoder, transform = models.build(lock, device, geometry)
+        before = tensor_identity(encoder)
+        fixture = torch.load(output / "replay.local.pt", map_location="cpu", weights_only=True)
+        with torch.no_grad():
+            actual = encoder(fixture["images"].to(device)).cpu()
+        if not torch.allclose(actual, fixture["features"], atol=1e-4, rtol=0):
+            raise ValueError("Resume frozen encoder replay differs")
+        chosen = dict(mode="frozen", epoch=probe["epoch"], score=probe["score"],
+            head_path=str((output / "frozen/best.pt").resolve()), encoder_path=None)
+        del encoder, saved_features, fixture, actual
+        if device.type == "cuda":
+            torch.cuda.empty_cache()
+    else:
+        output.mkdir(parents=True)
+        atomic_json(output / "config.json", cfg)
+        atomic_json(output / "assets.local.json", lock)
+        encoder, transform = models.build(lock, device, geometry)
+        before = tensor_identity(encoder)
+        features = {
+            role: extract(encoder, transform, roles[role], cfg, device)
+            for role in ("fitting", "selection")
+        }
+        if tensor_identity(encoder) != before:
+            raise ValueError(
+                "Frozen encoder weights/buffers changed during feature extraction"
+            )
+        atomic_torch(
+            output / "features.local.pt",
+            {
+                "identity": digest({"assets": lock, "data": data, "geometry": geometry}),
+                **features,
+            },
         )
-    atomic_torch(
-        output / "features.local.pt",
-        {
-            "identity": digest({"assets": lock, "data": data, "geometry": geometry}),
-            **features,
-        },
-    )
-    probe = fit_probe(
-        features["fitting"],
-        features["selection"],
-        roles["fitting"],
-        roles["selection"],
-        output / "frozen",
-        name,
-        spec["readout"],
-        device,
-        recipe=cfg["recipe"],
-    )
-    chosen = {
-        "mode": "frozen",
-        "epoch": probe["epoch"],
-        "score": probe["score"],
-        "head_path": str((output / "frozen/best.pt").resolve()),
-        "encoder_path": None,
-    }
-    # Raw fitting-image fixture, never assessment images, for checkpoint replay.
-    count = min(cfg["batch_size"], len(roles["fitting"]))
-    dataset = ResearchImages(roles["fitting"][:count], cfg["data_root"], transform)
-    images = torch.stack([dataset[i]["image"] for i in range(count)])
-    atomic_torch(
-        output / "replay.local.pt",
-        {
-            "identity": digest(roles["fitting"][:count]),
-            "images": images,
-            "features": features["fitting"][:count],
-        },
-    )
-    del encoder, features
-    if device.type == "cuda":
-        torch.cuda.empty_cache()
+        probe = fit_probe(
+            features["fitting"],
+            features["selection"],
+            roles["fitting"],
+            roles["selection"],
+            output / "frozen",
+            name,
+            spec["readout"],
+            device,
+            recipe=cfg["recipe"],
+        )
+        chosen = {
+            "mode": "frozen",
+            "epoch": probe["epoch"],
+            "score": probe["score"],
+            "head_path": str((output / "frozen/best.pt").resolve()),
+            "encoder_path": None,
+        }
+        # Raw fitting-image fixture, never assessment images, for checkpoint replay.
+        count = min(cfg["batch_size"], len(roles["fitting"]))
+        dataset = ResearchImages(roles["fitting"][:count], cfg["data_root"], transform)
+        images = torch.stack([dataset[i]["image"] for i in range(count)])
+        atomic_torch(
+            output / "replay.local.pt",
+            {
+                "identity": digest(roles["fitting"][:count]),
+                "images": images,
+                "features": features["fitting"][:count],
+            },
+        )
+        del encoder, features
+        if device.type == "cuda":
+            torch.cuda.empty_cache()
     if finetune:
         from .finetune import run_candidate
 
@@ -173,6 +226,7 @@ def fit(
                 output / "supervised" / f"lr{rate:g}",
                 device,
                 spec["supervised"],
+                resume=resume,
             )
             if candidate["score"]["selection_BA"] > chosen["score"]["selection_BA"]:
                 chosen = {k: v for k, v in candidate.items() if k != "probe"}

@@ -1,12 +1,686 @@
 {
   "model": "MobileNetV5-300M + linear classifier",
-  "status": "implemented_not_matched_trained",
+  "status": "completed",
   "selected_final_model": false,
-  "candidate": null,
-  "classifier_epoch": null,
+  "candidate": "supervised",
+  "classifier_epoch": 16,
+  "final_classifier_epoch": 20,
+  "selected_encoder_lr": 1e-05,
   "threshold": 0.5,
-  "validation": null,
-  "assessment": null,
-  "weights": "weights/manifest.json",
-  "scope": "No matched weld training or assessment has run. Historical results from different splits are not substituted."
+  "validation": {
+    "recordings": 6,
+    "frames": 6454,
+    "recording_balanced_accuracy": 0.9255012768636232,
+    "recording_defect_recall": 0.8852768402614603,
+    "recording_false_alarm_rate": 0.03427428653421407,
+    "recording_auroc": 0.9847005254180573,
+    "recording_pr_auc": 0.992499166321887,
+    "recording_precision": 0.9810096656524555,
+    "recording_f1": 0.9306879027660034,
+    "recording_brier": 0.08228378498884212,
+    "recording_ece": 0.08066808236347954,
+    "true_negative_frames": 1308,
+    "false_positive_frames": 33,
+    "false_negative_frames": 390,
+    "true_positive_frames": 4723,
+    "frame_weighted": {
+      "balanced_accuracy": 0.9495576700352788,
+      "defect_recall": 0.9237238411891258,
+      "false_alarm_rate": 0.024608501118568233,
+      "auroc": 0.9918174389301415,
+      "pr_auc": 0.9978617504423601
+    }
+  },
+  "assessment": {
+    "recordings": 9,
+    "frames": 6763,
+    "recording_balanced_accuracy": 0.795675165179716,
+    "recording_defect_recall": 0.8151405592061411,
+    "recording_false_alarm_rate": 0.2237902288467091,
+    "recording_auroc": 0.8683190866846152,
+    "recording_pr_auc": 0.9377154028947682,
+    "recording_precision": 0.8585376808818841,
+    "recording_f1": 0.8362764939296766,
+    "recording_brier": 0.19216907622019408,
+    "recording_ece": 0.1915584262960769,
+    "true_negative_frames": 2103,
+    "false_positive_frames": 524,
+    "false_negative_frames": 594,
+    "true_positive_frames": 3542,
+    "frame_weighted": {
+      "balanced_accuracy": 0.8284579530084475,
+      "defect_recall": 0.8563829787234043,
+      "false_alarm_rate": 0.19946707270650932,
+      "auroc": 0.8996932612455537,
+      "pr_auc": 0.9502367922807902
+    }
+  },
+  "selected_encoder_training": "full supervised encoder and classifier fine-tuning",
+  "weights": {
+    "base_sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321",
+    "selected_encoder_sha256": "e2ca8dcb3c29d68f683112c85e3b9221d35174aae02683551945b74f0caf22a0",
+    "classifier_sha256": "ab23162e817bec262fbc2376a8dbb4356959181e6e5d7513d85b666055507437",
+    "final_classifier_sha256": "d3ed8ef887994d0cbf57183020670a600248427f2b2044f7b240f1a9239ff877",
+    "best_directory": "weights/best",
+    "final_directory": "weights/final"
+  },
+  "training": {
+    "seed": 43,
+    "device": "NVIDIA RTX PRO 6000 Blackwell",
+    "dtype": "float32",
+    "extraction_batch_size": 8,
+    "workers": 4,
+    "geometry": "native",
+    "runtime": {
+      "convolution_precision": "tf32 on CUDA, matching recorded I-JEPA",
+      "float_dtype": "float32",
+      "matmul_precision": "highest",
+      "python": "3.12.3",
+      "torch": "2.14.1+cu130"
+    },
+    "exact_runtime": {
+      "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+      "platform": "Linux-7.0.0-1014-gcp-x86_64-with-glibc2.39",
+      "packages": {
+        "torch": "2.14.1+cu130",
+        "torchvision": "0.29.1",
+        "numpy": "2.5.4",
+        "Pillow": "12.3.0",
+        "safetensors": "0.6.2",
+        "huggingface-hub": "0.36.2",
+        "PyYAML": "6.0.3",
+        "packaging": "26.3"
+      },
+      "cuda": "13.0",
+      "cudnn": 92400,
+      "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "gpu_memory_bytes": 101973819392,
+      "driver": "580.178.04"
+    },
+    "sealed_run_config_sha256": "3d93672177cd94e56994e5c1bfd340c3f00d1e711ba6036073be509d9889196a",
+    "frozen_classifier_history": [
+      {
+        "epoch": 1,
+        "fitting_loss": 0.23145266739922904,
+        "selection_BA": 0.7850822379039686,
+        "selection_defect_recall": 0.5725063961826443,
+        "selection_false_alarm_rate": 0.0023419203747072626
+      },
+      {
+        "epoch": 2,
+        "fitting_loss": 0.09235403570729406,
+        "selection_BA": 0.7833555506729841,
+        "selection_defect_recall": 0.57373686247009,
+        "selection_false_alarm_rate": 0.007025761124121788
+      },
+      {
+        "epoch": 3,
+        "fitting_loss": 0.0666608408022824,
+        "selection_BA": 0.803678507673194,
+        "selection_defect_recall": 0.6132118162831562,
+        "selection_false_alarm_rate": 0.005854800936768156
+      },
+      {
+        "epoch": 4,
+        "fitting_loss": 0.05455962066987447,
+        "selection_BA": 0.8178904173763728,
+        "selection_defect_recall": 0.638122755127453,
+        "selection_false_alarm_rate": 0.0023419203747072626
+      },
+      {
+        "epoch": 5,
+        "fitting_loss": 0.045451424142439835,
+        "selection_BA": 0.8086418165839553,
+        "selection_defect_recall": 0.6184545933552641,
+        "selection_false_alarm_rate": 0.0011709601873535203
+      },
+      {
+        "epoch": 6,
+        "fitting_loss": 0.039073139122074864,
+        "selection_BA": 0.8138290785940343,
+        "selection_defect_recall": 0.628829117375422,
+        "selection_false_alarm_rate": 0.0011709601873535203
+      },
+      {
+        "epoch": 7,
+        "fitting_loss": 0.03428979126045011,
+        "selection_BA": 0.8341569878327382,
+        "selection_defect_recall": 0.6694849358528298,
+        "selection_false_alarm_rate": 0.0011709601873535203
+      },
+      {
+        "epoch": 8,
+        "fitting_loss": 0.03136857078891932,
+        "selection_BA": 0.8071228055988136,
+        "selection_defect_recall": 0.6171345775241942,
+        "selection_false_alarm_rate": 0.0028889663265672105
+      },
+      {
+        "epoch": 9,
+        "fitting_loss": 0.02788312628095536,
+        "selection_BA": 0.8533647385007574,
+        "selection_defect_recall": 0.7090713973762223,
+        "selection_false_alarm_rate": 0.0023419203747072626
+      },
+      {
+        "epoch": 10,
+        "fitting_loss": 0.025950868000883757,
+        "selection_BA": 0.8238992330993906,
+        "selection_defect_recall": 0.6489694263861349,
+        "selection_false_alarm_rate": 0.0011709601873535203
+      },
+      {
+        "epoch": 11,
+        "fitting_loss": 0.023527004305056363,
+        "selection_BA": 0.8360440918225459,
+        "selection_defect_recall": 0.6732591438324453,
+        "selection_false_alarm_rate": 0.0011709601873535203
+      },
+      {
+        "epoch": 12,
+        "fitting_loss": 0.02126602121209194,
+        "selection_BA": 0.8543870053340679,
+        "selection_defect_recall": 0.7104920168073493,
+        "selection_false_alarm_rate": 0.0017180061392134682
+      },
+      {
+        "epoch": 13,
+        "fitting_loss": 0.01998836137743551,
+        "selection_BA": 0.8487022331052954,
+        "selection_defect_recall": 0.6985754263979443,
+        "selection_false_alarm_rate": 0.0011709601873535203
+      },
+      {
+        "epoch": 14,
+        "fitting_loss": 0.01817820631605435,
+        "selection_BA": 0.8359189832019415,
+        "selection_defect_recall": 0.6730089265912365,
+        "selection_false_alarm_rate": 0.0011709601873535203
+      },
+      {
+        "epoch": 15,
+        "fitting_loss": 0.01748069423103291,
+        "selection_BA": 0.8199348800849942,
+        "selection_defect_recall": 0.6422116805446957,
+        "selection_false_alarm_rate": 0.0023419203747072626
+      },
+      {
+        "epoch": 16,
+        "fitting_loss": 0.01684954123109187,
+        "selection_BA": 0.839265356296413,
+        "selection_defect_recall": 0.6802487187320393,
+        "selection_false_alarm_rate": 0.0017180061392134682
+      },
+      {
+        "epoch": 17,
+        "fitting_loss": 0.01525804792522006,
+        "selection_BA": 0.8488395608659784,
+        "selection_defect_recall": 0.6988500819193105,
+        "selection_false_alarm_rate": 0.0011709601873535203
+      },
+      {
+        "epoch": 18,
+        "fitting_loss": 0.015018264547658483,
+        "selection_BA": 0.8296439862691909,
+        "selection_defect_recall": 0.6645188592396563,
+        "selection_false_alarm_rate": 0.005230886701274362
+      },
+      {
+        "epoch": 19,
+        "fitting_loss": 0.014822614733270276,
+        "selection_BA": 0.837485914317126,
+        "selection_defect_recall": 0.6778607949608194,
+        "selection_false_alarm_rate": 0.0028889663265672105
+      },
+      {
+        "epoch": 20,
+        "fitting_loss": 0.013612643260459047,
+        "selection_BA": 0.8481738158873269,
+        "selection_defect_recall": 0.6986895521493611,
+        "selection_false_alarm_rate": 0.0023419203747072626
+      },
+      {
+        "epoch": 21,
+        "fitting_loss": 0.01272635499163554,
+        "selection_BA": 0.836946786716148,
+        "selection_defect_recall": 0.676782539758863,
+        "selection_false_alarm_rate": 0.0028889663265672105
+      },
+      {
+        "epoch": 22,
+        "fitting_loss": 0.012187201943242024,
+        "selection_BA": 0.8511758656890949,
+        "selection_defect_recall": 0.7035226915655431,
+        "selection_false_alarm_rate": 0.0011709601873535203
+      },
+      {
+        "epoch": 23,
+        "fitting_loss": 0.01146673100888239,
+        "selection_BA": 0.8476618606935127,
+        "selection_defect_recall": 0.6982126877135927,
+        "selection_false_alarm_rate": 0.0028889663265672105
+      },
+      {
+        "epoch": 24,
+        "fitting_loss": 0.010931740714837795,
+        "selection_BA": 0.8373486461911773,
+        "selection_defect_recall": 0.679928179083629,
+        "selection_false_alarm_rate": 0.005230886701274362
+      },
+      {
+        "epoch": 25,
+        "fitting_loss": 0.010568509979397319,
+        "selection_BA": 0.8361962767680353,
+        "selection_defect_recall": 0.6759054340981313,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 26,
+        "fitting_loss": 0.010242716074501564,
+        "selection_BA": 0.8589017026677869,
+        "selection_defect_recall": 0.7224872460849882,
+        "selection_false_alarm_rate": 0.004683840749414414
+      },
+      {
+        "epoch": 27,
+        "fitting_loss": 0.010494012103273147,
+        "selection_BA": 0.838645211567167,
+        "selection_defect_recall": 0.6801793894609013,
+        "selection_false_alarm_rate": 0.0028889663265672105
+      },
+      {
+        "epoch": 28,
+        "fitting_loss": 0.00921764848604265,
+        "selection_BA": 0.8408186822216682,
+        "selection_defect_recall": 0.6856972909572572,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 29,
+        "fitting_loss": 0.009116444259436581,
+        "selection_BA": 0.857961249045575,
+        "selection_defect_recall": 0.7194353786532109,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 30,
+        "fitting_loss": 0.00874021458844021,
+        "selection_BA": 0.836414739268052,
+        "selection_defect_recall": 0.6780603652373783,
+        "selection_false_alarm_rate": 0.005230886701274362
+      },
+      {
+        "epoch": 31,
+        "fitting_loss": 0.008336986133925693,
+        "selection_BA": 0.853153241422053,
+        "selection_defect_recall": 0.7115373695453803,
+        "selection_false_alarm_rate": 0.005230886701274362
+      },
+      {
+        "epoch": 32,
+        "fitting_loss": 0.008064020681019291,
+        "selection_BA": 0.8524249055701836,
+        "selection_defect_recall": 0.708909737654288,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 33,
+        "fitting_loss": 0.007675096686856674,
+        "selection_BA": 0.8521183842711413,
+        "selection_defect_recall": 0.7077496491043435,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 34,
+        "fitting_loss": 0.007297225795581023,
+        "selection_BA": 0.8436518889512234,
+        "selection_defect_recall": 0.6913637044163676,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 35,
+        "fitting_loss": 0.0070999910254813375,
+        "selection_BA": 0.8473358830555513,
+        "selection_defect_recall": 0.6987316926250232,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 36,
+        "fitting_loss": 0.006764770838332738,
+        "selection_BA": 0.841794779549929,
+        "selection_defect_recall": 0.6876494856137788,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 37,
+        "fitting_loss": 0.006748578827294852,
+        "selection_BA": 0.8597790893648305,
+        "selection_defect_recall": 0.7236181052435818,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 38,
+        "fitting_loss": 0.0067530851224251775,
+        "selection_BA": 0.8585251308111924,
+        "selection_defect_recall": 0.7205631421844456,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 39,
+        "fitting_loss": 0.006093317535784241,
+        "selection_BA": 0.8430111353339851,
+        "selection_defect_recall": 0.6900821971818909,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 40,
+        "fitting_loss": 0.005969187574627584,
+        "selection_BA": 0.8630236786884343,
+        "selection_defect_recall": 0.7295602379389294,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 41,
+        "fitting_loss": 0.0060147234989291615,
+        "selection_BA": 0.8498891635286839,
+        "selection_defect_recall": 0.7032912076194286,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 42,
+        "fitting_loss": 0.005771413688167921,
+        "selection_BA": 0.8571677823214083,
+        "selection_defect_recall": 0.7178484452048776,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 43,
+        "fitting_loss": 0.005643492638790924,
+        "selection_BA": 0.8500810293897206,
+        "selection_defect_recall": 0.704221985293362,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 44,
+        "fitting_loss": 0.005525061360650985,
+        "selection_BA": 0.8543659116829405,
+        "selection_defect_recall": 0.7127917498798019,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 45,
+        "fitting_loss": 0.00525173956499388,
+        "selection_BA": 0.8485702091083858,
+        "selection_defect_recall": 0.7012003447306924,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 46,
+        "fitting_loss": 0.004919606224199713,
+        "selection_BA": 0.840068710581489,
+        "selection_defect_recall": 0.6841973476768989,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 47,
+        "fitting_loss": 0.005136575754361635,
+        "selection_BA": 0.851971937339432,
+        "selection_defect_recall": 0.7074567552409248,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 48,
+        "fitting_loss": 0.004890261798969858,
+        "selection_BA": 0.8480179919384836,
+        "selection_defect_recall": 0.6995488644390279,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 49,
+        "fitting_loss": 0.004912959293185408,
+        "selection_BA": 0.8607621492349076,
+        "selection_defect_recall": 0.725037179031876,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 50,
+        "fitting_loss": 0.004588207493927693,
+        "selection_BA": 0.8520709453146017,
+        "selection_defect_recall": 0.7076547711912642,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 51,
+        "fitting_loss": 0.0043652215103650695,
+        "selection_BA": 0.8477006786434182,
+        "selection_defect_recall": 0.6994612838007573,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 52,
+        "fitting_loss": 0.004357003567420151,
+        "selection_BA": 0.8491807380273633,
+        "selection_defect_recall": 0.7024214025686472,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 53,
+        "fitting_loss": 0.00412143859805092,
+        "selection_BA": 0.8501088959926353,
+        "selection_defect_recall": 0.7042777184991913,
+        "selection_false_alarm_rate": 0.004059926513920731
+      },
+      {
+        "epoch": 54,
+        "fitting_loss": 0.00421057589868151,
+        "selection_BA": 0.8547668454360836,
+        "selection_defect_recall": 0.713046571434228,
+        "selection_false_alarm_rate": 0.003512880562060783
+      },
+      {
+        "epoch": 55,
+        "fitting_loss": 0.004084485496399651,
+        "selection_BA": 0.8449472027705556,
+        "selection_defect_recall": 0.6939543320550318,
+        "selection_false_alarm_rate": 0.004059926513920731
+      }
+    ],
+    "supervised_candidates": {
+      "lr1e-05": [
+        {
+          "epoch": 0,
+          "selection_BA": 0.8630236786884343,
+          "selection_defect_recall": 0.7295602379389294,
+          "selection_false_alarm_rate": 0.003512880562060783
+        },
+        {
+          "epoch": 1,
+          "selection_BA": 0.8254087687055107,
+          "selection_defect_recall": 0.6543304179730821,
+          "selection_false_alarm_rate": 0.003512880562060783
+        },
+        {
+          "epoch": 2,
+          "selection_BA": 0.8729294223725903,
+          "selection_defect_recall": 0.7499187712591014,
+          "selection_false_alarm_rate": 0.004059926513920731
+        },
+        {
+          "epoch": 3,
+          "selection_BA": 0.8056101850863153,
+          "selection_defect_recall": 0.6123144620763507,
+          "selection_false_alarm_rate": 0.001094091903719896
+        },
+        {
+          "epoch": 4,
+          "selection_BA": 0.9102805901025375,
+          "selection_defect_recall": 0.865297240141838,
+          "selection_false_alarm_rate": 0.044736059936762995
+        },
+        {
+          "epoch": 5,
+          "selection_BA": 0.9115342329094476,
+          "selection_defect_recall": 0.8446159268594866,
+          "selection_false_alarm_rate": 0.021547461040591576
+        },
+        {
+          "epoch": 6,
+          "selection_BA": 0.9127836803125462,
+          "selection_defect_recall": 0.8354052197921477,
+          "selection_false_alarm_rate": 0.009837859167055263
+        },
+        {
+          "epoch": 7,
+          "selection_BA": 0.8985246593482359,
+          "selection_defect_recall": 0.802049600546845,
+          "selection_false_alarm_rate": 0.005000281850373267
+        },
+        {
+          "epoch": 8,
+          "selection_BA": 0.8306847549426706,
+          "selection_defect_recall": 0.661369509885341,
+          "selection_false_alarm_rate": 0.0
+        },
+        {
+          "epoch": 9,
+          "selection_BA": 0.8295544840835258,
+          "selection_defect_recall": 0.6591089681670517,
+          "selection_false_alarm_rate": 0.0
+        },
+        {
+          "epoch": 10,
+          "selection_BA": 0.9209069489911117,
+          "selection_defect_recall": 0.8644554509265349,
+          "selection_false_alarm_rate": 0.02264155294431147
+        },
+        {
+          "epoch": 11,
+          "selection_BA": 0.9217508960900522,
+          "selection_defect_recall": 0.8667672593599095,
+          "selection_false_alarm_rate": 0.023265467179805044
+        },
+        {
+          "epoch": 12,
+          "selection_BA": 0.923810828914304,
+          "selection_defect_recall": 0.8801779382236085,
+          "selection_false_alarm_rate": 0.03255628039500047
+        },
+        {
+          "epoch": 13,
+          "selection_BA": 0.9238684083965433,
+          "selection_defect_recall": 0.8906780023070022,
+          "selection_false_alarm_rate": 0.04294118551391568
+        },
+        {
+          "epoch": 14,
+          "selection_BA": 0.9236346416600185,
+          "selection_defect_recall": 0.8862274106036657,
+          "selection_false_alarm_rate": 0.038958127283628574
+        },
+        {
+          "epoch": 15,
+          "selection_BA": 0.9249157967699463,
+          "selection_defect_recall": 0.8852768402614603,
+          "selection_false_alarm_rate": 0.03544524672156768
+        },
+        {
+          "epoch": 16,
+          "selection_BA": 0.9255012768636232,
+          "selection_defect_recall": 0.8852768402614603,
+          "selection_false_alarm_rate": 0.03427428653421394
+        },
+        {
+          "epoch": 17,
+          "selection_BA": 0.9252636342780719,
+          "selection_defect_recall": 0.8848015550903577,
+          "selection_false_alarm_rate": 0.03427428653421394
+        },
+        {
+          "epoch": 18,
+          "selection_BA": 0.9253824555708475,
+          "selection_defect_recall": 0.885039197675909,
+          "selection_false_alarm_rate": 0.03427428653421394
+        },
+        {
+          "epoch": 19,
+          "selection_BA": 0.9251448129852962,
+          "selection_defect_recall": 0.8845639125048063,
+          "selection_false_alarm_rate": 0.03427428653421394
+        },
+        {
+          "epoch": 20,
+          "selection_BA": 0.9252636342780719,
+          "selection_defect_recall": 0.8848015550903577,
+          "selection_false_alarm_rate": 0.03427428653421394
+        }
+      ]
+    },
+    "optimizer_update_audit_at_lr_1e_5_epoch6": {
+      "passed": true,
+      "completed_epoch": 6,
+      "optimizer_updates": 1944,
+      "parameter_group_sizes": [
+        548,
+        2
+      ],
+      "all_optimizer_parameters_have_state": true,
+      "all_parameter_step_counters_equal": true,
+      "optimizer_states_with_nonzero_first_moment": 550,
+      "encoder_state_tensors": 548,
+      "encoder_state_tensors_changed": 548,
+      "encoder_and_optimizer_tensors_finite": true,
+      "backward_loss_scale": 5.421010862427522e-20,
+      "assessment_accessed": false
+    },
+    "stability": {
+      "backward_loss_scale": 5.421010862427522e-20,
+      "gradient_norm_dtype": "float64",
+      "purpose": "Avoid overflow before applying the declared global norm-1 clipping; verified on fitting data before assessment."
+    },
+    "selection_amendment": {
+      "assessment_opened": false,
+      "completed_candidates": [
+        {
+          "best_epoch": 16,
+          "best_validation_BA": 0.9255012768636232,
+          "completed_epoch": 20,
+          "rate": 1e-05
+        }
+      ],
+      "completed_rates_used_for_selection": [
+        1e-05
+      ],
+      "originally_declared_rates": [
+        1e-05,
+        3e-05,
+        0.0001
+      ],
+      "reason": "User stopped the additional learning-rate search before assessment; retain the completed 1e-5 configuration and frozen baseline.",
+      "selection_rule": "Compare the frozen baseline and completed configurations only, using validation; earliest ties retained.",
+      "skipped_rates": [
+        3e-05,
+        0.0001
+      ],
+      "utc": "2026-10-23T14:01:16.960345+00:00"
+    },
+    "stopped_extra_search": {
+      "stopped_rate": 3e-05,
+      "completed_epochs": 5,
+      "best_validation_BA": 0.8731920472508223,
+      "used_for_final_selection": false,
+      "unstarted_rates": [
+        0.0001
+      ],
+      "reason": "User stopped additional search before assessment. The unfinished/unstarted rates were not established as worse."
+    },
+    "checkpoint_portability": {
+      "best_and_final_reloaded_on_cpu_and_gpu": true,
+      "checked_fitting_decisions_agree": true,
+      "cpu_gpu_dataset_metric_equivalence_established": false,
+      "scope": "CPU logits differ substantially on the fitting-only fixture; reported scores are the saved GPU evaluation. Finite reloads and matching checked decisions do not establish hardware-equivalent metrics."
+    }
+  },
+  "selection_used_assessment": false,
+  "assessment_previously_inspected": true,
+  "scope": "Same canonical recording/frame roles as final adapted I-JEPA. Assessment excluded from training, normalization and checkpoint selection. These previously inspected recordings provide retrospective held-out evidence. Final checkpoint saved; reported metrics use validation-selected best only."
 }

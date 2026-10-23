@@ -53,7 +53,7 @@ def audit(require_weights=False):
         assert {
             p.name
             for p in folder.iterdir()
-            if p.name not in ("__pycache__", ".pytest_cache")
+            if p.name not in ("__pycache__", ".pytest_cache", "assets", "runs")
         } == ENTRIES, model_id
         package = read(folder / "model.json")
         config = read(folder / package["configuration"])
@@ -93,10 +93,11 @@ def audit(require_weights=False):
                 assert weight["sha256"] is weight["bytes"] is None
                 continue
             path = folder / "weights" / weight["path"]
-            assert path.resolve().parent == (folder / "weights").resolve()
+            assert path.resolve().is_relative_to((folder / "weights").resolve())
+            assert ".." not in Path(weight["path"]).parts
             assert re.fullmatch(r"[0-9a-f]{64}", weight["sha256"])
             assert weight["bytes"] > 0
-            available_names.add(path.name)
+            available_names.add(Path(weight["path"]).parts[0])
             if require_weights:
                 assert path.is_file() and not path.is_symlink(), path
                 stat = path.stat()
@@ -117,6 +118,35 @@ def audit(require_weights=False):
             "manifest.json",
             "download.py",
         }
+        allowed_weight_paths = {
+            weight["path"] for weight in inventory["artifacts"].values()
+            if weight["path"] is not None
+        } | {"README.md", "manifest.json", "download.py", "best/model.json", "final/model.json"}
+        for weight_file in (folder / "weights").rglob("*"):
+            if "__pycache__" in weight_file.parts or not weight_file.is_file():
+                continue
+            assert weight_file.relative_to(folder / "weights").as_posix() in allowed_weight_paths, weight_file
+        for kind in ("best", "final"):
+            descriptor_path = folder / "weights" / kind / "model.json"
+            if package["status"] == "completed" and package["entrypoint"] == "tig_benchmark":
+                assert descriptor_path.is_file(), descriptor_path
+            if descriptor_path.exists():
+                descriptor = read(descriptor_path)
+                assert descriptor["threshold"] == 0.5
+                assert descriptor["assessment_used_to_select"] is False
+                assert descriptor["source_model_config_sha256"] == hashlib.sha256(
+                    (folder / "config.json").read_bytes()
+                ).hexdigest()
+                for role in ("pretrained_encoder", "classifier", "supervised_encoder"):
+                    item = descriptor[role]
+                    if item is None:
+                        continue
+                    assert Path(item["path"]).name == item["path"]
+                    relative = kind + "/" + item["path"]
+                    assert any(
+                        weight["path"] == relative and weight["sha256"] == item["sha256"]
+                        for weight in inventory["artifacts"].values()
+                    ), (model_id, relative)
         if package["status"] == "completed":
             assert result["validation"] is not None and result["assessment"] is not None
             assert (

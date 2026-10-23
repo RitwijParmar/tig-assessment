@@ -59,6 +59,15 @@ def extract(encoder, transform, rows, config, device):
     for batch in loader:
         values.append(encoder(batch["image"].to(device)).cpu())
         paths.extend(batch["path"])
+        if len(values) % 100 == 0 or len(paths) == len(rows):
+            print(
+                {
+                    "stage": "feature_extraction",
+                    "frames": len(paths),
+                    "total": len(rows),
+                },
+                flush=True,
+            )
     if paths != [r["path"] for r in rows]:
         raise ValueError("Feature frame coverage/order mismatch")
     return torch.cat(values)

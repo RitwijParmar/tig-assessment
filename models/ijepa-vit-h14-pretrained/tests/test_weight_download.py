@@ -73,3 +73,25 @@ def test_missing_and_changed_local_weights_fail_closed(fixture):
     (output / "encoder.pt").write_bytes(b"changed")
     with pytest.raises(ValueError, match="Existing checkpoint"):
         module.download(path, output)
+
+
+def test_nested_checkpoint_and_identical_encoder_are_retained(fixture):
+    module, path, manifest, whole, output = fixture
+    item=manifest["artifacts"]["encoder"]
+    item["path"]="best/encoder.pt"
+    manifest["artifacts"]["final_encoder"]={**item,"path":"final/encoder.pt"}
+    path.write_text(json.dumps(manifest))
+    result=module.download(path,output)
+    assert result["final/encoder.pt"]=="verified_local_hardlink"
+    assert (output/"best/encoder.pt").read_bytes()==whole
+    assert (output/"final/encoder.pt").read_bytes()==whole
+    assert all(v=="verified" for v in module.download(path,output,verify_only=True).values())
+
+
+def test_checkpoint_path_cannot_escape_weights_folder(fixture):
+    module,path,manifest,_,output=fixture
+    manifest["artifacts"]["encoder"]["path"]="../outside.pt"
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError,match="inside the weights"):
+        module.download(path,output)
+    assert not (output.parent/"outside.pt").exists()

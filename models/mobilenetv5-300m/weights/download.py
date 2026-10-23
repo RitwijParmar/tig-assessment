@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import urllib.request
 
@@ -24,12 +25,17 @@ def download(manifest_path, output=None, verify_only=False, only=None):
     if only and only not in {v["path"] for v in available}:
         raise ValueError("No required checkpoint with this filename")
     result = {}
+    verified = {}
     for item in available:
         if only and item["path"] != only:
             continue
-        if Path(item["path"]).name != item["path"]:
+        relative = Path(item["path"])
+        if relative.is_absolute() or ".." in relative.parts or not relative.parts:
             raise ValueError("Checkpoint filename must stay inside the weights folder")
-        target = folder / item["path"]
+        target = folder / relative
+        if not target.resolve().is_relative_to(folder.resolve()) or target.is_symlink():
+            raise ValueError("Checkpoint filename must stay inside the weights folder")
+        target.parent.mkdir(parents=True, exist_ok=True)
         if target.exists():
             if (
                 target.stat().st_size != item["bytes"]
@@ -37,9 +43,16 @@ def download(manifest_path, output=None, verify_only=False, only=None):
             ):
                 raise ValueError("Existing checkpoint differs: " + str(target))
             result[item["path"]] = "verified"
+            verified[item["sha256"]] = target
             continue
         if verify_only:
             raise FileNotFoundError("Checkpoint is missing: " + str(target))
+        if item["sha256"] in verified:
+            # Best/final frozen encoders have identical bytes. Keep complete
+            # usable files in both folders without downloading another copy.
+            os.link(verified[item["sha256"]], target)
+            result[item["path"]] = "verified_local_hardlink"
+            continue
         temporary = target.with_name(target.name + ".partial")
         whole = hashlib.sha256()
         try:
@@ -84,6 +97,7 @@ def download(manifest_path, output=None, verify_only=False, only=None):
         finally:
             temporary.unlink(missing_ok=True)
         result[item["path"]] = "downloaded_and_verified"
+        verified[item["sha256"]] = target
     return result
 
 

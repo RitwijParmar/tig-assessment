@@ -160,6 +160,48 @@ def run_candidate(lock, roles, config, probe, rate, output, device, recipe):
             stale = 0
         else:
             stale += 1
+        # Durable epoch boundaries retain the actual final weights even if a
+        # spot VM stops before the next epoch. Selection still uses validation.
+        atomic_torch(
+            output / "final_encoder.pt",
+            {
+                "identity": candidate["identity"],
+                "encoder": {
+                    k: v.detach().cpu() for k, v in encoder.state_dict().items()
+                },
+            },
+        )
+        atomic_torch(output / "final_head.pt", candidate)
+        atomic_json(output / "history.json", history)
+        atomic_torch(
+            output / "resume.private.pt",
+            {
+                "encoder": encoder.state_dict(),
+                "head": head.state_dict(),
+                "optimizer": opt.state_dict(),
+                "completed_epoch": epoch,
+                "updates": update,
+                "stale": stale,
+                "history": history,
+                "best_epoch": best["epoch"],
+                "best_score": best["score"],
+                "torch_rng": torch.get_rng_state(),
+                "cuda_rng": (
+                    torch.cuda.get_rng_state_all() if torch.cuda.is_available() else []
+                ),
+                "identity": digest({"config": config, "recipe": recipe, "rate": rate}),
+            },
+        )
+        print(
+            {
+                "stage": "supervised_epoch",
+                "lr": rate,
+                "epoch": epoch,
+                "validation_BA": score["selection_BA"],
+                "best_epoch": best["epoch"],
+            },
+            flush=True,
+        )
         if stale >= recipe["patience"]:
             break
     atomic_torch(

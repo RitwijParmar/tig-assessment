@@ -25,7 +25,6 @@
     "device": "CUDA for recorded run; float32, zero initialized linear head"
   },
   "same_split_config": "data.json",
-  "status": "implemented; no completed matched training result yet",
   "supervised": {
     "encoder_lr_candidates": [
       1e-05,

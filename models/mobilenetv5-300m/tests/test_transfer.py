@@ -121,6 +121,12 @@ def test_full_pipeline_separates_assessment_and_replays(stub, monkeypatch, model
     assert torch.equal(probe["mean"], cache["fitting"].mean(0))
     assert probe["fitting_rows_sha256"] == digest(roles["fitting"])
     assert pipeline.verify(run)["verified"]
+    final_probe = torch.load(run / "final/classifier.pt", weights_only=True)
+    final_export = json.loads((run / "final/model.json").read_text())
+    history = json.loads((run / "frozen/history.json").read_text())
+    assert final_probe["epoch"] == history[-1]["epoch"] == final_export["final_epoch"]
+    assert (run / "final/pretrained_encoder.safetensors").is_file()
+    assert final_export["classifier"]["sha256"] != ""
     result = pipeline.evaluate(run)
     assert result["balanced_accuracy"] is not None
     predictions = json.loads((run / "assessment_predictions.json").read_text())
@@ -299,3 +305,93 @@ def test_other_installed_upstream_cannot_silently_replace_pinned_source(
     monkeypatch.setitem(sys.modules, "fixture_upstream", module)
     with pytest.raises(RuntimeError, match="different upstream"):
         models.source_import("fixture_upstream", tmp_path)
+
+
+def test_scaled_clipping_matches_unscaled_objective_and_handles_huge_norm():
+    p=nn.Parameter(torch.zeros(3))
+    p.grad=torch.tensor([3.,4.,0.])*finetune.BACKWARD_SCALE
+    norm=finetune.clip_scaled_gradients([p],1.)
+    assert norm==pytest.approx(5.)
+    assert torch.allclose(p.grad,torch.tensor([3.,4.,0.])/(5.+1e-6),atol=1e-7)
+    p.grad=torch.tensor([1e38,-1e38,0.])*finetune.BACKWARD_SCALE
+    norm=finetune.clip_scaled_gradients([p],1.)
+    assert norm==pytest.approx(2.**.5*1e38,rel=1e-6)
+    assert torch.isfinite(p.grad).all()
+    assert float(p.grad.norm())==pytest.approx(1.,abs=1e-6)
+
+
+@pytest.mark.parametrize("initial_score", [0.0, 1.0])
+def test_resume_exactly_reproduces_uninterrupted_epoch_weights(stub, monkeypatch, initial_score):
+    from pathlib import Path
+    root,roles=stub
+    cfg=dict(seed=43,batch_size=2,workers=0,data_root=str(root),geometry='native')
+    monkeypatch.setattr(finetune,'build',tiny_build)
+    enc,transform=tiny_build({},'cpu')
+    features=pipeline.extract(enc,transform,roles['fitting'],cfg,'cpu')
+    torch.manual_seed(9)
+    probe=dict(identity='fixture',mean=features.mean(0),std=features.std(0,unbiased=False).clamp_min(1e-6),head=nn.Linear(2048,1).state_dict(),epoch=0,score={'selection_BA':initial_score},fitting_rows_sha256=digest(roles['fitting']),selection_rows_sha256=digest(roles['selection']))
+    recipe=dict(effective_batch=4,epochs=3,warmup_epochs=1,head_lr=.001,weight_decay=.01,gradient_clip=1.,patience=10)
+    finetune.run_candidate({'model':'mobilenetv5'},roles,cfg,probe,1e-4,root/'continuous','cpu',recipe)
+    original=finetune.atomic_torch
+    def interrupt_after_epoch(path,value):
+        answer=original(path,value)
+        if Path(path).name=='resume.private.pt' and value['completed_epoch']==1:
+            raise RuntimeError('simulated spot interruption after durable epoch1')
+        return answer
+    monkeypatch.setattr(finetune,'atomic_torch',interrupt_after_epoch)
+    with pytest.raises(RuntimeError,match='simulated spot'):
+        finetune.run_candidate({'model':'mobilenetv5'},roles,cfg,probe,1e-4,root/'interrupted','cpu',recipe)
+    monkeypatch.setattr(finetune,'atomic_torch',original)
+    finetune.run_candidate({'model':'mobilenetv5'},roles,cfg,probe,1e-4,root/'interrupted','cpu',recipe,resume=True)
+    for filename,key in [('final_encoder.pt','encoder'),('final_head.pt','head')]:
+        a=torch.load(root/'continuous'/filename,weights_only=True)[key]
+        b=torch.load(root/'interrupted'/filename,weights_only=True)[key]
+        assert all(torch.equal(a[k],b[k]) for k in a)
+    assert json.loads((root/'continuous/history.json').read_text())==json.loads((root/'interrupted/history.json').read_text())
+    # A completed candidate can be recovered without a new optimizer update.
+    before=(root/'interrupted/final_encoder.pt').read_bytes()
+    finetune.run_candidate({'model':'mobilenetv5'},roles,cfg,probe,1e-4,root/'interrupted','cpu',recipe,resume=True)
+    assert (root/'interrupted/final_encoder.pt').read_bytes()==before
+    with pytest.raises(ValueError,match='configuration'):
+        finetune.run_candidate({'model':'mobilenetv5'},roles,{**cfg,'seed':99},probe,1e-4,root/'interrupted','cpu',recipe,resume=True)
+    path=root/'interrupted/best_head.pt'
+    ahead=torch.load(path,weights_only=True);ahead['epoch']+=1;torch.save(ahead,path)
+    with pytest.raises(ValueError,match='commit boundary'):
+        finetune.run_candidate({'model':'mobilenetv5'},roles,cfg,probe,1e-4,root/'interrupted','cpu',recipe,resume=True)
+
+
+
+def test_full_pipeline_resumes_only_unsealed_run_without_assessment(stub,monkeypatch):
+    from pathlib import Path
+    root,roles=stub
+    loader=pipeline.load_assets
+    monkeypatch.setattr(pipeline,'load_assets',lambda *a: {**loader(*a),'checkpoint_sha256':hashlib.sha256((root/'fixture.weights').read_bytes()).hexdigest()})
+    spec=pipeline.model_config('mobilenetv5')
+    spec['supervised']=dict(effective_batch=4,epochs=3,warmup_epochs=1,head_lr=.001,weight_decay=.01,gradient_clip=1.,patience=10,encoder_lr_candidates=[1e-4])
+    monkeypatch.setattr(pipeline,'model_config',lambda name:spec)
+    monkeypatch.setattr(finetune,'build',tiny_build)
+    accessed=[];getitem=pipeline.ResearchImages.__getitem__
+    def read(self,index):
+        accessed.append(self.rows[index]['group'])
+        return getitem(self,index)
+    monkeypatch.setattr(pipeline.ResearchImages,'__getitem__',read)
+    original=finetune.atomic_torch
+    def interrupt(path,payload):
+        result=original(path,payload)
+        if Path(path).name=='resume.private.pt' and payload['completed_epoch']==1:
+            raise RuntimeError('simulated interrupted run')
+        return result
+    monkeypatch.setattr(finetune,'atomic_torch',interrupt)
+    run=root/'resumable'
+    with pytest.raises(RuntimeError,match='simulated interrupted'):
+        pipeline.fit('mobilenetv5',root/'prepared/data.local.json','unused',run,batch_size=2,finetune=True)
+    assert not (run/'seal.json').exists()
+    frozen=(run/'frozen/best.pt').read_bytes();features=(run/'features.local.pt').read_bytes()
+    monkeypatch.setattr(finetune,'atomic_torch',original)
+    pipeline.fit('mobilenetv5',root/'prepared/data.local.json','unused',run,batch_size=2,finetune=True,resume=True)
+    assert (run/'frozen/best.pt').read_bytes()==frozen
+    assert (run/'features.local.pt').read_bytes()==features
+    assert not any(g.startswith('assessment') for g in accessed)
+    assert json.loads((run/'status.json').read_text())['stage']=='sealed_and_reload_verified'
+    with pytest.raises(ValueError,match='sealed'):
+        pipeline.fit('mobilenetv5',root/'prepared/data.local.json','unused',run,batch_size=2,finetune=True,resume=True)

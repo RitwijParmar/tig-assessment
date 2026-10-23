@@ -1,0 +1,25 @@
+{
+  "classifier": {
+    "path": "classifier.pt",
+    "sha256": "ab23162e817bec262fbc2376a8dbb4356959181e6e5d7513d85b666055507437"
+  },
+  "geometry": "native",
+  "mode": "supervised",
+  "model": "mobilenetv5",
+  "note": "Selected final model; supervised final-epoch checkpoints are retained separately.",
+  "pretrained_encoder": {
+    "path": "pretrained_encoder.safetensors",
+    "sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321"
+  },
+  "selected_epoch": 16,
+  "source_revision": "af97f99efef62bd9bd7eaa908fffe5b7a2d98e2c",
+  "supervised_encoder": {
+    "path": "encoder.pt",
+    "sha256": "e2ca8dcb3c29d68f683112c85e3b9221d35174aae02683551945b74f0caf22a0"
+  },
+  "threshold": 0.5,
+  "checkpoint_kind": "best",
+  "source_model_config_sha256": "12c8f9ce01ce3cf99f1402742b0b3f50c64264f8cf2ee9f5c8fa02a86ef6791b",
+  "assessment_used_to_select": false,
+  "full_run": "runs/full"
+}

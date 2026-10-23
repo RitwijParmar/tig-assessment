@@ -32,7 +32,18 @@ elif command == "predict-local":
     p = argparse.ArgumentParser()
     p.add_argument("--image", required=True)
     p.add_argument("--device", default="cpu")
+    p.add_argument("--checkpoint", choices=("best", "final"), default="best")
+    p.add_argument("--assets")
     a = p.parse_args(sys.argv[2:])
+    if meta["entrypoint"] == "tig_benchmark":
+        from tig_benchmark.inference import predict_local
+
+        print(
+            json.dumps(
+                predict_local(ROOT, a.image, a.device, a.checkpoint, a.assets), indent=2
+            )
+        )
+        raise SystemExit(0)
     manifest = json.loads((ROOT / "weights/manifest.json").read_text())["artifacts"]
     if manifest["classifier"]["path"] is None:
         p.error(

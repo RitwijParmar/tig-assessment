@@ -121,6 +121,12 @@ def test_full_pipeline_separates_assessment_and_replays(stub, monkeypatch, model
     assert torch.equal(probe["mean"], cache["fitting"].mean(0))
     assert probe["fitting_rows_sha256"] == digest(roles["fitting"])
     assert pipeline.verify(run)["verified"]
+    final_probe = torch.load(run / "final/classifier.pt", weights_only=True)
+    final_export = json.loads((run / "final/model.json").read_text())
+    history = json.loads((run / "frozen/history.json").read_text())
+    assert final_probe["epoch"] == history[-1]["epoch"] == final_export["final_epoch"]
+    assert (run / "final/pretrained_encoder.safetensors").is_file()
+    assert final_export["classifier"]["sha256"] != ""
     result = pipeline.evaluate(run)
     assert result["balanced_accuracy"] is not None
     predictions = json.loads((run / "assessment_predictions.json").read_text())

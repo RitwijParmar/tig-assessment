@@ -32,6 +32,7 @@ def main():
     p.add_argument("--workers", type=int, default=0)
     p.add_argument("--geometry", choices=("native", "letterbox224"), default="native")
     p.add_argument("--finetune", action="store_true")
+    p.add_argument("--resume", action="store_true", help="Continue an unsealed run from complete saved epoch checkpoints")
     for name in ("verify", "evaluate", "predict"):
         p = subs.add_parser(name)
         p.add_argument("--run", required=True)
@@ -58,6 +59,7 @@ def main():
             a.workers,
             a.geometry,
             a.finetune,
+            a.resume,
         )
     elif a.command == "verify":
         result = pipeline.verify(a.run, a.device)

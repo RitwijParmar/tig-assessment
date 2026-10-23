@@ -69,6 +69,24 @@
       "description": "not part of the retained selected model; future supervised runs keep this separately",
       "parts": [],
       "required": false
+    },
+    "best_pretrained_encoder": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_applicable",
+      "description": "Separate upstream base is only needed by the native transfer packages.",
+      "parts": [],
+      "required": false
+    },
+    "final_pretrained_encoder": {
+      "path": null,
+      "sha256": null,
+      "bytes": null,
+      "status": "not_applicable",
+      "description": "Separate upstream base is only needed by the native transfer packages.",
+      "parts": [],
+      "required": false
     }
   },
   "release": "https://github.com/RitwijParmar/tig-assessment/releases/tag/model-weights-20261023"

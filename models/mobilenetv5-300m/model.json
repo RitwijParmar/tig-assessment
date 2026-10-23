@@ -2,7 +2,7 @@
   "format": "tig-model-package-v1",
   "model_id": "mobilenetv5-300m",
   "name": "MobileNetV5-300M + linear classifier",
-  "status": "implemented_not_matched_trained",
+  "status": "completed",
   "selected_final_model": false,
   "architecture": {
     "backbone": "MobileNetV5-300M",

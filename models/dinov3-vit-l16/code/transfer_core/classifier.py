@@ -97,6 +97,14 @@ def fit_probe(
             stale += 1
         if stale >= recipe["patience"]:
             break
+    final = {
+        **saved,
+        "head": {k: v.detach().cpu().clone() for k, v in head.state_dict().items()},
+        "epoch": epoch,
+        "score": score,
+        "checkpoint_kind": "final_epoch",
+    }
+    atomic_torch(output / "final.pt", final)
     atomic_torch(output / "best.pt", saved)
     atomic_json(output / "history.json", history)
     # Check selected CPU reloaded head and full metrics agree with selection.
