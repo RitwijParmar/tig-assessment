@@ -84,6 +84,8 @@ False alarms are therefore rare across the remaining eight recordings, while thi
 
 The table uses raw frame counts; the reported **11.00%** uses recording weights. All nine recordings remain included in the reported assessment results. These counts locate the failure; its underlying visual or annotation cause has not been established.
 
+I see this as encouraging. Almost all of adapted I-JEPA’s false alarms come from one recording, with very few elsewhere. That gives us a clear place to investigate, whereas MobileNetV5’s false alarms are spread across several recordings. We still need to understand what makes that recording difficult, but the model’s behavior on the remaining good-weld data is promising.
+
 **Proposed follow-up:** [SliceFinder](https://arxiv.org/abs/1807.06068) could test whether brightness, glare, contrast or blur are associated with false alarms. [Domino](https://arxiv.org/abs/2203.14960) could find visually similar error groups using image embeddings, labels and predictions. These analyses would help investigate what makes this recording difficult; they have not yet been run.
 
 ## Usage
