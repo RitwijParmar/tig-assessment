@@ -1,0 +1,7 @@
+# Install matching torch/torchvision wheels for the target CPU/CUDA platform.
+# Exact versions used for the recorded GPU run: README.md
+torch>=2.3
+torchvision>=0.18
+numpy>=1.26
+Pillow>=10
+pytest>=8

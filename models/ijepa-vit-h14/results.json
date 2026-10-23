@@ -1,0 +1,44 @@
+{
+  "model": "I-JEPA ViT-H/14 with weld adaptation and a linear classifier",
+  "candidate": "rrc_native_epoch1/mean",
+  "adaptation_epoch": 1,
+  "adaptation_updates": 324,
+  "adaptation_schedule_epochs": 5,
+  "classifier_epoch": 3,
+  "threshold": 0.5,
+  "validation": {
+    "recordings": 6,
+    "frames": 6454,
+    "recording_balanced_accuracy": 0.9840920266515871,
+    "recording_defect_recall": 0.9758426966292135,
+    "recording_false_alarm_rate": 0.007658643326039383,
+    "false_negative_frames": 43,
+    "false_positive_frames": 14
+  },
+  "assessment": {
+    "recordings": 9,
+    "frames": 6763,
+    "recording_balanced_accuracy": 0.9275219205767377,
+    "recording_defect_recall": 0.9650830201368565,
+    "recording_false_alarm_rate": 0.1100391789833812,
+    "false_negative_frames": 165,
+    "false_positive_frames": 521,
+    "recording_specific_failure": {
+      "recording": "170906-141809",
+      "group": "170906-141809-Al 2mm",
+      "good_frames": 1037,
+      "false_positive_frames": 514,
+      "good_frame_false_alarm_rate": 0.4956605593056895,
+      "total_assessment_false_positive_frames": 521,
+      "other_assessment_false_positive_frames": 7,
+      "present_in_validation": false,
+      "cause": "Not established; counts locate the failure but do not prove a visual or annotation cause."
+    }
+  },
+  "weights": {
+    "base_sha256": "0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22",
+    "selected_encoder_sha256": "9f9c3dfe31e49c1a7333ac85e436d6a7b9f7a12c3a4b142ee12b662a7cde5b17",
+    "classifier_sha256": "990833bb02a531cb2350b65cb4141630b721d79eed62b9b5cc11b245f93619bb"
+  },
+  "scope": "Existing recorded results, not a new training run. Assessment groups were not used for weight updates but were inspected in earlier research."
+}
