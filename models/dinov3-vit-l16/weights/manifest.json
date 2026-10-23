@@ -32,36 +32,6 @@
         }
       ],
       "required": true
-    },
-    "final_encoder": {
-      "path": "final/encoder.safetensors",
-      "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
-      "bytes": 1212559808,
-      "description": "Final encoder",
-      "parts": [
-        {
-          "asset": "dinov3-vit-l16--best--encoder.safetensors",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--best--encoder.safetensors",
-          "bytes": 1212559808,
-          "sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179"
-        }
-      ],
-      "required": true
-    },
-    "final_classifier": {
-      "path": "final/classifier.pt",
-      "bytes": 27795,
-      "sha256": "1d32999b903d3ff235d2b76ff487583c81718cd64131651f69300ab61b7f06f7",
-      "description": "Final classifier",
-      "parts": [
-        {
-          "asset": "dinov3-vit-l16--final--classifier.pt",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/matched-training-20261023/dinov3-vit-l16--final--classifier.pt",
-          "bytes": 27795,
-          "sha256": "1d32999b903d3ff235d2b76ff487583c81718cd64131651f69300ab61b7f06f7"
-        }
-      ],
-      "required": true
     }
   },
   "checkpoints": {
@@ -69,15 +39,9 @@
       "encoder": "best_encoder",
       "classifier": "best_classifier",
       "descriptor": "best/model.json"
-    },
-    "final": {
-      "encoder": "final_encoder",
-      "classifier": "final_classifier",
-      "descriptor": "final/model.json"
     }
   },
   "checkpoint_definition": {
-    "best": "Validation-selected checkpoint used for reported results.",
-    "final": "Last completed downstream training epoch."
+    "best": "Validation-selected checkpoint used for reported results."
   }
 }

@@ -121,8 +121,8 @@ def audit(require_weights=False):
             "download.py",
         }
         pairs = inventory["checkpoints"]
-        assert set(inventory["artifacts"]) == {"best_encoder", "best_classifier", "final_encoder", "final_classifier"}
-        assert available_names == {"best", "final"}
+        assert set(inventory["artifacts"]) == {"best_encoder", "best_classifier"}
+        assert available_names == {"best"}
         allowed_weight_paths = {
             weight["path"] for weight in inventory["artifacts"].values()
             if weight["path"] is not None
@@ -131,10 +131,10 @@ def audit(require_weights=False):
             if "__pycache__" in weight_file.parts or not weight_file.is_file():
                 continue
             assert weight_file.relative_to(folder / "weights").as_posix() in allowed_weight_paths, weight_file
-        assert set(inventory["checkpoints"]) == {"best", "final"}
+        assert set(inventory["checkpoints"]) == {"best"}
         assert all(inventory["artifacts"][inventory["checkpoints"]["best"][key]]["path"].startswith("best/") for key in ("encoder", "classifier"))
         for kind, pair in pairs.items():
-            assert kind in ("best", "final")
+            assert kind == "best"
             assert all(inventory["artifacts"][pair[key]]["path"].startswith(kind+"/") for key in ("encoder", "classifier"))
             descriptor_path = folder / "weights" / kind / "model.json"
             assert descriptor_path.is_file(), descriptor_path

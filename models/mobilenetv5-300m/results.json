@@ -2,7 +2,6 @@
   "model": "MobileNetV5-300M",
   "status": "completed",
   "classifier_epoch": 16,
-  "final_classifier_epoch": 20,
   "selected_encoder_lr": 1e-05,
   "threshold": 0.5,
   "validation": {
@@ -58,9 +57,7 @@
     "base_sha256": "affbbd57927c4138b783564d98603ef54530eb02ddf25cbabf79a4b2ce0fb321",
     "selected_encoder_sha256": "e2ca8dcb3c29d68f683112c85e3b9221d35174aae02683551945b74f0caf22a0",
     "classifier_sha256": "ab23162e817bec262fbc2376a8dbb4356959181e6e5d7513d85b666055507437",
-    "final_classifier_sha256": "d3ed8ef887994d0cbf57183020670a600248427f2b2044f7b240f1a9239ff877",
-    "best_directory": "weights/best",
-    "final_directory": "weights/final"
+    "best_directory": "weights/best"
   },
   "training": {
     "seed": 43,
@@ -138,7 +135,7 @@
       "reason": "User stopped additional search before assessment. The unfinished/unstarted rates were not established as worse."
     },
     "checkpoint_portability": {
-      "best_and_final_reloaded_on_cpu_and_gpu": true,
+      "best_reloaded_on_cpu_and_gpu": true,
       "checked_fitting_decisions_agree": true,
       "cpu_gpu_dataset_metric_equivalence_established": false,
       "scope": "CPU logits differ substantially on the fitting-only fixture; reported scores are the saved GPU evaluation. Finite reloads and matching checked decisions do not establish hardware-equivalent metrics."
@@ -146,5 +143,5 @@
   },
   "selection_used_assessment": false,
   "assessment_previously_inspected": true,
-  "scope": "Same canonical recording/frame roles as final adapted I-JEPA. Assessment excluded from training, normalization and checkpoint selection. These previously inspected recordings provide retrospective held-out evidence. Final checkpoint saved; reported metrics use validation-selected best only."
+  "scope": "Same canonical recording/frame roles as final adapted I-JEPA. Assessment excluded from training, normalization and checkpoint selection. These previously inspected recordings provide retrospective held-out evidence. Reported metrics use the validation-selected best checkpoint."
 }

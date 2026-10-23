@@ -1,4 +1,4 @@
-"""Portable inference for the best/final model stored in this model folder."""
+"""Portable inference for the best model stored in this model folder."""
 
 import json
 from pathlib import Path
@@ -22,8 +22,8 @@ def checkpoint_file(root, item):
 
 def predict_local(folder, image, device="cpu", checkpoint="best", assets=None):
     folder = Path(folder)
-    if checkpoint not in ("best", "final"):
-        raise ValueError("Choose best or final")
+    if checkpoint != "best":
+        raise ValueError("Only the best checkpoint is distributed")
     weights = folder / "weights"
     descriptor = json.loads((weights / checkpoint / "model.json").read_text())
     if descriptor["format"] != "tig-checkpoint-v1" or descriptor["kind"] != checkpoint:

@@ -112,7 +112,7 @@ python run.py evaluate --run runs/training --device cuda
 
 ## Weights
 
-`best/` and `final/` each contain the encoder, classifier and checkpoint descriptor. Reported results use **best**. Final classifier: reconstructed CPU replay. See [downloads and hashes](weights/README.md).
+`weights/best/` contains the validation-selected encoder, matching classifier and checkpoint descriptor used for the reported results. See [downloads and hashes](weights/README.md).
 
 ## Implementation and licenses
 

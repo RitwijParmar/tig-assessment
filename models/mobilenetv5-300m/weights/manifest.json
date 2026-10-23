@@ -32,36 +32,6 @@
         }
       ],
       "required": true
-    },
-    "final_encoder": {
-      "path": "final/encoder.pt",
-      "bytes": 1176686749,
-      "sha256": "8c5878d324d30cec64e08cbb57e1e2c85739c9533b470c1f0cf1af8339f56fb8",
-      "description": "Final encoder",
-      "parts": [
-        {
-          "asset": "mobilenetv5-300m--final--encoder.pt",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/matched-training-20261023/mobilenetv5-300m--final--encoder.pt",
-          "bytes": 1176686749,
-          "sha256": "8c5878d324d30cec64e08cbb57e1e2c85739c9533b470c1f0cf1af8339f56fb8"
-        }
-      ],
-      "required": true
-    },
-    "final_classifier": {
-      "path": "final/classifier.pt",
-      "bytes": 28037,
-      "sha256": "d3ed8ef887994d0cbf57183020670a600248427f2b2044f7b240f1a9239ff877",
-      "description": "Final classifier",
-      "parts": [
-        {
-          "asset": "mobilenetv5-300m--final--classifier.pt",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/matched-training-20261023/mobilenetv5-300m--final--classifier.pt",
-          "bytes": 28037,
-          "sha256": "d3ed8ef887994d0cbf57183020670a600248427f2b2044f7b240f1a9239ff877"
-        }
-      ],
-      "required": true
     }
   },
   "checkpoints": {
@@ -69,15 +39,9 @@
       "encoder": "best_encoder",
       "classifier": "best_classifier",
       "descriptor": "best/model.json"
-    },
-    "final": {
-      "encoder": "final_encoder",
-      "classifier": "final_classifier",
-      "descriptor": "final/model.json"
     }
   },
   "checkpoint_definition": {
-    "best": "Validation-selected checkpoint used for reported results.",
-    "final": "Last completed downstream training epoch."
+    "best": "Validation-selected checkpoint used for reported results."
   }
 }

@@ -38,42 +38,6 @@
         }
       ],
       "required": true
-    },
-    "final_encoder": {
-      "path": "final/encoder.pt",
-      "sha256": "2fd11db9cf9ade5f7d707faedb78f3bde64feea79c5d18e5f498f86620bdb671",
-      "bytes": 2523165301,
-      "description": "Final encoder",
-      "parts": [
-        {
-          "asset": "ijepa-vit-h14-pretrained--best--encoder.pt.part01",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14-pretrained--best--encoder.pt.part01",
-          "bytes": 1610612736,
-          "sha256": "8b870a1a74800ce24d87cd294fa4a705f2707a05036ca99060fa6f69faa5ac67"
-        },
-        {
-          "asset": "ijepa-vit-h14-pretrained--best--encoder.pt.part02",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14-pretrained--best--encoder.pt.part02",
-          "bytes": 912552565,
-          "sha256": "b5d494f0975b3f7db91add4a4866eca8a65dab2abf9e2db5a6d5e0e499316d8f"
-        }
-      ],
-      "required": true
-    },
-    "final_classifier": {
-      "path": "final/classifier.pt",
-      "bytes": 19807,
-      "sha256": "2adcd785c7c41eeffaa2a7f4ddf1fecc63adc115fb8a0ee97647c5e96a732016",
-      "description": "Final classifier",
-      "parts": [
-        {
-          "asset": "ijepa-vit-h14-pretrained--final--classifier.pt",
-          "url": "https://github.com/RitwijParmar/tig-assessment/releases/download/ijepa-final-recovery-20261023/ijepa-vit-h14-pretrained--final--classifier.pt",
-          "bytes": 19807,
-          "sha256": "2adcd785c7c41eeffaa2a7f4ddf1fecc63adc115fb8a0ee97647c5e96a732016"
-        }
-      ],
-      "required": true
     }
   },
   "checkpoints": {
@@ -81,15 +45,9 @@
       "encoder": "best_encoder",
       "classifier": "best_classifier",
       "descriptor": "best/model.json"
-    },
-    "final": {
-      "encoder": "final_encoder",
-      "classifier": "final_classifier",
-      "descriptor": "final/model.json"
     }
   },
   "checkpoint_definition": {
-    "best": "Validation-selected checkpoint used for reported results.",
-    "final": "Last completed downstream training epoch."
+    "best": "Validation-selected checkpoint used for reported results."
   }
 }

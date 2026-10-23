@@ -32,7 +32,7 @@ elif command == "predict-local":
     p = argparse.ArgumentParser()
     p.add_argument("--image", required=True)
     p.add_argument("--device", default="cpu")
-    p.add_argument("--checkpoint", choices=("best", "final"), default="best")
+    p.add_argument("--checkpoint", choices=("best",), default="best")
     p.add_argument("--assets")
     a = p.parse_args(sys.argv[2:])
     if meta["entrypoint"] == "tig_benchmark":

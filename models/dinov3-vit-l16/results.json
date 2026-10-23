@@ -2,7 +2,6 @@
   "model": "DINOv3 ViT-L/16",
   "status": "completed",
   "classifier_epoch": 77,
-  "final_classifier_epoch": 92,
   "selected_encoder_lr": null,
   "threshold": 0.5,
   "validation": {
@@ -58,9 +57,7 @@
     "base_sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
     "selected_encoder_sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
     "classifier_sha256": "b24a1ce82e1850d9d47c98fc98d79fc532d73faa98747d7cf9e9295d28f3c8b4",
-    "final_classifier_sha256": "1d32999b903d3ff235d2b76ff487583c81718cd64131651f69300ab61b7f06f7",
-    "best_directory": "weights/best",
-    "final_directory": "weights/final"
+    "best_directory": "weights/best"
   },
   "training": {
     "seed": 43,
@@ -99,5 +96,5 @@
   },
   "selection_used_assessment": false,
   "assessment_previously_inspected": true,
-  "scope": "Same canonical recording/frame roles as final adapted I-JEPA. Assessment excluded from training, normalization and checkpoint selection. These previously inspected recordings provide retrospective held-out evidence. Final checkpoint saved; reported metrics use validation-selected best only."
+  "scope": "Same canonical recording/frame roles as final adapted I-JEPA. Assessment excluded from training, normalization and checkpoint selection. These previously inspected recordings provide retrospective held-out evidence. Reported metrics use the validation-selected best checkpoint."
 }

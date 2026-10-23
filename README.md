@@ -37,13 +37,9 @@ models/<model>/
       encoder.pt          # .safetensors for DINOv3
       classifier.pt
       model.json
-    final/
-      encoder.pt          # .safetensors for DINOv3
-      classifier.pt
-      model.json
 ```
 
-**Best** is validation-selected and supplies the reported results. **Final** is the last downstream training epoch. I-JEPA final classifiers are labelled CPU reconstructions.
+Only the validation-selected **best** checkpoint is distributed for each model. It supplies the reported results.
 
 Run inside a model folder:
 
@@ -52,9 +48,10 @@ python -m pip install -r requirements.txt
 python run.py fetch-weights
 python run.py verify-weights
 python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint best
-python run.py predict-local --image /absolute/path/weld.png --device cpu --checkpoint final
 ```
 
 Before native-model inference, set up pinned source: MobileNetV5 uses `python run.py fetch-assets --output assets/pretrained --source-only`; DINOv3 uses `python run.py fetch-assets --output assets/pretrained`.
 
 Each model's weight manifest provides downloads and SHA-256 checks. Training commands, architecture, data and results are in its model card. Validate with `python tools/verify_model_packages.py` and `python tools/check_all_models.py`.
+
+**I-JEPA download note:** Part 1 and part 2 are pieces of one encoder file. The encoder is about 2.52 GB, so it was split to fit GitHub’s release-file limit. `python run.py fetch-weights` automatically joins and verifies them. [GitHub limits](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases#storage-and-bandwidth-quotas).

@@ -17,7 +17,7 @@ def spec(path, root):
 def package(tmp_path, monkeypatch):
     model = json.loads((Path(__file__).resolve().parents[1]/'model.json').read_text())['runtime_model']
     mobile = model == 'mobilenetv5'
-    weights = tmp_path/'weights'; (weights/'best').mkdir(parents=True); (weights/'final').mkdir()
+    weights = tmp_path/'weights'; (weights/'best').mkdir(parents=True)
     (tmp_path/'config.json').write_text('{}')
     base = weights/'best/encoder.safetensors'
     if not mobile:base.write_bytes(b'released encoder fixture')
@@ -34,7 +34,7 @@ def package(tmp_path, monkeypatch):
         return Tiny(),lambda image:torch.zeros(3,2,2)
     monkeypatch.setattr(inference,'load_assets',load)
     monkeypatch.setattr(inference,'build',build)
-    for kind,value in [('best',7.),('final',9.)]:
+    for kind,value in [('best',7.)]:
         classifier=weights/kind/'classifier.pt';w=torch.zeros(1,2048);w[0,0]=1.
         torch.save({'head':{'weight':w,'bias':torch.tensor([float(kind=='final')])},'mean':torch.zeros(2048),'std':torch.ones(2048)},classifier)
         encoder=base
@@ -52,16 +52,16 @@ def package(tmp_path, monkeypatch):
 def test_requested_checkpoint_loads_its_exact_encoder_and_head(package):
     folder,image,mobile=package
     best=inference.predict_local(folder,image,checkpoint='best')
-    final=inference.predict_local(folder,image,checkpoint='final')
     assert best['logit']==(7. if mobile else 3.)
-    assert final['logit']==(10. if mobile else 4.)
+    with pytest.raises(ValueError,match='Only the best'):
+        inference.predict_local(folder,image,checkpoint='final')
 
 
 def test_modified_classifier_is_rejected(package):
     folder,image,_=package
-    (folder/'weights/final/classifier.pt').write_bytes(b'corrupted')
+    (folder/'weights/best/classifier.pt').write_bytes(b'corrupted')
     with pytest.raises(ValueError,match='checksum'):
-        inference.predict_local(folder,image,checkpoint='final')
+        inference.predict_local(folder,image,checkpoint='best')
 
 
 def test_descriptor_cannot_escape_the_weights_directory(tmp_path):
