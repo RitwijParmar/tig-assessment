@@ -1,0 +1,29 @@
+{
+  "model": "dinov3",
+  "source_repository": "facebookresearch/dinov3",
+  "source_revision": "6876159a11b4df116f30f667f8c9888617df0751",
+  "checkpoint_repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
+  "checkpoint_revision": "ea8dc2863c51be0a264bab82070e3e8836b02d51",
+  "checkpoint_sha256": "dcb2e45127cccbf1601e5f42fef165eea275c8e5213197e8dcf3f48822718179",
+  "readout": "official last-block CLS + patch-token mean",
+  "feature_dim": 2048,
+  "extraction_batch_size": 16,
+  "classifier": {
+    "epochs": 100,
+    "patience": 15,
+    "batch_size": 256,
+    "lr": 0.001,
+    "weight_decay": 0.01,
+    "seed": 43,
+    "threshold": 0.5,
+    "readouts": [
+      "mean"
+    ],
+    "selection": "highest recording-weighted validation BA at0.5; earliest epoch",
+    "normalization": "fitting-only per-feature mean and population standard deviation",
+    "loss": "fitting-only recording and binary-class balanced BCE on detached EMA features",
+    "device": "CUDA for recorded run; float32, zero initialized linear head"
+  },
+  "same_split_config": "../ijepa-vit-h14/config.json",
+  "status": "implemented; no completed matched training result yet"
+}

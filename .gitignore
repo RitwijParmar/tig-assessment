@@ -8,3 +8,8 @@ weights/
 data/
 *.pt
 .DS_Store
+assets/
+*.safetensors
+*.pth
+*.bin
+*.local.pt
