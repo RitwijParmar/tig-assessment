@@ -25,9 +25,11 @@ models/<model>/
   results.json
   requirements.txt
   run.py
-  code/
+  code/                  # training, evaluation and inference
+  tests/
   licenses/
   weights/
+    README.md            # download links and multipart instructions
     manifest.json
     best/
       encoder.pt          # .safetensors for DINOv3
@@ -46,8 +48,10 @@ python run.py fetch-source
 python run.py predict --image /absolute/path/weld.png --device cpu
 ```
 
-Each model folder contains its architecture, data split, training recipe, results, best weights and inference code. Weight downloads verify all SHA-256 hashes. Native encoder source is pinned and downloaded by `fetch-source`; I-JEPA source is bundled.
+Each model folder contains its architecture, data split, training recipe, results, best weights and training, evaluation and inference code. Weight downloads verify all SHA-256 hashes. Native encoder source is pinned and downloaded by `fetch-source`; I-JEPA source is bundled.
 
 **I-JEPA download note:** Part 1 and part 2 are pieces of one encoder file. The encoder is about 2.52 GB, so it was split to fit GitHub’s release-file limit. `python run.py fetch-weights` automatically joins and verifies them. [GitHub limits](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases#storage-and-bandwidth-quotas).
+
+Each model README includes complete `prepare`, `train` and `evaluate` commands. `evaluate --run` assesses a sealed training run; `evaluate-best --data ... --output ...` assesses the published best pair directly using the exact prepared split. Neither evaluation path fits a classifier or tunes a threshold. Use `python run.py test` inside each model to check training and checkpoint isolation.
 
 Check package metadata with `python verify.py`; use `python verify.py --weights` after downloading checkpoints.

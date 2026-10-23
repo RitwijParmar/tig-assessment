@@ -56,22 +56,40 @@ python run.py fetch-weights
 python run.py verify-weights
 python run.py fetch-source
 python run.py predict --image /absolute/path/weld.png --device cpu
+python run.py test
 ```
+
+### Training and evaluation
+
+Use canonical metadata with `path, group, frame, label6, target, crc, original_bytes` columns (CSV), or a registration JSON containing `rows`. Paths are relative to the dataset root. Missing CRC/size fields can be computed from local images. `prepare` verifies all recording roles and normalized-row hashes against [data.json](data.json); it does not generate a new random split. Acquire the images and annotations from the dataset linked above.
+
+Training requires the [official full I-JEPA pretraining checkpoint](https://dl.fbaipublicfiles.com/ijepa/IN1K-vit.h.14-300e.pth.tar), containing the context encoder, target encoder and predictor. Its SHA-256 is checked against [config.json](config.json). The submitted best encoder alone does not contain all three roles.
+
+```bash
+python run.py prepare --metadata /absolute/path/registration.json \
+  --data-root /absolute/path/dataset-root \
+  --base-checkpoint /absolute/path/IN1K-vit.h.14-300e.pth.tar --output runs/prepared
+python run.py train --config runs/prepared/config.local.json --output runs/training --device cuda
+python run.py evaluate --run runs/training --device cuda
+```
+
+This profile skips JEPA adaptation, keeps the original pretrained target encoder fixed and trains the linear classifier.
+
+To evaluate the **downloaded best weights** directly after data preparation, without retraining:
+
+```bash
+python run.py evaluate-best --data runs/prepared/config.local.json \
+  --output runs/best-assessment --device cuda --batch-size 2
+```
+
+Both evaluation paths use the registered assessment recordings, the saved fitting-only normalization and threshold 0.5. They save aggregate metrics and per-frame predictions locally in a fresh output directory. Training uses fitting images; validation selects the checkpoint. Assessment labels never update weights or choose the checkpoint.
 
 ## Weights
 
-`weights/best/` contains the encoder and matching classifier used for the reported results. [manifest.json](weights/manifest.json) records downloads, hashes and inference settings.
-
-| File | Download |
-| --- | --- |
-| `best/encoder.pt` | [part 1](https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14-pretrained--best--encoder.pt.part01), [part 2](https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14-pretrained--best--encoder.pt.part02) |
-| `best/classifier.pt` | [download](https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/ijepa-vit-h14-pretrained--best--classifier.pt) |
-
-**Note:** Part 1 and part 2 are pieces of one encoder file. The encoder is about 2.52 GB, so it was split to fit GitHub’s release-file limit. `python run.py fetch-weights` automatically joins and verifies them. [GitHub limits](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases#storage-and-bandwidth-quotas).
-
-In the previous layout, the `final/encoder.pt` row linked to `best` because both used identical frozen encoder weights; their classifier weights differed. Only the best checkpoint is distributed here.
-
+Only the validation-selected encoder and matching classifier are distributed in `weights/best/`. See [weights/README.md](weights/README.md) for every file, public download link, multipart instructions and checksum verification. [manifest.json](weights/manifest.json) records the exact pair and inference settings.
 
 ## Implementation and licenses
 
-Inference and preprocessing are in [code/](code/). Read [licenses/](licenses/) for source and checkpoint terms.
+[Training](code/ijepa/train.py), [sealed-run evaluation](code/ijepa/evaluate.py), [best-weight evaluation](code/evaluation.py).
+
+[code/](code/) contains training, preprocessing, checkpoint selection, evaluation and best-checkpoint inference. These paths share the same model and classifier implementation. [tests/](tests/) checks weight updates, split isolation and saved-checkpoint reproduction. Each model folder runs independently. Read [licenses/](licenses/) for source and checkpoint terms.

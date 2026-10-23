@@ -47,6 +47,20 @@
       "upstream_sha256": "336255dc30193e8e15d689d9481bb05673d89055718f3a96923a7ffb99adbbaf",
       "local_sha256": "336255dc30193e8e15d689d9481bb05673d89055718f3a96923a7ffb99adbbaf",
       "modifications": []
+    },
+    {
+      "file": "ijepa/transforms.py",
+      "upstream_url": "https://raw.githubusercontent.com/facebookresearch/ijepa/52c1ae95d05f743e000e8f10a1f3a79b10cff048/src/transforms.py",
+      "upstream_sha256": "441acaef22ca3bd121f98f95bfcad2b271ecacef0ab4ba72d4f3dc28c57fd44c",
+      "local_sha256": "441acaef22ca3bd121f98f95bfcad2b271ecacef0ab4ba72d4f3dc28c57fd44c",
+      "modifications": []
+    },
+    {
+      "file": "ijepa/multiblock.py",
+      "upstream_url": "https://raw.githubusercontent.com/facebookresearch/ijepa/52c1ae95d05f743e000e8f10a1f3a79b10cff048/src/masks/multiblock.py",
+      "upstream_sha256": "a06c593636f81e760bd26b615b2a7a976790dcc027d4b9244f3e8e7a2e5a8804",
+      "local_sha256": "a06c593636f81e760bd26b615b2a7a976790dcc027d4b9244f3e8e7a2e5a8804",
+      "modifications": []
     }
   ],
   "notes": "Official native-image encoder/predictor source. Relative imports and concrete CPU depth schedule enable standalone meta-device construction without changing numerical forward behavior."

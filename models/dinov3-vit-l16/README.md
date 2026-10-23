@@ -50,18 +50,40 @@ python run.py fetch-weights
 python run.py verify-weights
 python run.py fetch-source
 python run.py predict --image /absolute/path/weld.png --device cpu
+python run.py test
 ```
+
+### Training and evaluation
+
+Use canonical metadata with `path, group, frame, label6, target, crc, original_bytes` columns (CSV), or a registration JSON containing `rows`. Paths are relative to the dataset root. Missing CRC/size fields can be computed from local images. `prepare` verifies all recording roles and normalized-row hashes against [data.json](data.json); it does not generate a new random split. Acquire the images and annotations from the dataset linked above.
+
+```bash
+python run.py prepare --metadata /absolute/path/registration.json \
+  --data-root /absolute/path/dataset-root --output runs/prepared
+python run.py fetch-assets --output assets/training
+python run.py train --data runs/prepared/data.local.json --assets assets/training/assets.local.json \
+  --output runs/training --device cuda --batch-size 2 --workers 4
+python run.py verify --run runs/training --device cuda
+python run.py evaluate --run runs/training --device cuda
+```
+
+`fetch-assets` downloads pinned upstream source and verifies the released DINOv3 encoder distributed with this model. Training holds that encoder fixed and fits its linear classifier.
+
+To evaluate the **downloaded best weights** directly after data preparation, without retraining:
+
+```bash
+python run.py evaluate-best --data runs/prepared/data.local.json \
+  --output runs/best-assessment --device cuda --batch-size 2
+```
+
+Both evaluation paths use the registered assessment recordings, the saved fitting-only normalization and threshold 0.5. They save aggregate metrics and per-frame predictions locally in a fresh output directory. Training uses fitting images; validation selects the checkpoint. Assessment labels never update weights or choose the checkpoint.
 
 ## Weights
 
-`weights/best/` contains the encoder and matching classifier used for the reported results. [manifest.json](weights/manifest.json) records downloads, hashes and inference settings.
-
-| File | Download |
-| --- | --- |
-| `best/encoder.safetensors` | [download](https://github.com/RitwijParmar/tig-assessment/releases/download/model-weights-20261023/dinov3-vit-l16--best--encoder.safetensors) |
-| `best/classifier.pt` | [download](https://github.com/RitwijParmar/tig-assessment/releases/download/matched-training-20261023/dinov3-vit-l16--best--classifier.pt) |
-
+Only the validation-selected encoder and matching classifier are distributed in `weights/best/`. See [weights/README.md](weights/README.md) for every file, public download link, multipart instructions and checksum verification. [manifest.json](weights/manifest.json) records the exact pair and inference settings.
 
 ## Implementation and licenses
 
-Inference and preprocessing are in [code/](code/). Read [licenses/](licenses/) for source and checkpoint terms.
+[Training and sealed-run evaluation](code/tig_benchmark/pipeline.py), [best-weight evaluation](code/evaluation.py).
+
+[code/](code/) contains training, preprocessing, checkpoint selection, evaluation and best-checkpoint inference. These paths share the same model and classifier implementation. [tests/](tests/) checks weight updates, split isolation and saved-checkpoint reproduction. Each model folder runs independently. Read [licenses/](licenses/) for source and checkpoint terms.

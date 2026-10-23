@@ -16,8 +16,8 @@ def verify(weights=False):
     checked={};split=None
     for name in MODELS:
         folder=ROOT/'models'/name
-        expected={'README.md','config.json','data.json','results.json','requirements.txt','run.py','code','licenses','weights'}
-        actual={p.name for p in folder.iterdir() if p.name not in {'assets','__pycache__'}}
+        expected={'README.md','config.json','data.json','results.json','requirements.txt','run.py','code','licenses','weights','tests'}
+        actual={p.name for p in folder.iterdir() if p.name not in {'assets','__pycache__','.pytest_cache','runs'}}
         assert actual==expected,(name,actual)
         config=read(folder/'config.json');data=read(folder/'data.json');result=read(folder/'results.json')
         manifest=read(folder/'weights/manifest.json')
@@ -43,13 +43,21 @@ def verify(weights=False):
                 assert path.is_file() and not path.is_symlink(),path
                 assert path.stat().st_size==item['bytes'] and sha256(path)==item['sha256'],path
         assert result['weights']['classifier_sha256']==manifest['artifacts']['best_classifier']['sha256']
-        assert {p.name for p in (folder/'weights').iterdir() if p.name!='__pycache__'}=={'best','manifest.json'}
+        assert {p.name for p in (folder/'weights').iterdir() if p.name!='__pycache__'}=={'best','manifest.json','README.md'}
         assert {p.name for p in (folder/'weights/best').iterdir()} <= {'encoder.pt','encoder.safetensors','classifier.pt'}
         for path in (folder/'code').rglob('*.py'):ast.parse(path.read_text())
         if inference['family']=='ijepa':
-            source=folder/'code/vendor'
+            source=folder/'code/ijepa/vendor'
             for item in read(source/'SOURCE_MANIFEST.json')['files']:
                 assert sha256(source/item['file'])==item['local_sha256']
+        required = (['ijepa/train.py','ijepa/classifier.py','ijepa/evaluate.py','ijepa/data.py','ijepa/model.py']
+                    if inference['family']=='ijepa' else
+                    ['tig_benchmark/pipeline.py','tig_benchmark/models.py','tig_benchmark/data.py','transfer_core/classifier.py'])
+        if inference['family']=='mobilenetv5':required += ['tig_benchmark/finetune.py']
+        for relative in required+['evaluation.py','inference.py','weights.py']:
+            assert (folder/'code'/relative).is_file(), (name, 'Missing required source', relative)
+        assert (folder/'weights/README.md').is_file()
+        assert (folder/'tests').is_dir()
         checked[name]={'best_checkpoint':True,'weight_bytes_verified':weights}
     for path in ROOT.rglob('*.md'):
         if any(x in path.parts for x in ('assets','.git')):continue
