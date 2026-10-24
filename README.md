@@ -1,6 +1,6 @@
 # TIG Assessment
 
-Offline good-versus-defective TIG weld classification with four models on the same recording splits. The selected weld-adapted **I-JEPA ViT-H/14 + linear classifier** achieved **92.75% balanced accuracy** and **96.51% defect recall** on assessment. Its main limitation is a concentrated false-alarm failure in one recording.
+Offline good-versus-defective TIG weld classification with four models on the same recording splits. The selected weld-adapted **I-JEPA ViT-H/14 + linear classifier** achieved **92.75% balanced accuracy** and **96.51% defect recall** on assessment. Recording-level analysis identified a specific appearance regime associated with most of its false alarms.
 
 [One-page report](docs/report.pdf) | [Findings and follow-up](docs/findings.md) | [PyTorch vs TensorRT code](benchmarks/ijepa_tensorrt/)
 
@@ -33,9 +33,15 @@ Assessment is excluded from this run's fitting, normalization and checkpoint sel
 
 ## Why these approaches
 
-I started with MobileNet because I had used it in my deep learning course. I revisited V5's convolution, attention and multiscale features and wanted to test its inference-oriented design. Results were decent but varied across recordings. DINOv3 gave me a self-supervised transfer benchmark. It reduced assessment false alarms relative to MobileNet, but still missed defects, particularly lack of penetration. Lowering its threshold traded more detections for more false alarms.
+The weld images contain local texture changes alongside broader differences in pool shape and boundaries. I started with MobileNetV5 because its convolution, attention and multiscale fusion seemed suitable for capturing both. Its design for efficient visual processing also motivated testing it for future deployment. This is an architectural rationale, rather than a measured latency comparison between the models. See the [MobileNetV5 architecture](https://huggingface.co/docs/timm/main/models/mobilenetv5).
 
-I had read about I-JEPA but had never implemented it. Predicting hidden-region embeddings seemed promising for weld features. Rechecking the first AI-generated implementation showed that it was supervised transfer from I-JEPA weights with LoRA and a classifier. The intended JEPA adaptation was missing. The corrected training path is:
+I then tried DINOv3 to examine how well a strong pretrained representation transferred with only 12 training recordings. Its image-level and patch-level representations provided a frozen-encoder benchmark for local appearance and wider context. The [DINOv3 paper](https://arxiv.org/abs/2508.10104) motivates this transfer setting.
+
+With I-JEPA I wanted to test weld-specific representation learning before classification. Predicting hidden-region embeddings from visible context offered a way to learn relationships across weld images without defect labels during adaptation. The comparison evaluates original pretrained features and weld-adapted features. The [I-JEPA paper](https://arxiv.org/abs/2301.08243) describes the predictive objective. These model-selection hypotheses are separate from the observed outcomes below.
+
+## Training approach
+
+The reported I-JEPA settings use the original pretrained encoder or the weld-adapted target encoder. Adaptation and downstream classification are separate stages:
 
 ```text
 Same image
@@ -51,11 +57,13 @@ Inference:  one encoder + fitting-only normalization + saved linear classifier
 
 The pretrained I-JEPA baseline uses its original frozen encoder. DINOv3 also uses a frozen encoder. The selected MobileNetV5 model uses supervised encoder and classifier fine-tuning. Each model folder documents its exact architecture and recipe.
 
-## False alarms and follow-up
+## Findings and follow-up
+
+Adapted I-JEPA had the highest assessment BA and defect recall. DINOv3 produced fewer assessment false alarms than MobileNetV5, but lower defect recall than adapted I-JEPA. Lack of penetration was its largest source of missed defect frames. Lowering the threshold traded more detections for more false alarms.
 
 Adapted I-JEPA's FAR increased from **0.77% on validation to 11.00% on assessment**. Recording **`170906-141809` accounts for 514 of 521 false alarms**. The other eight recordings contribute seven, with a **0.48% recording-weighted FAR across their available good frames**. Only three of those eight contain good frames; five contain defects only. All nine remain in the reported results. The difficult recording also accounts for most of DINOv3's false alarms, while MobileNetV5's are more distributed.
 
-Per-recording counts located the failure first. SliceFinder then identified associations with bright-region position and contrast within that recording. The same position marker appears in correctly classified good frames elsewhere, so it is an appearance pattern to investigate, not a proven physical cause or label error.
+Per-recording counts identified the concentration first. SliceFinder then identified associations with bright-region position and contrast within that recording. The same position marker appears in correctly classified good frames elsewhere, so it is an appearance pattern to investigate, not a proven physical cause or label error.
 
 Three **15-epoch** frozen-encoder classifier trials tested continuation, targeted augmentation and augmentation with difficult-good-frame weighting. A separate nonlinear-classifier screen was also completed. None met the development requirement of reducing false alarms while preserving defect recall. The original model and published results were retained. See [findings](docs/findings.md) for the controls and limits.
 
@@ -110,6 +118,6 @@ Model folders are self-contained. Shared utilities and required license notices 
 
 ## Future direction
 
-With control over a real welding setup, I would prioritize independent recordings under conditions similar to the difficult case, including good and defective welds. A data-coverage gap is my first suspicion, not an established cause. I would test better coverage before changing the model again.
+With control over a real welding setup, I would prioritize independent recordings under conditions similar to that case, including good and defective welds. A data-coverage gap is my first suspicion, not an established cause. I would test better coverage before changing the model again.
 
 Model work would remain my main focus. I would also improve the full pipeline as I did with TensorRT. Actual Jetson testing would focus mainly on **latency**, then memory use. In ROS 2 I would test image transport and QoS tuning, including a measured Fast DDS versus Connext comparison. Delivered FPS, latency and dropped frames would determine whether it helps. No DDS improvement percentage is assumed.

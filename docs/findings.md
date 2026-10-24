@@ -31,15 +31,15 @@ These are recording-weighted metrics. Each frame receives weight `1 / number of 
 
 The split is matched, but backbone, preprocessing, readout and training recipe differ between pipelines. This comparison does not isolate the effect of the pretraining objective alone.
 
-## The corrected I-JEPA implementation
+## I-JEPA training approach
 
-The initial LoRA/classifier implementation tested supervised transfer from pretrained I-JEPA weights. It did not perform the intended JEPA adaptation. The corrected path sends visible patches through a context encoder and predictor, then compares predicted embeddings with corresponding target-patch embeddings from the full-image target encoder. Gradients update the context encoder and predictor. An exponential moving average updates the target encoder.
+The reported comparison evaluates the original pretrained representation and a weld-adapted representation. JEPA adaptation sends visible patches through a context encoder and predictor, then compares predicted embeddings with corresponding target-patch embeddings from the full-image target encoder. Gradients update the context encoder and predictor. An exponential moving average updates the target encoder.
 
 After weld adaptation, the encoder is frozen and a separate linear classifier is trained. Inference uses that encoder and classifier. The original-pretrained baseline also uses a frozen encoder and its own trained linear classifier. Model folders retain their training, evaluation and inference code and the matching best weights.
 
-## Where the models struggled
+## What the assessment showed
 
-MobileNet's assessment false alarms were spread across several recordings. DINOv3 had fewer assessment false alarms, but lack of penetration accounted for 419 of its 658 missed defect frames. DINO detected 281 of 700 lack-of-penetration frames in this split, compared with 611 for adapted I-JEPA. Later diagnostics found interactions between DINO's CLS and patch-mean contributions and sensitivity to image framing. They did not isolate a single architectural or physical cause. Those retrospective diagnostics explain the observed failure, rather than establishing that the architecture is inherently inferior.
+MobileNet's assessment false alarms were spread across several recordings. DINOv3 had fewer assessment false alarms, but lack of penetration accounted for 419 of its 658 missed defect frames. DINO detected 281 of 700 lack-of-penetration frames in this split, compared with 611 for adapted I-JEPA. Later diagnostics found interactions between DINO's CLS and patch-mean contributions and sensitivity to image framing. These retrospective diagnostics characterize the observed behavior without establishing a single architectural or physical cause.
 
 For adapted I-JEPA, recording `170906-141809` contributed **514 of 521 assessment false alarms**. It contains 1,037 good frames, giving a raw within-recording FAR of 49.57%.
 
@@ -54,11 +54,11 @@ The other eight recordings contributed only seven adapted-I-JEPA false alarms. T
 
 ## What SliceFinder added
 
-Per-recording counts located the failure before slice discovery. SliceFinder then helped identify an appearance association within that recording. The search used 24 predefined visual measurements with bins derived from fitting images, rather than recording IDs as search features.
+Per-recording counts identified the concentration before slice discovery. SliceFinder then helped identify an appearance association within that recording. The search used 24 predefined visual measurements with bins derived from fitting images, rather than recording IDs as search features.
 
 The strongest reported marker was a bright-region horizontal centroid below 0.489945 of image width. There were 509 false alarms among 747 good frames with that marker, versus 5 among 290 without it. The corresponding raw rates were 68.14% and 1.72%. An alternating-temporal-block check retained the association.
 
-This is diagnostic evidence, not an independent-frame significance test or a causal rule. The same marker appeared in 311 correctly classified good frames from another assessment recording and in fitting good frames. Position alone is therefore insufficient to explain the failure. Contrast also varied with the error regime. Neither a physical defect cause nor incorrect labels was established. False alarms began well before the released label transition, so a small annotation-boundary shift cannot explain all errors.
+This is diagnostic evidence, not an independent-frame significance test or a causal rule. The same marker appeared in 311 correctly classified good frames from another assessment recording and in fitting good frames. Position alone is therefore insufficient to explain the observed errors. Contrast also varied with the error regime. Neither a physical defect cause nor incorrect labels was established. False alarms began well before the released label transition, so a small annotation-boundary shift cannot explain all errors.
 
 ## Follow-up experiments
 
@@ -72,6 +72,6 @@ The follow-up used a fresh IEEE FP32 reference. Small differences from historica
 
 The selected adapted I-JEPA was benchmarked on an NVIDIA RTX PRO 6000 Blackwell Server Edition. TensorRT FP32 reduced median model inference from 14.44 ms to 8.17 ms against matched PyTorch FP32, a 1.77x speedup. Including in-memory PNG decoding and preprocessing, latency fell from 22.24 ms to 15.96 ms, a 1.39x speedup. All 6,454 validation decisions agreed with the fresh matched PyTorch reference. Camera acquisition, disk reads and startup were outside that timing boundary. See the [benchmark code and recorded protocol](../benchmarks/ijepa_tensorrt/).
 
-In a real welding setup, collecting more independent recordings resembling the difficult case would be a sensible priority, including both good and defective welds. The concentrated failure makes recording coverage worth investigating, but does not prove that changing the data alone will fix it. A welding expert could also review the ambiguous appearance and label transition.
+In a real welding setup, collecting more independent recordings resembling that case would be a sensible priority, including both good and defective welds. The concentration of errors makes recording coverage worth investigating, but does not prove that changing the data alone will resolve it. A welding expert could also review the appearance and label transition.
 
 Jetson testing remains future work, especially latency and memory use. The server speedup does not predict a Jetson speedup. ROS 2 image transport, QoS and Fast DDS versus Connext would also need measurements of delivered FPS, end-to-end latency and dropped frames. No Jetson or DDS benchmark has been completed for this project.
