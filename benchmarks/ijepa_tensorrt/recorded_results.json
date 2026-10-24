@@ -1,0 +1,184 @@
+{
+  "model": "Selected weld-adapted I-JEPA ViT-H/14 + saved linear classifier",
+  "measurement_date": "2026-10-23",
+  "status": "Historical measured GPU run; this public packaging was checked on CPU without rerunning GPU timings",
+  "environment": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "cudnn": 92400,
+    "tensorrt": "10.13.3.9.post1",
+    "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "compute_capability": [
+      12,
+      0
+    ],
+    "gpu_total_bytes": 101973819392,
+    "driver_csv": "NVIDIA RTX PRO 6000 Blackwell Server Edition, 580.178.04, P0, 600.00 W"
+  },
+  "method": {
+    "precision": "IEEE FP32; TF32 disabled in both runtimes",
+    "batch": 1,
+    "input_shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "valid_mask_shape": [
+      1,
+      256
+    ],
+    "warmup": 30,
+    "timed_iterations": 200,
+    "cuda_graphs": false,
+    "cuda_stream": "One shared nondefault stream, serial batch one",
+    "timing_images": 8,
+    "development_gate_images": 64,
+    "onnx_check_images": 3,
+    "runtime_order": "PyTorch FP32, PyTorch FP16 autocast, TensorRT FP32, TensorRT mixed FP16; failed FP16 variants not timed",
+    "assessment_images_loaded": false,
+    "jetson_measured": false
+  },
+  "comparison": {
+    "gpu_compute": {
+      "boundary": "GPU stream elapsed latency",
+      "median_speedup": 1.7682872075632732,
+      "median_latency_reduction_percent": 43.44810075406159,
+      "pytorch_fp32": {
+        "samples": 200,
+        "median_ms": 14.408032417297363,
+        "p95_ms": 14.417458009719848,
+        "p99_ms": 14.421153392791748,
+        "mean_ms": 14.408318910598755,
+        "minimum_ms": 14.390591621398926,
+        "maximum_ms": 14.43660831451416
+      },
+      "tensorrt_fp32": {
+        "samples": 200,
+        "median_ms": 8.148015975952148,
+        "p95_ms": 8.1659565448761,
+        "p99_ms": 8.172044734954834,
+        "mean_ms": 8.148854055404662,
+        "minimum_ms": 8.118975639343262,
+        "maximum_ms": 8.177887916564941
+      }
+    },
+    "input_tensor_to_host_logit": {
+      "boundary": "Preprocessed GPU input to returned logit",
+      "median_speedup": 1.7664204175403462,
+      "median_latency_reduction_percent": 43.38833552476421,
+      "pytorch_fp32": {
+        "samples": 200,
+        "median_ms": 14.436637000130759,
+        "p95_ms": 14.446911500010629,
+        "p99_ms": 14.452940089831827,
+        "mean_ms": 14.436901920007585,
+        "minimum_ms": 14.421693000031155,
+        "maximum_ms": 14.484442000139097
+      },
+      "tensorrt_fp32": {
+        "samples": 200,
+        "median_ms": 8.172820500021771,
+        "p95_ms": 8.190100949900625,
+        "p99_ms": 8.200652309988072,
+        "mean_ms": 8.172755479997704,
+        "minimum_ms": 8.144275999939055,
+        "maximum_ms": 8.20282499989844
+      }
+    },
+    "png_bytes_to_host_decision": {
+      "boundary": "In-memory PNG bytes to returned decision",
+      "median_speedup": 1.3936430029677345,
+      "median_latency_reduction_percent": 28.24561255138366,
+      "pytorch_fp32": {
+        "samples": 200,
+        "median_ms": 22.240662999934102,
+        "p95_ms": 22.804172499979813,
+        "p99_ms": 22.82423901008997,
+        "mean_ms": 22.05803654499391,
+        "minimum_ms": 20.718519000183733,
+        "maximum_ms": 23.041297999952803
+      },
+      "tensorrt_fp32": {
+        "samples": 200,
+        "median_ms": 15.958651500113774,
+        "p95_ms": 16.559629500045503,
+        "p99_ms": 16.592190199821744,
+        "mean_ms": 15.809636165001848,
+        "minimum_ms": 14.467302999946696,
+        "maximum_ms": 16.663891000007425
+      }
+    }
+  },
+  "validation": {
+    "frames": 6454,
+    "recordings": 6,
+    "reference": "Fresh IEEE FP32 PyTorch, batch one",
+    "tensorrt_gate": {
+      "passed": true,
+      "finite": true,
+      "frames": 6454,
+      "max_abs_logit_difference": 0.00030553340911865234,
+      "max_abs_probability_difference": 3.520044713667403e-05,
+      "mean_abs_probability_difference": 3.102629259991793e-07,
+      "decision_disagreements": 0,
+      "probability_tolerance": 0.0001,
+      "threshold": 0.5
+    }
+  },
+  "excluded_variants": {
+    "pytorch_autocast_fp16": {
+      "status": "numerical_gate_failed; no speedup claimed",
+      "development_gate": {
+        "passed": false,
+        "finite": true,
+        "frames": 64,
+        "max_abs_logit_difference": 0.07204413414001465,
+        "max_abs_probability_difference": 0.010233741685615194,
+        "mean_abs_probability_difference": 0.001014544090027505,
+        "decision_disagreements": 0,
+        "probability_tolerance": 0.005,
+        "threshold": 0.5
+      }
+    },
+    "tensorrt_fp16": {
+      "status": "numerical_gate_failed; no speedup claimed",
+      "development_gate": {
+        "passed": false,
+        "finite": true,
+        "frames": 64,
+        "max_abs_logit_difference": 0.2724294662475586,
+        "max_abs_probability_difference": 0.03929598142653912,
+        "mean_abs_probability_difference": 0.0045460433981229145,
+        "decision_disagreements": 0,
+        "probability_tolerance": 0.005,
+        "threshold": 0.5
+      }
+    }
+  },
+  "checkpoint_sha256": {
+    "encoder": "9f9c3dfe31e49c1a7333ac85e436d6a7b9f7a12c3a4b142ee12b662a7cde5b17",
+    "classifier": "990833bb02a531cb2350b65cb4141630b721d79eed62b9b5cc11b245f93619bb"
+  },
+  "provenance": {
+    "executed_worker_sha256": "e413fa6e5c472a0676267ebc4b62279c3e4b3968545bec8185ee693e6b147b1a",
+    "packaged_worker_sha256": "3a33ed363b7ab4afecb03d641fd46e00cb29942dd0397009c3edcafb44b242c6",
+    "raw_result_sha256": "4a86f108a2a8c0c7288bae6a7a665a9f5ec3f67e66b98cabc809e5437b249985",
+    "changes_from_executed_worker": [
+      "Portable repository-relative default model path and clearer CLI help",
+      "PyTorch imported after CLI parsing so --help and CPU tests work without CUDA dependencies",
+      "Default run compares qualified FP32 paths; --include-fp16 restores historical four-variant screening",
+      "Diagnostic validation limits cannot mark latency results eligible for a full-validation claim",
+      "Normal argparse --help exit is not logged as a benchmark failure",
+      "Inference, export, TensorRT build policies, gates and timing functions otherwise retained"
+    ]
+  },
+  "limits": [
+    "One GPU, fixed runtime order, serial batch one; not a thermal stress or energy study",
+    "PNG timing starts from already loaded bytes and excludes camera acquisition, disk reads and model startup",
+    "Fresh IEEE reference changes one validation-frame decision relative to historical TF32 model evaluation; original classification results are unchanged",
+    "No assessment images were loaded; split fingerprint validation reads manifest metadata for all roles",
+    "No Jetson or ROS 2/DDS performance measurement"
+  ]
+}

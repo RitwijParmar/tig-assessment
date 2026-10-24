@@ -82,11 +82,15 @@ The increase from **0.77% validation false-alarm rate to 11.00% assessment false
 
 False alarms are therefore rare across the remaining eight recordings, while this single-recording failure largely explains the aggregate increase. The recording is absent from validation, so validation's **0.77% recording-weighted false-alarm rate did not reveal it**.
 
-The table uses raw frame counts; the reported **11.00%** uses recording weights. All nine recordings remain included in the reported assessment results. These counts locate the failure; its underlying visual or annotation cause has not been established.
+The table uses raw frame counts; the reported **11.00%** uses recording weights. Using the same recording weights, the available good frames in the other eight recordings have a **0.48%** false-alarm rate. Only three of those eight contain good frames; the other five are defect-only. All nine recordings remain included in the reported assessment results.
 
 I see this as encouraging. Almost all of adapted I-JEPA’s false alarms come from one recording, with very few elsewhere. That gives us a clear place to investigate, whereas MobileNetV5’s false alarms are spread across several recordings. We still need to understand what makes that recording difficult, but the model’s behavior on the remaining good-weld data is promising.
 
-**Proposed follow-up:** [SliceFinder](https://arxiv.org/abs/1807.06068) could test whether brightness, glare, contrast or blur are associated with false alarms. [Domino](https://arxiv.org/abs/2203.14960) could find visually similar error groups using image embeddings, labels and predictions. These analyses would help investigate what makes this recording difficult; they have not yet been run.
+**Completed investigation:** SliceFinder identified associations with bright-region position and contrast in this recording. The position marker also appears in correctly classified good frames elsewhere, so it is not a sufficient cause or a new decision rule. A physical cause or label error has not been established.
+
+Three 15-epoch classifier trials compared continuation, targeted augmentation and augmentation with difficult-good-frame weighting, keeping the encoder frozen. A separate nonlinear-classifier screen was also completed. None improved development false alarms while preserving the required defect recall. The original model was retained, and rejected trained heads were not evaluated on assessment. See the [findings and follow-up](../../docs/findings.md) and [one-page report](../../docs/report.pdf).
+
+**Inference benchmark:** The selected model was compared in PyTorch FP32 and TensorRT FP32 on an NVIDIA RTX PRO 6000 Blackwell Server Edition. Median model latency fell from **14.44 ms to 8.17 ms (1.77x)**; in-memory PNG-to-decision latency fell from **22.24 ms to 15.96 ms (1.39x)**. Decisions matched on all 6,454 validation frames against the fresh matched FP32 reference. See the [benchmark code and reproduction instructions](../../benchmarks/ijepa_tensorrt/). Actual Jetson latency and memory use remain future work.
 
 ## Usage
 

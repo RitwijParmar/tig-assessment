@@ -1,0 +1,212 @@
+{
+  "schema": "tig-assessment-public-summary-v1",
+  "recorded_date": "2026-10-23",
+  "scope": "Recorded retrospective held-out model results. No new training or assessment from this documentation update.",
+  "units": "rates are fractions in [0,1], not percentages",
+  "decision_threshold": 0.5,
+  "metric_weight_rule": "Each frame has weight 1 / all assessed frames in its parent recording; weighted class recalls are averaged for balanced accuracy.",
+  "assessment_previously_inspected": true,
+  "identical_splits_verified": true,
+  "splits": {
+    "fitting": {
+      "recordings": 12,
+      "frames": 10338,
+      "good_frames": 3915,
+      "defect_frames": 6423,
+      "normalized_rows_sha256": "9a4599b891d5cb4d0c79ec8c223523a5678a1e478c1b7591dc5ee7cca8144e91"
+    },
+    "selection": {
+      "recordings": 6,
+      "frames": 6454,
+      "good_frames": 1341,
+      "defect_frames": 5113,
+      "normalized_rows_sha256": "0b4ca0af988acff774c5dacae817ab102f09c7b0e9255cd373f36ac8d40ed75e"
+    },
+    "assessment": {
+      "recordings": 9,
+      "frames": 6763,
+      "good_frames": 2627,
+      "defect_frames": 4136,
+      "normalized_rows_sha256": "1fdce6903cd9d9c44ca2d5d90ebf461410fe679605076a825e81dc0fd7893e60"
+    }
+  },
+  "models": {
+    "mobilenetv5-300m": {
+      "name": "MobileNetV5-300M",
+      "source": "../models/mobilenetv5-300m/results.json",
+      "source_sha256": "15cbb66eca439db3f4c8debd3c0c98054d1add7e98cd9fc7d8b9bd3b0f50064c",
+      "validation": {
+        "recordings": 6,
+        "frames": 6454,
+        "recording_balanced_accuracy": 0.9255012768636232,
+        "recording_defect_recall": 0.8852768402614603,
+        "recording_false_alarm_rate": 0.03427428653421407,
+        "false_positive_frames": 33,
+        "false_negative_frames": 390
+      },
+      "assessment": {
+        "recordings": 9,
+        "frames": 6763,
+        "recording_balanced_accuracy": 0.795675165179716,
+        "recording_defect_recall": 0.8151405592061411,
+        "recording_false_alarm_rate": 0.2237902288467091,
+        "false_positive_frames": 524,
+        "false_negative_frames": 594
+      },
+      "assessment_false_alarm_concentration": {
+        "focus_recording": "170906-141809",
+        "focus_good_frames": 1037,
+        "focus_false_positives": 113,
+        "assessment_false_positives": 524,
+        "other_eight_good_frames": 1590,
+        "other_eight_false_positives": 411,
+        "other_eight_recording_weighted_far": 0.2551227401630628
+      }
+    },
+    "dinov3-vit-l16": {
+      "name": "DINOv3 ViT-L/16",
+      "source": "../models/dinov3-vit-l16/results.json",
+      "source_sha256": "cc46be7a7e924a83261b0e1f5e0e6877c437a0f22db372cca62f61aa8d72f716",
+      "validation": {
+        "recordings": 6,
+        "frames": 6454,
+        "recording_balanced_accuracy": 0.8969869247719391,
+        "recording_defect_recall": 0.8590723178152129,
+        "recording_false_alarm_rate": 0.06509846827133484,
+        "false_positive_frames": 119,
+        "false_negative_frames": 360
+      },
+      "assessment": {
+        "recordings": 9,
+        "frames": 6763,
+        "recording_balanced_accuracy": 0.8800090206513969,
+        "recording_defect_recall": 0.8344913307224274,
+        "recording_false_alarm_rate": 0.07447328941963367,
+        "false_positive_frames": 310,
+        "false_negative_frames": 658
+      },
+      "assessment_false_alarm_concentration": {
+        "focus_recording": "170906-141809",
+        "focus_good_frames": 1037,
+        "focus_false_positives": 269,
+        "assessment_false_positives": 310,
+        "other_eight_good_frames": 1590,
+        "other_eight_false_positives": 41,
+        "other_eight_recording_weighted_far": 0.02401011921173211
+      }
+    },
+    "ijepa-vit-h14-pretrained": {
+      "name": "I-JEPA ViT-H/14 (pretrained)",
+      "source": "../models/ijepa-vit-h14-pretrained/results.json",
+      "source_sha256": "5d900ed8f49527fda4ab2fbff8311ec796888ad68033ac3a474071f568473af5",
+      "validation": {
+        "recordings": 6,
+        "frames": 6454,
+        "recording_balanced_accuracy": 0.9478004756421904,
+        "recording_defect_recall": 0.8972420891399606,
+        "recording_false_alarm_rate": 0.0016411378555798689,
+        "false_positive_frames": 3,
+        "false_negative_frames": 229
+      },
+      "assessment": {
+        "recordings": 9,
+        "frames": 6763,
+        "recording_balanced_accuracy": 0.8488513214866322,
+        "recording_defect_recall": 0.8502218597552431,
+        "recording_false_alarm_rate": 0.15251921678197872,
+        "false_positive_frames": 729,
+        "false_negative_frames": 747
+      },
+      "assessment_false_alarm_concentration": {
+        "focus_recording": "170906-141809",
+        "focus_good_frames": 1037,
+        "focus_false_positives": 723,
+        "assessment_false_positives": 729,
+        "other_eight_good_frames": 1590,
+        "other_eight_false_positives": 6,
+        "other_eight_recording_weighted_far": 0.0038863943702653536
+      }
+    },
+    "ijepa-vit-h14-adapted": {
+      "name": "I-JEPA ViT-H/14 (weld-adapted)",
+      "source": "../models/ijepa-vit-h14-adapted/results.json",
+      "source_sha256": "7a657b494cca2c2f3344842970b75feebf211565ebf9d807a5ce0d745f6aca3c",
+      "validation": {
+        "recordings": 6,
+        "frames": 6454,
+        "recording_balanced_accuracy": 0.9840920266515871,
+        "recording_defect_recall": 0.9758426966292135,
+        "recording_false_alarm_rate": 0.007658643326039383,
+        "false_positive_frames": 14,
+        "false_negative_frames": 43
+      },
+      "assessment": {
+        "recordings": 9,
+        "frames": 6763,
+        "recording_balanced_accuracy": 0.9275219205767377,
+        "recording_defect_recall": 0.9650830201368565,
+        "recording_false_alarm_rate": 0.1100391789833812,
+        "false_positive_frames": 521,
+        "false_negative_frames": 165
+      },
+      "assessment_false_alarm_concentration": {
+        "focus_recording": "170906-141809",
+        "focus_good_frames": 1037,
+        "focus_false_positives": 514,
+        "assessment_false_positives": 521,
+        "other_eight_good_frames": 1590,
+        "other_eight_false_positives": 7,
+        "other_eight_recording_weighted_far": 0.0048112535612535486
+      }
+    }
+  },
+  "false_alarm_denominator_note": "Only four assessment recordings contain good frames. Among the other eight recordings, three contain good frames and five are defect-only.",
+  "slicefinder": {
+    "scope": "Retrospective within-recording diagnostic, not a causal finding or independent test",
+    "focus_recording": "170906-141809",
+    "visual_feature_count": 24,
+    "marker": "Horizontal centroid of pixels above each image intensity 95th percentile < 0.489945 of image width",
+    "marker_present": {
+      "good_frames": 747,
+      "false_alarms": 509
+    },
+    "marker_absent": {
+      "good_frames": 290,
+      "false_alarms": 5
+    },
+    "same_marker_other_recording": {
+      "good_frames": 311,
+      "false_alarms": 0
+    },
+    "physical_cause_established": false,
+    "label_error_established": false
+  },
+  "followup": {
+    "frozen_encoder_classifier_trial": {
+      "arms": [
+        "continuation_control",
+        "augmentation",
+        "augmentation_hard_good"
+      ],
+      "completed_epochs_per_arm": 15,
+      "selected": "original epoch zero",
+      "accepted_improvement": false,
+      "rejected_heads_assessed": false
+    },
+    "rbf_svm_screen": {
+      "settings": 6,
+      "fitting_recording_folds": 3,
+      "advanced_to_validation": false,
+      "advanced_to_assessment": false
+    },
+    "original_model_results_replaced": false
+  },
+  "deployment": {
+    "jetson_measured": false,
+    "dds_measured": false,
+    "jetson_future_focus": [
+      "latency",
+      "memory use"
+    ]
+  }
+}

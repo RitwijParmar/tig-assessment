@@ -1,0 +1,10 @@
+# Linux/CUDA 13 benchmark environment. Install matching CUDA PyTorch first.
+torch==2.14.1
+torchvision==0.29.1
+numpy==2.5.4
+Pillow==12.3.0
+tensorrt-cu13==10.13.3.9.post1
+onnx
+onnxscript
+onnxruntime
+nvidia-ml-py

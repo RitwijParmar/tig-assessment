@@ -2,6 +2,7 @@ __pycache__/
 .pytest_cache/
 *.pyc
 .venv/
+.venv-benchmark/
 *.local.json
 *.local.pt
 models/*/runs/
@@ -10,9 +11,12 @@ data/
 .DS_Store
 *.pt
 !models/*/weights/best/classifier.pt
-!models/*/weights/final/classifier.pt
 *.pth
 *.pth.tar
 *.safetensors
 *.bin
 *.partial
+*.onnx*
+*.engine
+*.plan
+benchmarks/*/runs/
